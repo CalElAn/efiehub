@@ -1,0 +1,27 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    /* @font-face {
+      font-family: Poppins;
+      font-weight: 400;
+      src: url(/fonts/Poppins/Poppins-Regular.ttf) format("ttf");
+    }
+    @font-face {
+      font-family: Poppins;
+      font-weight: 500;
+      src: url(/fonts/proxima-nova/Poppins-Medium.ttf) format("ttf");
+    }
+    @font-face {
+      font-family: Poppins;
+      font-weight: 600;
+      src: url(/fonts/proxima-nova/Poppins-SemiBold.ttf) format("ttf");
+    }
+    @font-face {
+      font-family: Poppins;
+      font-weight: 700;
+      src: url(/fonts/proxima-nova/Poppins-Bold.ttf) format("ttf");
+    } */
+}

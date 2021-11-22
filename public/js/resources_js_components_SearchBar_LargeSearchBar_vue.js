@@ -1535,7 +1535,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onBlur: _cache[5] || (_cache[5] = function ($event) {
       return _ctx.isInputFocused = false;
     }),
-    "class": "text-base lg:text-lg xl:text-xl text-left border-0 h-full pl-3 pr-0 w-full rounded-full focus:ring-0 focus:outline-none bg-transparent placeholder-white focus:placeholder-main-blue group-hover:placeholder-main-blue",
+    "class": "text-base lg:text-lg xl:text-xl text-left border-0 h-full pl-3 pr-0 w-full rounded-full focus:ring-0 focus:outline-none bg-transparent placeholder-white mx-2 focus:placeholder-main-blue group-hover:placeholder-main-blue",
     type: "text",
     placeholder: "Enter a location"
   }, null, 32

@@ -1,10 +1,14 @@
 #!/bin/sh
+set -e
+
+echo "Deploying application ..."
 
 # activate maintenance mode
-php artisan down
+(php artisan down) || true
 
-# update source code
-git pull
+# Update codebase
+git fetch origin deploy
+git reset --hard origin/deploy
 
 # update PHP dependencies
 composer install --no-interaction --no-dev --prefer-dist
@@ -17,9 +21,7 @@ php artisan view:cache
 # update database
 #php artisan migrate --force
 
-#install and compile js assets
-npm install
-npx mix --production
-
 # stop maintenance mode
 php artisan up
+ 
+echo "Application deployed!"

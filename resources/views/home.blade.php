@@ -14,7 +14,7 @@
 <body class="font-Poppins container">
     <div id="app">
         <header>
-            <div class="w-full h-header-bg-min sm:h-header-bg flex flex-col sm:px-10 bg-main-blue rounded-b-header-bg-min sm:rounded-3xl">
+            <div class="w-full h-header-bg-min sm:h-header-bg flex flex-col sm:px-14 bg-main-blue rounded-b-header-bg-min sm:rounded-3xl">
                 <nav class="flex justify-center sm:justify-between pt-5">
                     <div class="bg-contain bg-center bg-no-repeat h-8 w-32" style="background-image: url('images/logo.png');" alt="logo"></div>
                     <div class="hidden sm:flex gap-3 text-sm sm:text-base">
@@ -69,7 +69,7 @@
             <p class="font-semibold text-2xl">
                 Explore other locations
             </p>
-            <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 mt-5 ml-5 gap-8">
+            <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 mt-5 gap-8">
                 <div class="flex gap-2.5">
                     <img src="images/accra.png" alt="accra" class="rounded-3xl w-16 h-16">
                     <div class="flex flex-col justify-center gap-1">
@@ -116,11 +116,11 @@
                 </div>
             </div>
         </section>
-        <section class="mt-24 sm:mx-10">
-            <p class="font-semibold text-2xl mx-5">
+        <section class="mt-24 mx-5 sm:mx-10">
+            <p class="font-semibold text-2xl">
                 Rent in Accra
             </p>
-            <div class="flex flex-col items-center mt-12 mx-10 gap-16 lg:grid lg:grid-cols-2 2xl:grid-cols-3 lg:gap-20">
+            <div class="flex flex-col items-center mt-12 gap-16 lg:grid lg:grid-cols-2 2xl:grid-cols-3 lg:gap-20">
                 <div class="rounded-main-card flex flex-col bg-main-blue h-96 w-72 sm:w-96">
                     <div class="bg-cover bg-no-repeat h-2/3" style="background-image: url('images/accra.png');" alt="accra home"></div>
                     <div class="h-1/3 flex flex-col text-white text-base justify-around gap-2 p-5">

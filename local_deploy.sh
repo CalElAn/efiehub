@@ -1,7 +1,8 @@
 #!/bin/sh
 set -e
  
-vendor/bin/phpunit
+#vendor/bin/phpunit
+sail php artisan test
  
 (git push) || true
  

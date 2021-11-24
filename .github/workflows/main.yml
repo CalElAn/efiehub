@@ -38,5 +38,5 @@ jobs:
         with:
           username: ubuntu
           host: ec2-3-133-119-84.us-east-2.compute.amazonaws.com
-          password: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
           script: 'cd /var/www/efiehub && ./server_deploy.sh'

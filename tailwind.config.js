@@ -29,7 +29,7 @@ module.exports = {
             height: {
                 'header-img': '33rem',
                 'header-bg': '30rem',
-                'header-bg-min': '82vh',
+                'header-bg-min': '80vh',
             },
             width: {
                 'header-img': '50vw',

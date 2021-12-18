@@ -2,7 +2,7 @@
     <div
         ref="searchBar"
         :class="[isSearchBarFocused ? 'xl:grid-cols-9' : '', {isSearchBarInNavbar: 'my-5'}]"
-        class="grid-cols-8 absolute backdrop-blur-2xl backdrop-filter backdrop-opacity-90 bg-opacity-30 bg-white bottom-14 h-16 hidden items-center left-0 rounded-full sm:grid text-center text-white text-base lg:text-lg xl:text-xl w-searchbar-max z-10 2xl:w-searchbar-2x">
+        class="grid-cols-8 absolute backdrop-blur-2xl backdrop-filter backdrop-opacity-90 bg-opacity-30 bg-white bottom-14 h-16 hidden items-center left-0 rounded-full sm:grid text-center text-white text-base lg:text-lg xl:text-xl w-searchbar-max md:w-searchbar-md xl:w-searchbar-max 3xl:w-searchbar-2x z-10">
 
         <!-- Types Popover -->
         <Popover v-slot="{ open }" class="col-span-2 h-full relative hover:bg-opacity-75">

@@ -2,7 +2,7 @@
 set -e
  
 #vendor/bin/phpunit
-vendor/bin/sail php artisan test
+#vendor/bin/sail php artisan test
  
 (git push) || true
  

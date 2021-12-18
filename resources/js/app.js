@@ -7,7 +7,8 @@ import { createApp, defineAsyncComponent } from 'vue';
 import VueFinalModal from 'vue-final-modal'
 import { SearchIcon } from '@heroicons/vue/outline'
 
-import LoginModal from './components/LogInModal.vue';
+import NavBar from './components/NavBar.vue';
+import LogInModal from './components/LogInModal.vue';
 import SignUpModal from './components/SignUpModal.vue';
 
 window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -15,13 +16,18 @@ window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribut
 const app = 
     createApp({
         components: {
-            LoginModal,
+            NavBar,
+            LogInModal,
             SignUpModal,
 
             LargeSearchBar: defineAsyncComponent( () =>
                 import('./components/SearchBar/LargeSearchBar.vue') ),
             MobileSearchBar: defineAsyncComponent( () =>
                 import('./components/SearchBar/MobileSearchBar.vue') ),
+            PropertyCard: defineAsyncComponent( () =>
+                import('./components/PropertyCard.vue') ),
+            AddProperty: defineAsyncComponent( () =>
+                import('./components/AddProperty.vue') ),
         },
 
         data() {
@@ -38,7 +44,7 @@ const app =
 
         methods: {
 
-            showLoginModal(event) {
+            showLogInModal(event) {
                 event?.showWelcomeText ? this.showWelcomeText = true : ''
                 this.$vfm.show('LogInModal')
             },
@@ -58,24 +64,24 @@ const app =
         },
 
         mounted() {
-            if (this.$refs.mainHeader && document.getElementById('nav-bar'))
-            {
-                var mainHeaderOffsetHeight = this.$refs.mainHeader.offsetHeight;
-                var mainHeaderOffsetTop = this.$refs.mainHeader.offsetTop;
-                var navBarHeight = document.getElementById('nav-bar').offsetHeight;
-                var thisVar = this;
+            // if (this.$refs.mainHeader && document.getElementById('nav-bar'))
+            // {
+            //     var mainHeaderOffsetHeight = this.$refs.mainHeader.offsetHeight;
+            //     var mainHeaderOffsetTop = this.$refs.mainHeader.offsetTop;
+            //     var navBarHeight = document.getElementById('nav-bar').offsetHeight;
+            //     var thisVar = this;
 
-                window.addEventListener(
-                    'scroll',
-                    _.throttle(function () {
-                        if (window.scrollY >= mainHeaderOffsetTop + navBarHeight - (window.scrollY + mainHeaderOffsetHeight) ) {
-                            thisVar.isScrollYPastMainHeader = true
-                        } else {
-                            thisVar.isScrollYPastMainHeader = false
-                        }
-                    }, 600)
-                );
-            }
+            //     window.addEventListener(
+            //         'scroll',
+            //         _.throttle(function () {
+            //             if (window.scrollY >= mainHeaderOffsetTop + navBarHeight - (window.scrollY + mainHeaderOffsetHeight) ) {
+            //                 thisVar.isScrollYPastMainHeader = true
+            //             } else {
+            //                 thisVar.isScrollYPastMainHeader = false
+            //             }
+            //         }, 600)
+            //     );
+            // }
         }
     });
 

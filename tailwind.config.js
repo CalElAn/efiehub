@@ -18,6 +18,9 @@ module.exports = {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
                 Poppins: ['Poppins','Nunito', 'sans-serif'],
             }, 
+            screens: {
+                '3xl': '2560px',
+            },
             colors: {
                 'main-blue': '#4568ED',
                 'main-orange': '#FF5B1A',
@@ -34,6 +37,7 @@ module.exports = {
             width: {
                 'header-img': '50vw',
                 'searchbar-max': '60vw',
+                'searchbar-md': '70vw',
                 'searchbar-2x': '33vw',
             },
             backgroundImage: {

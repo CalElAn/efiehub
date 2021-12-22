@@ -1,13 +1,16 @@
 <template>
-<div class="rounded-main-card flex flex-col bg-main-blue h-96 w-64 sm:w-96">
-    <!-- <div class="bg-cover bg-no-repeat h-2/3" style="background-image: url('images/accra.png');" alt="accra home"></div> -->
+<div class="rounded-main-card relative flex flex-col bg-main-blue h-96 w-64 sm:w-96">
+    <div class="absolute top-3 right-6 z-10 text-white flex flex-col gap-3">
+        <HeartIcon class="h-6 w-6"/>
+        <ShareIcon class="h-6 w-6"/>
+    </div>
     <swiper 
         :style="{
             '--swiper-navigation-color': '#fff',
             '--swiper-pagination-color': '#FF5B1A',
             '--swiper-pagination-bullet-inactive-color': '#fff',
             '--swiper-pagination-bullet-inactive-opacity': 1,
-            '--swiper-navigation-size': '70px',
+            '--swiper-navigation-size': '60px',
         }"
         :navigation="true" 
         :pagination='{
@@ -18,40 +21,40 @@
         :loop="true"
         :lazy="true"
         class="w-full h-2/3">
-        <swiper-slide class="bg-cover bg-no-repeat swiper-lazy" data-background="images/accra.png">
+        <swiper-slide class="bg-cover bg-no-repeat rounded-t-main-card swiper-lazy" data-background="images/accra.png" alt="accra home">
             <div class="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
         </swiper-slide>
-        <swiper-slide class="bg-cover bg-no-repeat swiper-lazy" data-background="images/kumasi.png" alt="kumasi home">
+        <swiper-slide class="bg-cover bg-no-repeat rounded-t-main-card swiper-lazy" data-background="images/kumasi.png" alt="kumasi home">
             <div class="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
         </swiper-slide>
-        <swiper-slide class="bg-cover bg-no-repeat swiper-lazy" data-background="images/tamale.png" alt="tamale home">
+        <swiper-slide class="bg-cover bg-no-repeat rounded-t-main-card swiper-lazy" data-background="images/tamale.png" alt="tamale home">
             <div class="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
         </swiper-slide>
     </swiper>
 
-    <div class="h-1/3 flex flex-col text-white text-base justify-around gap-2 p-5">
+    <div class="h-1/3 flex flex-col text-white text-xs sm:text-sm justify-around gap-2 p-4">
         <div>
-            <p class="font-medium text-lg">
+            <p class="font-medium text-sm sm:text-base tracking-wide">
                 Vue Apartment Apartment in Okponglo
             </p>
         </div>
-        <div class="flex justify-between text-sm">
-            <div class="flex flex-col">
-                <p>
-                    Self contained
-                </p>
-                <p>
-                    Porch
-                </p>
+        <div class="flex flex-col justify-between">
+            <div class="flex flex-row justify-center items-center gap-2">
+                <p> 2 bedrooms </p>
+                <svg  width="5" height="5" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="2.5" cy="2.5" r="2.5" fill="white"/>
+                </svg>
+                <p> 2 washrooms </p>
             </div>
-            <div>
-                <p>
-                    $200
-                </p>
-                <p class="text-xs">
-                    per month
-                </p>
+            <div class="flex flex-row justify-center items-center gap-2">
+                <p> Furnished </p>
             </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-1">
+                <StarIcon class="h-4 sm:h-5 w-4 sm:w-5 text-white"/> 4.7 (2 reviews)
+            </div>
+            <p> $200 / month </p>
         </div>
     </div>
 </div>
@@ -73,10 +76,15 @@ import SwiperCore, { Navigation, Pagination, Mousewheel, Lazy } from 'swiper';
 // install Swiper modules
 SwiperCore.use([Navigation, Pagination, Mousewheel, Lazy]);
 
+import { StarIcon, HeartIcon, ShareIcon } from '@heroicons/vue/solid'
+
 export default {
     components: {
         Swiper,
         SwiperSlide,
+        StarIcon,
+        HeartIcon,
+        ShareIcon
     },
 
     data() {

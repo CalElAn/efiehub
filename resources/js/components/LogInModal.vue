@@ -11,8 +11,8 @@
         'leave-to-class': 'translate-y-full',
         'leave-from-class': 'translate-y-0'
     }"
-    classes="text-main flex justify-center items-center"
-    content-class="w-full sm:max-w-md px-6 pb-6 pt-8 bg-white overflow-hidden sm:rounded-lg rounded-2xl relative flex flex-col max-h-full border"
+    classes="text-sm sm:text-base flex justify-center items-center"
+    content-class="sm:w-full sm:max-w-md px-6 pb-6 pt-8 bg-white overflow-hidden sm:rounded-lg rounded-2xl relative flex flex-col max-h-full border"
 >
     <button class="absolute top-0 right-0 mt-2 mr-2" @click="showLogInModal=false">
       <XIcon  class="h-5 w-5 text-black"/>
@@ -35,15 +35,15 @@
         <div class="font-medium text-red-600">
             Whoops! Something went wrong
         </div>
-        <ul class="mt-3 list-disc list-inside text-sm text-red-600">
+        <ul class="mt-3 list-disc list-inside text-xs text-red-600">
             <li v-for="(item, index) in errors.email" :key="index">{{ item }}</li>
         </ul>
     </div>
 
-    <form @submit.prevent="onSubmit" method="POST" action="/login">
+    <form @submit.prevent="onSubmit" @keydown="clearErrors" method="POST" action="/login">
         <!-- Email Address -->
         <div>
-            <label for="loginEmail" class="block font-medium text-sm text-gray-700" >Email</label>
+            <label for="loginEmail" class="block font-medium text-gray-700" >Email</label>
 
             <input
                 v-model="form.email"
@@ -54,8 +54,8 @@
 
         <!-- Password -->
         <div class="mt-4">
-            <div class="flex justify-between">
-                <label for="password" class="font-medium text-sm text-gray-700" >Password</label>
+            <div class="flex justify-between items-center">
+                <label for="password" class="font-medium text-gray-700" >Password</label>
                 <a class="underline text-sm text-indigo-600 hover:text-indigo-700" href="/forgot-password">
                     Forgot your password?
                 </a>
@@ -81,18 +81,20 @@
             </label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <span>Don't have an account?&nbsp;</span>
-            <a 
-                @click="showSignUpModal"
-                class="underline text-sm text-indigo-600 hover:text-indigo-700" 
-                href="#"
-                >
-                Sign Up
-            </a>
+        <div class="flex flex-col gap-2 items-center justify-end mt-4">
+            <div class="flex">
+                <span>Don't have an account?&nbsp;</span>
+                <a
+                    @click="showSignUpModal"
+                    class="underline text-sm text-indigo-600 hover:text-indigo-700"
+                    href="#"
+                    >
+                    Sign Up
+                </a>
+            </div>
 
             <button 
-                class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Log In
             </button>
         </div>
@@ -140,6 +142,12 @@ export default {
             .catch( (error) => {
                 this.errors = error.response.data.errors;
             })
+        },
+
+        clearErrors() {
+            // console.log(this.errors[error])
+            // if (this.errors[error]) this.errors[error].length = 0
+            this.errors = {}
         }
     },
 }

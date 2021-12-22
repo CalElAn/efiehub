@@ -51,25 +51,25 @@ class PropertyTypeToFeatureMap
             'Unfurnished',
             'Walled',
         ],
-        'Studio apartment' => [
-            'Porch / Balcony',
-            'Kitchen',
-            'Dining room',
-            'Living room',
-            'Furnished',
-            'Semi-furnished',
-            'Unfurnished',
-            'Walled',
-        ],
-        'Service apartment' => [
-            'Number of bedrooms',
-            'Number of washrooms',
-            'Porch / Balcony',
-            'Kitchen',
-            'Dining room',
-            'Living room',
-            'Walled',
-        ],
+        // 'Studio apartment' => [
+        //     'Porch / Balcony',
+        //     'Kitchen',
+        //     'Dining room',
+        //     'Living room',
+        //     'Furnished',
+        //     'Semi-furnished',
+        //     'Unfurnished',
+        //     'Walled',
+        // ],
+        // 'Service apartment' => [
+        //     'Number of bedrooms',
+        //     'Number of washrooms',
+        //     'Porch / Balcony',
+        //     'Kitchen',
+        //     'Dining room',
+        //     'Living room',
+        //     'Walled',
+        // ],
         'House' => [
             'Number of bedrooms',
             'Number of washrooms',
@@ -90,9 +90,9 @@ class PropertyTypeToFeatureMap
             'Unfurnished',
             'Walled',
         ],
-        'Bed' => [
-            //*Add option for campus?
-        ],
+        // 'Bed' => [
+        //     //*Add option for campus?
+        // ],
     ];
 
     public function mapPropertyTypeToFeature()

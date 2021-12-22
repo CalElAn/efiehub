@@ -23,7 +23,7 @@
                     @@click="showMobileSearchBarModal"
                     class="absolute bottom-9 left-0 right-0 mx-auto h-14 w-44 justify-evenly text-white flex items-center rounded-full backdrop-filter backdrop-blur-2xl backdrop-opacity-90 bg-opacity-30 bg-white sm:hidden">
                     Find a home
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                     </svg>
                 </button>
@@ -94,9 +94,11 @@
     </p>
     <div class="flex flex-col items-center mt-12 gap-16 lg:grid lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-5 xl:gap-20">
 
-        <property-card></property-card>
-
         @for ($i = 0; $i < 7; $i++)
+        <property-card></property-card>
+        @endfor
+
+        {{-- @for ($i = 0; $i < 1; $i++)
         <div class="rounded-main-card flex flex-col bg-main-blue h-96 w-64 sm:w-96">
             <div class="bg-cover bg-no-repeat h-2/3" style="background-image: url('images/accra.png');" alt="accra home"></div>
             <div class="h-1/3 flex flex-col text-white text-base justify-around gap-2 p-5">
@@ -125,7 +127,7 @@
                 </div>
             </div>
         </div>
-        @endfor
+        @endfor --}}
 
     </div>
 </section>

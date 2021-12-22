@@ -7,7 +7,8 @@ import { createApp, defineAsyncComponent } from 'vue';
 import VueFinalModal from 'vue-final-modal'
 import { SearchIcon } from '@heroicons/vue/outline'
 
-import NavBar from './components/NavBar.vue';
+import NavBar from './components/NavBar/NavBar.vue';
+import MobileNavBar from './components/NavBar/MobileNavBar.vue';
 import LogInModal from './components/LogInModal.vue';
 import SignUpModal from './components/SignUpModal.vue';
 
@@ -17,6 +18,7 @@ const app =
     createApp({
         components: {
             NavBar,
+            MobileNavBar,
             LogInModal,
             SignUpModal,
 

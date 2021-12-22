@@ -142,6 +142,8 @@ export default {
     mixins: [searchBarMixin],
 
     props: ['showWelcomeText'],
+
+    emits: ['closedMobileSearchBar']
    
 }
 </script>

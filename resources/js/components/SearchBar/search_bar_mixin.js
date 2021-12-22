@@ -64,7 +64,7 @@ const searchBarMixin = {
     methods: {
         onSearchBarNotFocused(event) {
 
-            if (!this.$refs.searchBar.contains(event.target)) {
+            if (!this.$refs.searchBar?.contains(event.target)) {
                 //the click was outside the specifiedElement, do something
                 this.isSearchBarFocused = false;
                 // console.log(this.$refs.searchBar)

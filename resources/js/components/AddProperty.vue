@@ -1,6 +1,6 @@
 <template>
-<div class="ml-auto mr-auto my-5 w-1/2">
-    <ul id="progress-bar" class="font-semibold">
+<div class="ml-auto mr-auto mb-5 sm:mt-5 sm:w-1/2">
+    <ul id="progress-bar" class="sm:font-semibold">
         <li :class="[step == 1 ? 'active' : '']" class="progress-step inline list-none text-center">
             Details
         </li>
@@ -13,69 +13,69 @@
     </ul>
 </div>
 <div class="flex justify-center items-center h-3/4">
-    <div class="rounded-2xl border bg-white p-6" :class="[animation, step == 3 ? 'w-1/2' : '']">
+    <div class="rounded-2xl border text-xs sm:text-sm bg-white p-6" :class="[animation, step == 3 ? 'w-11/12 md:w-1/2' : '']">
         <!-- Details -->
         <section v-show="step == 1">
             <div class="text-xl mb-3">Property Details</div>
             <div class="grid grid-cols-2 gap-6">
-                <div class="col-span-1">
-                    <label for="city" class="block font-medium text-gray-700 text-sm">City <span
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="city" class="block font-medium text-gray-700">City <span
                             class="text-red-600">*</span></label>
                     <input v-model="form.city" type="text" id="city"
                         class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                    <span class="text-red-600 text-sm" v-if="v$.form.city.$error">{{ v$.form.city.$errors[0].$message }}
+                    <span class="text-red-600" v-if="v$.form.city.$error">{{ v$.form.city.$errors[0].$message }}
                     </span>
                 </div>
-                <div class="col-span-1">
-                    <label for="town" class="block font-medium text-gray-700 text-sm">Town <span
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="town" class="block font-medium text-gray-700">Town <span
                             class="text-red-600">*</span></label>
                     <input v-model="form.town" type="text" id="town"
                         class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                    <span class="text-red-600 text-sm" v-if="v$.form.town.$error">{{ v$.form.town.$errors[0].$message }}
+                    <span class="text-red-600" v-if="v$.form.town.$error">{{ v$.form.town.$errors[0].$message }}
                     </span>
                 </div>
                 <div class="col-span-2">
-                    <label for="address" class="block font-medium text-gray-700 text-sm">Street address <span
+                    <label for="address" class="block font-medium text-gray-700">Street address <span
                             class="text-red-600">*</span></label>
                     <input v-model="form.address" type="text" id="address"
                         class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                    <span class="text-red-600 text-sm" v-if="v$.form.address.$error">{{ v$.form.address.$errors[0].$message }}
+                    <span class="text-red-600" v-if="v$.form.address.$error">{{ v$.form.address.$errors[0].$message }}
                     </span>
                 </div>
                 <div class="col-span-2">
-                    <label for="gps_location" class="block font-medium text-gray-700 text-sm">GPS location</label>
-                    <div class="flex rounded-md">
-                        <input v-model="form.gpsLocation" readonly type="text" id="gps_location"
-                            class="block bg-gray-100 w-full mt-1 rounded-l-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                    <label for="gps_location" class="block font-medium text-gray-700">GPS location</label>
+                    <div class="flex flex-col sm:flex-row rounded-md">
+                        <input v-model="form.gpsLocation" type="text" id="gps_location"
+                            class="block w-full mt-1 rounded-t-md sm:rounded-l-md sm:rounded-r-none border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
                         <button
                             @click="getLocation"
-                            class="bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 border mt-1 border-gray-300 border-l-0 inline-flex justify-center items-center px-3 rounded-r-md shadow-sm text-gray-500 text-sm font-medium">
+                            class="py-0.5 sm:py-0 bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 border sm:mt-1 border-gray-300 border-b-0 sm:border-l-0 inline-flex justify-center items-center px-3 rounded-b-md sm:rounded-r-md  sm:rounded-l-none sm:w-2/3 shadow-sm text-gray-500 font-medium">
                             Click to add location
                         </button>
-                        <span class="text-red-600 text-sm" v-if="gpsLocationError">{{ gpsLocationError }}
+                        <span class="text-red-600" v-if="gpsLocationError">{{ gpsLocationError }}
                         </span>
                     </div>
                 </div>
-                <div class="col-span-1 col-start-1">
-                    <label for="contact-number" class="block font-medium text-gray-700 text-sm">Contact number <span
+                <div class="col-span-2 sm:col-span-1 col-start-1">
+                    <label for="contact-number" class="block font-medium text-gray-700">Contact number <span
                             class="text-red-600">*</span></label>
                     <input v-model="form.contactPhoneNumber" type="tel" id="contact-number"
                         class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                    <span class="text-red-600 text-sm"
+                    <span class="text-red-600"
                         v-if="v$.form.contactPhoneNumber.$error">{{ v$.form.contactPhoneNumber.$errors[0].$message }}
                     </span>
                 </div>
-                <div class="col-span-1">
-                    <label for="email" class="block font-medium text-gray-700 text-sm">Contact Email <span
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="email" class="block font-medium text-gray-700">Contact Email <span
                             class="text-red-600">*</span></label>
                     <input v-model="form.contactEmail" type="email" id="email"
                         class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                    <span class="text-red-600 text-sm" v-if="v$.form.contactEmail.$error">{{ v$.form.contactEmail.$errors[0].$message }}
+                    <span class="text-red-600" v-if="v$.form.contactEmail.$error">{{ v$.form.contactEmail.$errors[0].$message }}
                     </span>
                 </div>
                 <div class="col-span-2 flex justify-end">
                     <button @click="nextStep"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Next
                     </button>
                 </div>
@@ -85,27 +85,27 @@
         <section v-show="step == 2">
             <div class="text-xl mb-3">Property Features</div>
             <div class="grid gap-6" :class="[property[form.type]?.[0] ? 'grid-cols-2' : 'grid-cols-1']">
-                <div class="col-span-1">
-                    <label for="type" class="block font-medium text-gray-700 text-sm">Type <span
+                <div class="col-span-2">
+                    <label for="type" class="block font-medium text-gray-700">Type <span
                             class="text-red-600">*</span></label>
                     <select 
                         v-model="form.type" 
-                        @change="typeOnChange"
+                        @change="typeOnChange"  
                         id="type"
-                        class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        class="block w-full mt-1 text-xs sm:text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                         <option value="">-- Select property type --</option>
                         <option v-for="(item, index) in property" :key="index" 
                             :value="index">
                             {{ index }}
                         </option>
                     </select>
-                    <span class="text-red-600 text-sm" v-if="v$.form.type.$error">{{ v$.form.type.$errors[0].$message }}
+                    <span class="text-red-600" v-if="v$.form.type.$error">{{ v$.form.type.$errors[0].$message }}
                     </span>
                 </div>
-                <div v-if="property[form.type]?.[0]" class="col-span-1"></div>
+                <!-- <div v-if="property[form.type]?.[0]" class="col-span-1"></div> -->
                 <template v-for="(item, index) in property[form.type]" :key="index">
                     <div v-if="item['input_type'] == 'number'" class="col-span-1">
-                        <label for="address" class="block font-medium text-gray-700 text-sm">{{ item['feature'] }}</label>
+                        <label for="address" class="block font-medium text-gray-700">{{ item['feature'] }}</label>
                         <input type="number"
                             v-model="form.inputFeatures[item['feature']]"
                             class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
@@ -130,25 +130,25 @@
                     </div>
                 </template>
                 <div class="col-span-2 col-start-1">
-                    <label for="description" class="block text-sm font-medium text-gray-700">
+                    <label for="description" class="block font-medium text-gray-700">
                     Other Features
                     </label>
                     <div class="mt-1">
-                    <textarea id="description" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md" 
+                    <textarea id="description" rows="3" class="shadow-sm focus:ring-indigo-500 text-xs sm:text-sm focus:border-indigo-500 mt-1 block w-full sm border border-gray-300 rounded-md" 
                         @input="autoGrowTextarea"
                         v-model="form.description"
                         placeholder="Add any other features we might have missed"></textarea>
                     </div>
                 </div>
-                <div class="col-span-1 col-start-1">
+                <div class="col-span-2 col-start-1">
                     <div>
                         <label for="price"
-                            class="block font-medium text-gray-700 text-sm">{{ 'Rent (GH&#8373; / month)' }}
+                            class="block font-medium text-gray-700">{{ 'Rent (GH&#8373; / month)' }}
                             <span class="text-red-600">*</span></label>
                         <input type="number" step="any" id="address"
                             v-model="form.rent"
                             class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                        <span class="text-red-600 text-sm" v-if="v$.form.rent.$error">{{ v$.form.rent.$errors[0].$message }}
+                        <span class="text-red-600" v-if="v$.form.rent.$error">{{ v$.form.rent.$errors[0].$message }}
                         </span>
                     </div>
                     <div class="col-span-1 col-start-1 inline-flex items-center mt-2">
@@ -160,11 +160,11 @@
                 </div>
                 <div class="col-span-2 flex justify-between">
                     <button @click="previousStep"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Previous
                     </button>
                     <button @click="nextStep"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Next
                     </button>
                 </div>
@@ -173,18 +173,18 @@
         <!-- Upload Media -->
         <section v-show="step == 3">
             <div>
-                <div class="text-xl mb-3">Upload Media</div>
+                <div class="text-xl mb-3">Upload photos</div>
                 <div>
-                    <label class="block font-medium text-gray-700">
+                    <!-- <label class="block font-medium text-gray-700">
                         Upload photos or videos
-                    </label>
+                    </label> -->
                     <file-pond
                         name="filepond"
                         ref="filepond"
                         label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
                         allow-multiple="true"
                         allow-reorder="true"
-                        :accepted-file-types="['image/*', 'video/*']"
+                        :accepted-file-types="['image/*']"
                         :server = "{
                             url: '/filepond',
                             process: '/process',
@@ -198,23 +198,23 @@
                         }"
                         @processfile="onFilePondProcessFile"
                     />
-                    <ul class=" list-disc list-inside text-red-600 text-sm" v-if="mediaError">
+                    <ul class=" list-disc list-inside text-red-600" v-if="mediaError">
                         <li>{{ mediaError }}</li>
                     </ul>
                 </div>
-                <div class="input-errors ml-3 my-3 text-red-600 text-sm">
+                <div class="input-errors ml-3 my-3 text-red-600">
                     <ul class="mt-3 list-disc list-inside">
                         <li v-for="error of v$.form.$errors" :key="error.$uid">{{ error.$message +' on "'+ error.$property +'"'  }}</li>
                     </ul>
                 </div>
                 <div class="mt-7 col-span-2 flex justify-between">
                     <button @click="previousStep"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Previous
                     </button>
                     <button
                         @click="submitForm"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Submit
                     </button>
                 </div>
@@ -493,12 +493,12 @@ export default {
 	/*to style every sibling after li active*/
 	&.active {
 		~ .progress-step {
-			color: white;
+			color: #9CA3AF;
 		}
 
 		~ .progress-step:before,
 		~ .progress-step:after {
-			background: white;
+			background: #9CA3AF;
 		}
 	}
 }

@@ -120,6 +120,8 @@ export default {
         'isUserAuthenticated', 
     ],
 
+    emits: ['showSignUpModal', 'showLogInModal'],
+
     data () {
         return {
             csrfToken: csrfToken,

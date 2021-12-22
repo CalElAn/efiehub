@@ -16,15 +16,22 @@
         <nav-bar
             :authenticated-user="authenticatedUser"
             :is-user-authenticated="isUserAuthenticated"
-            @@show-login-modal = "showLogInModal"
+            @@show-log-in-modal = "showLogInModal"
             @@show-sign-up-modal="showSignUpModal"
         ></nav-bar>
         <div>    
             @yield('main-content')
         </div>
-        <footer class="p-5 text-lg">
+        <mobile-nav-bar
+        :authenticated-user="authenticatedUser"
+        :is-user-authenticated="isUserAuthenticated"
+        @@show-mobile-search-bar = "showMobileSearchBarModal"
+        @@show-log-in-modal = "showLogInModal"
+        @@show-sign-up-modal="showSignUpModal"
+        ></mobile-nav-bar>
+        <footer class="p-5 text-base sm:text-lg">
             <hr class="my-5">
-            <div class="flex flex-col justify-center items-center gap-6 sm:flex-row sm:gap-12">
+            <div class="flex flex-col justify-center items-center gap-4 sm:flex-row sm:gap-12">
                 <span>About us</span>
                 <span>Terms of use</span>
                 <span>Privacy policy</span>
@@ -53,7 +60,7 @@
             @@closed-log-in-modal = "showWelcomeText = false"
         ></log-in-modal>
         <sign-up-modal
-            @@show-log-in-modal="showLoginModal"
+            @@show-log-in-modal="showLogInModal"
             @@user-has-been-authenticated="onUserHasBeenAuthenticated"
         ></sign-up-modal>
     </div>

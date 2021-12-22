@@ -394,13 +394,13 @@ export default {
             this.form.media.length = 0;
             this.$refs.filepond.getFiles().forEach((value, key) => this.form.media.push(value.serverId))
             
-            // if(this.form.media.length == 0)
-            // {
-            //     this.mediaError = 'At least one image or video is required';
-            //     return
-            // }
+            if(this.form.media.length == 0)
+            {
+                this.mediaError = 'At least one image is required';
+                return
+            }
 
-            // if (this.v$.$error) return
+            if (this.v$.$error) return
 
             if (!this.isUserAuthenticated) {
                 this.triggerSubmitAfterLogin = true

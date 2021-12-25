@@ -20,8 +20,6 @@ const searchBarMixin = {
 
     props: ['propertyTypes', 'isSearchBarInNavbar'],
 
-    // emits: ['onScrollYPastSearchBar', 'onScrollYNotPastSearchBar'],
-
     data () {
         return {
             csrfToken: csrfToken,

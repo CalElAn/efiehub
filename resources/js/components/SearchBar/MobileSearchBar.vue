@@ -24,7 +24,7 @@
         <PopoverButton
             @click="isSearchBarFocused=true"
             :class="open ? 'bg-opacity-75 shadow-2xl' : ''"
-            class="w-full inline-flex items-center px-3 h-full rounded-full group bg-white text-main-blue">
+            class="w-full inline-flex items-center text-center h-full rounded-full group bg-white text-main-blue">
             <span class="w-3/4">Type</span>
             <ChevronDownIcon :class="open ? '' : 'text-opacity-70'"
                 class="w-1/4 h-6" aria-hidden="true" />
@@ -34,9 +34,9 @@
             leave-from-class="translate-y-0 opacity-100" leave-to-class="translate-y-1 opacity-0">
             <PopoverPanel
                 @click="isSearchBarFocused=true"
-                class="absolute z-10 w-max px-4 mt-5 transform -translate-x-1/2 left-full">
+                class="absolute z-10 w-max px-4 mt-3">
                 <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
-                    <div class="relative grid gap-4 bg-white p-7 grid-cols-2">
+                    <div class="relative grid gap-4 text-xs text-gray-700 bg-white p-7 grid-cols-1">
                         <div class="col-span-1 flex items-center">
                             <input
                                 v-model="selectAllPropertyTypes"
@@ -44,12 +44,12 @@
                                 class="rounded border-gray-600 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
                             <span class="ml-2 font-semibold">-- Select {{selectAllPropertyTypes ? 'none' : 'all'}} --</span>
                         </div>
-                        <div class="col-span-1"></div>
+                        <!-- <div class="col-span-1"></div> -->
                         <div v-for="(item, index) in propertyTypes" :key="index" class="col-span-1 flex items-center">
                             <input type="checkbox"
                                 v-model="form.types"
                                 :value="item['type']"
-                                class="rounded border-gray-600 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
+                                class="rounded border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
                             <span class="ml-2">{{ item['type'] }}</span>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
             <input
                 @focus="isInputFocused=true, isSearchBarFocused=true"
                 @blur="isInputFocused=false"
-                class="text-base lg:text-lg xl:text-xl text-left border-0 h-full pl-3 pr-0 w-full rounded-full focus:ring-0 focus:outline-none bg-transparent placeholder-main-blue"
+                class="text-base lg:text-lg xl:text-xl text-center border-0 h-full pl-3 pr-0 w-full rounded-full focus:ring-0 focus:outline-none bg-transparent placeholder-main-blue"
                 type="text"
                 placeholder="Enter a location">
             <LocationMarkerIcon class="h-6 pl-1 pr-3"/>
@@ -79,7 +79,7 @@
             <PopoverButton 
                 @click="isSearchBarFocused=true" 
                 :class="open ? 'focus:bg-opacity-75 shadow-2xl' : ''"
-                class="w-full flex items-center pl-1 h-full rounded-full group bg-white text-main-blue">
+                class="w-full flex items-center h-full rounded-full group bg-white text-main-blue">
                 <span class="w-3/4">Price range</span>
                 <ChevronDownIcon :class="open ? '' : 'text-opacity-70'"
                     class="w-1/4 h-6" aria-hidden="true" />
@@ -106,15 +106,15 @@
         <!-- Search Button -->
         <div 
             :class="[isSearchBarFocused ? '' : '']"
-            class="px-5 h-full">
-            <button class="p-1 rounded-full focus:outline-none w-full h-full bg-main-orange hover:bg-opacity-75 flex items-center justify-center gap-3">
+            class="h-full">
+            <button class="p-1 rounded-full focus:outline-none w-full h-full bg-main-orange hover:bg-opacity-75 flex items-center justify-center gap-0.5">
                 <!-- Search -->
                 <search-icon 
                     :class="[isSearchBarFocused ? '' : '']"
                     class="text-white w-6"/>
                 <span
                     :class="[isSearchBarFocused ? 'xl:inline' : '']" 
-                    class="font-semibold text-lg text-white tracking-wide">Search</span>
+                    class="font-medium text-lg text-white tracking-wide">Search</span>
             </button>
         </div>
     </div>
@@ -140,8 +140,6 @@ export default {
     },
 
     mixins: [searchBarMixin],
-
-    props: ['showWelcomeText'],
 
     emits: ['closedMobileSearchBar']
    

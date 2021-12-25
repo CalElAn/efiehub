@@ -125,6 +125,7 @@
                         <input  type="radio"
                             v-model="form.pickedFeatures"
                             :value="item['feature']"
+                            :checked="item.feature == 'Unfurnished'"
                             class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"> 
                        <span class="ml-2">{{ item['feature'] }}</span>
                     </div>
@@ -197,6 +198,7 @@
                             }
                         }"
                         @processfile="onFilePondProcessFile"
+                        :imagePreviewHeight="256"
                     />
                     <ul class=" list-disc list-inside text-red-600" v-if="mediaError">
                         <li>{{ mediaError }}</li>
@@ -278,8 +280,8 @@ export default {
                 town: '',
                 address: '',
                 gpsLocation: '',
-                contactPhoneNumber: '',
-                contactEmail: '',
+                contactPhoneNumber: this.authenticatedUser?.phone_number,
+                contactEmail: this.authenticatedUser?.email,
                 type: '',
                 checkedFeatures: [],
                 pickedFeatures: '',
@@ -404,7 +406,7 @@ export default {
 
             if (!this.isUserAuthenticated) {
                 this.triggerSubmitAfterLogin = true
-                this.$emit('showLogInModal', {showWelcomeText: true})
+                this.$emit('showLogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to complete the submission, or'})
                 return
             }
 
@@ -444,7 +446,13 @@ export default {
 <style>
 .filepond--item {
     /* percentage over number of columns in grid divided by 2 */
-    width: calc(50%/2 - 0.5em); 
+    width: calc(100% - 0.5em);
+}
+
+@media (min-width: 640px) {
+    .filepond--item {
+        width: calc(50%/1 - 0.5em); 
+    }
 }
 </style>
 

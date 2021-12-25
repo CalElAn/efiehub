@@ -43,6 +43,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['favouriteProperties'];
+
     public function properties()
     {
         return $this->hasMany(Property::class);
@@ -55,7 +62,7 @@ class User extends Authenticatable
 
     public function favouriteProperties()
     {
-        return $this->hasMany(FavouriteProperty::class);
+        return $this->hasMany(FavouriteProperty::class, 'user_id', 'id');
     }
 
     public function articles()
@@ -63,4 +70,8 @@ class User extends Authenticatable
         return $this->hasMany(Article::class);
     }
 
+    public function isPropertyFavourited($property_id)
+    {
+        return $this->favouriteProperties()->where('property_id', $property_id)->get()->isNotEmpty();
+    }
 }

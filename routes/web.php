@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DeployController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilePondController;
 
 /*
@@ -16,20 +17,18 @@ use App\Http\Controllers\FilePondController;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
 Route::post('/deploy', [DeployController::class, 'deploy']);
 
-// Route::get('/', [PropertyController::class, 'index']);
+Route::get('/', [PropertyController::class, 'index']);
 
 Route::get('/add-property', [PropertyController::class, 'create']);
 Route::post('/add-property', [PropertyController::class, 'store']);
+
+Route::post('/favourite-property', [UserController::class, 'favouriteProperty']);
 
 Route::post('/filepond/process', [FilePondController::class, 'process']);
 Route::delete('/filepond/revert', [FilePondController::class, 'revert']);

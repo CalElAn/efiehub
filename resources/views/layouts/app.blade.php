@@ -55,6 +55,7 @@
         </footer>
         <log-in-modal
             :show-welcome-text="showWelcomeText"
+            :welcome-text="welcomeText"
             @@show-sign-up-modal="showSignUpModal"
             @@user-has-been-authenticated="onUserHasBeenAuthenticated"
             @@closed-log-in-modal = "showWelcomeText = false"

@@ -23,12 +23,6 @@
                                 :style="{'background-image': 'url('+(authenticatedUser.profile_picture_path ? 'https://ui-avatars.com/api/?size=25&rounded=true&bold=true&name='+authenticatedUser.name : 'https://ui-avatars.com/api/?size=50&rounded=true&name='+authenticatedUser.name)+')'}" alt="logo">
 
                             </div>
-                            <!-- <img 
-                                :src="authenticatedUser.profile_picture_path ? 'https://ui-avatars.com/api/?size=25&rounded=true&bold=true&name='+authenticatedUser.name : 'https://ui-avatars.com/api/?size=50&rounded=true&name='+authenticatedUser.name"
-                                alt="Avatar" 
-                                class="rounded-full h-7 mr-2 -ml-2"> -->
-                                <!-- Realized no need to display name since every sites doesnt -->
-                                <!-- {{authenticatedUser.name}} --> 
                             <ChevronDownIcon class="w-5 h-5 ml-2 -mr-1 text-white hover:text-indigo-100"
                                 aria-hidden="true" />
                         </MenuButton>

@@ -25,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::share('propertyTypes', PropertyType::all());
+        View::composer('*', function ($view) {
+            $view->with('propertyTypes', PropertyType::all());
+        });
     }
 }

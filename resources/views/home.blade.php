@@ -12,7 +12,7 @@
                     Rent the easy way
                 </p>
                 <large-search-bar
-                    :property-types="[]"
+                    :property-types="{{$propertyTypes}}"
                     :is-search-bar-in-navbar="false"                      
                 ></large-search-bar>
             </div>
@@ -28,27 +28,30 @@
                     </svg>
                 </button>
             </div>
-            <mobile-search-bar></mobile-search-bar>
+            <mobile-search-bar
+                :property-types="{{$propertyTypes}}"
+                :is-search-bar-in-navbar="false"                      
+            ></mobile-search-bar>
         </div>
     </div>
 </header>
 <section class="flex justify-center mt-6 lg:mt-10 sm:justify-start sm:mx-10 xl:text-lg">
-    <button class="bg-main-orange text-white rounded-full w-44 h-12 hover:bg-opacity-75 sm:w-52 sm:h-16">
+    <button class="bg-main-orange text-white rounded-full hover:bg-opacity-75 w-44 h-12 sm:w-52 sm:h-16">
         Book an agent
     </button>
 </section>
 <section class="mt-24 mx-5 sm:mx-10">
-    <p class="font-semibold text-2xl">
+    <p class="font-semibold text-xl sm:text-2xl">
         Explore other locations
     </p>
     <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-5 mt-5 gap-8">
         <div class="flex gap-2.5">
             <img src="images/accra.png" alt="accra" class="rounded-3xl w-16 h-16">
             <div class="flex flex-col justify-center gap-1">
-                <p class="font-medium text-lg">
+                <p class="font-medium text-base sm:text-lg">
                     Accra
                 </p>
-                <p class="text-gray-700">
+                <p class="text-gray-700 text-sm sm:text-base">
                     Greater Accra Region
                 </p>
             </div>
@@ -56,10 +59,10 @@
         <div class="flex gap-2.5">
             <img src="images/kumasi.png" alt="accra" class="rounded-3xl w-16 h-16">
             <div class="flex flex-col justify-center gap-1">
-                <p class="font-medium text-lg">
+                <p class="font-medium text-base sm:text-lg">
                     Kumasi
                 </p>
-                <p class="text-gray-700">
+                <p class="text-gray-700 text-sm sm:text-base">
                     Ashanti Region
                 </p>
             </div>
@@ -67,10 +70,10 @@
         <div class="flex gap-2.5">
             <img src="images/tamale.png" alt="accra" class="rounded-3xl w-16 h-16">
             <div class="flex flex-col justify-center gap-1">
-                <p class="font-medium text-lg">
+                <p class="font-medium text-base sm:text-lg">
                     Tamale
                 </p>
-                <p class="text-gray-700">
+                <p class="text-gray-700 text-sm sm:text-base">
                     Northern Region
                 </p>
             </div>
@@ -78,10 +81,10 @@
         <div class="flex gap-2.5">
             <img src="images/kumasi.png" alt="accra" class="rounded-3xl w-16 h-16">
             <div class="flex flex-col justify-center gap-1">
-                <p class="font-medium text-lg">
+                <p class="font-medium text-base sm:text-lg">
                     Kumasi
                 </p>
-                <p class="text-gray-700">
+                <p class="text-gray-700 text-sm sm:text-base">
                     Ashanti Region
                 </p>
             </div>
@@ -89,60 +92,38 @@
     </div>
 </section>
 <section class="mt-24 mx-5 sm:mx-10">
-    <p class="font-semibold text-2xl">
+    <p class="font-semibold text-xl sm:text-2xl">
         Rent in Accra
     </p>
     <div class="flex flex-col items-center mt-12 gap-16 lg:grid lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-5 xl:gap-20">
-
-        @for ($i = 0; $i < 7; $i++)
-        <property-card></property-card>
-        @endfor
-
-        {{-- @for ($i = 0; $i < 1; $i++)
-        <div class="rounded-main-card flex flex-col bg-main-blue h-96 w-64 sm:w-96">
-            <div class="bg-cover bg-no-repeat h-2/3" style="background-image: url('images/accra.png');" alt="accra home"></div>
-            <div class="h-1/3 flex flex-col text-white text-base justify-around gap-2 p-5">
-                <div>
-                    <p class="font-medium text-lg">
-                        Apartment Apartment in Okponglo
-                    </p>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <div class="flex flex-col">
-                        <p>
-                            Self contained
-                        </p>
-                        <p>
-                            Porch
-                        </p>
-                    </div>
-                    <div>
-                        <p>
-                            $200
-                        </p>
-                        <p class="text-xs">
-                            per month
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endfor --}}
+        
+        @isset($properties)
+        @foreach($properties as $property)
+        <property-card
+            :property="{{$property}}"
+            :is-user-authenticated = "isUserAuthenticated"
+            :authenticated-user = "authenticatedUser"
+            @@show-log-in-modal = "showLogInModal"
+            @@unfavourite-property = "onUnfavouriteProperty"
+            @@favourite-property = "onFavouriteProperty"
+        ></property-card>
+        @endforeach
+        @endisset
 
     </div>
 </section>
 <section class="mt-24 mx-5 sm:mx-10">
-    <p class="font-semibold text-2xl mx-5 text-center">
+    <p class="font-semibold text-xl sm:text-2xl mx-5 text-center">
         Not sure where to rent?
     </p>
     <div class="flex justify-center mt-4">
-        <button class="bg-main-orange text-white rounded-full w-52 h-16">
+        <button class="bg-main-orange text-white rounded-full h-12 w-44 sm:w-52 sm:h-16">
             Book an agent
         </button>
     </div>
 </section>
-<section class="flex items-center mt-24 mx-2 sm:mx-10 rounded-main-card bg-cover bg-no-repeat bg-become-an-agent lg:bg-become-an-agent-2x" style="height: 549px">
-    <div class="flex flex-col gap-5 sm:mx-24">
+<section class="flex items-center mt-24 mx-2 sm:mx-10 rounded-3xl sm:rounded-main-card bg-cover bg-no-repeat bg-become-an-agent lg:bg-become-an-agent-2x h-96 sm:h-become-an-agent-card-max">
+    <div class="flex flex-col gap-5 px-1.5 sm:px-0 sm:mx-24">
         <p class="text-white text-center text-4xl font-semibold sm:text-5xl">
             Become an agent
         </p>
@@ -150,7 +131,7 @@
             Earn extra income and unlock new opportunities
         </p>
         <div class="flex justify-center">
-            <button class="bg-main-orange text-white rounded-full w-52 h-16 sm:text-lg">
+            <button class="bg-main-orange text-white rounded-full h-12 w-44 sm:w-52 sm:h-16 sm:text-lg">
                 Learn more
             </button>
         </div>
@@ -158,7 +139,7 @@
 </section>
 <section class="mt-24 mx-5 sm:mx-10 flex flex-col gap-20 lg:grid lg:grid-cols-3 text-justify">
     <div class="flex flex-col gap-6">
-        <p class="text-center font-semibold text-2xl text-main-blue">
+        <p class="text-center font-semibold text-xl sm:text-2xl text-main-blue">
             Rent the easy way
         </p>
         <p>
@@ -166,7 +147,7 @@
         </p>
     </div>
     <div class="flex flex-col gap-6">
-        <p class="text-center font-semibold text-2xl text-main-blue">
+        <p class="text-center font-semibold text-xl sm:text-2xl text-main-blue">
             Add a property
         </p>
         <p>
@@ -174,7 +155,7 @@
         </p>
     </div>
     <div class="flex flex-col gap-6">
-        <p class="text-center font-semibold text-2xl text-main-blue">
+        <p class="text-center font-semibold text-xl sm:text-2xl text-main-blue">
             Earn extra income
         </p>
         <p>

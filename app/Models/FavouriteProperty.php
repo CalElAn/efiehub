@@ -12,4 +12,6 @@ class FavouriteProperty extends Model
     protected $table = 'favourite_property';
 
     protected $primaryKey = 'favourite_id';
+
+    protected $guarded = [];
 }

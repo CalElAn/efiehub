@@ -1,8 +1,12 @@
 <template>
-<div class="rounded-main-card relative flex flex-col bg-main-blue h-96 w-64 sm:w-96">
+<div class="rounded-3xl sm:rounded-main-card relative flex flex-col bg-main-blue h-96 w-64 sm:w-96">
     <div class="absolute top-3 right-6 z-10 text-white flex flex-col gap-3">
-        <HeartIcon class="h-6 w-6"/>
-        <ShareIcon class="h-6 w-6"/>
+        <button @click="favouriteProperty">
+            <HeartIcon class="h-6 w-6" :class="{'text-main-orange': isPropertyFavouritedByUser}"/>
+        </button>
+        <button @click="shareProperty">
+            <ShareIcon class="h-6 w-6"/>
+        </button>    
     </div>
     <swiper 
         :style="{
@@ -21,13 +25,8 @@
         :loop="true"
         :lazy="true"
         class="w-full h-2/3">
-        <swiper-slide class="bg-cover bg-no-repeat rounded-t-main-card swiper-lazy" data-background="images/accra.png" alt="accra home">
-            <div class="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
-        </swiper-slide>
-        <swiper-slide class="bg-cover bg-no-repeat rounded-t-main-card swiper-lazy" data-background="images/kumasi.png" alt="kumasi home">
-            <div class="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
-        </swiper-slide>
-        <swiper-slide class="bg-cover bg-no-repeat rounded-t-main-card swiper-lazy" data-background="images/tamale.png" alt="tamale home">
+        <swiper-slide v-for="(item, index) in property?.media" :key="index"
+            class="bg-cover bg-center bg-no-repeat rounded-t-3xl sm:rounded-t-main-card swiper-lazy" :data-background="'storage/'+item.path" alt="property image">
             <div class="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
         </swiper-slide>
     </swiper>
@@ -35,29 +34,32 @@
     <div class="h-1/3 flex flex-col text-white text-xs sm:text-sm justify-around gap-2 p-4">
         <div>
             <p class="font-medium text-sm sm:text-base tracking-wide">
-                Vue Apartment Apartment in Okponglo
+                {{property?.property_type?.type}} in {{property?.town}}
             </p>
         </div>
         <div class="flex flex-col justify-between">
             <div class="flex flex-row justify-center items-center gap-2">
-                <p> 2 bedrooms </p>
+                <p> {{property?.features.find(obj => obj.feature == 'Number of bedrooms')?.pivot?.number}} bedrooms </p>
                 <svg  width="5" height="5" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="2.5" cy="2.5" r="2.5" fill="white"/>
                 </svg>
-                <p> 2 washrooms </p>
+                <p> {{property?.features.find(obj => obj.feature == 'Number of washrooms')?.pivot?.number}} washrooms </p>
             </div>
             <div class="flex flex-row justify-center items-center gap-2">
-                <p> Furnished </p>
+                <p> {{property?.features.find(obj => obj.input_type == 'radio')?.feature}} </p>
             </div>
         </div>
         <div class="flex justify-between items-center">
-            <div class="flex items-center gap-1">
-                <StarIcon class="h-4 sm:h-5 w-4 sm:w-5 text-white"/> 4.7 (2 reviews)
+            <div v-if="Object.keys(property?.reviews).length" class="flex items-center gap-1">
+                <StarIcon class="h-4 sm:h-5 w-4 sm:w-5 text-white"/> 
+                {{Math.round((Object.values(property?.reviews).reduce((a, b) => a + parseFloat(b.rating), 0) / Object.keys(property?.reviews).length)*100)/100}} <span class="hidden sm:inline">({{Object.keys(property?.reviews).length}} reviews)</span>
             </div>
-            <p> $200 / month </p>
+            <div v-else></div>
+            <p> GH&#8373; {{property?.rent}} / month </p>
         </div>
     </div>
 </div>
+<notifications position="bottom right" />
 </template>
 
 <script>
@@ -89,8 +91,49 @@ export default {
 
     data() {
         return {
+        }
+    },
+
+    props: ['property', 'isUserAuthenticated', 'authenticatedUser'],
+
+    emits: ['showLogInModal', 'unfavouriteProperty', 'favouriteProperty'],
+
+    methods: {
+        favouriteProperty() {
+
+            if (!this.isUserAuthenticated) {
+
+                this.$emit('showLogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to add to favourites, or'})
+                return
+            }
+
+            axios.post('/favourite-property', { 'propertyId': this.property.property_id,})
+            .then( (response) => {
+                if( response.status === 200 ) { 
+
+                    this.$emit('unfavouriteProperty', this.property.property_id)
+                }
+
+                if( response.status === 201 ) { 
+
+                    this.$notify({ type: "success", text: "Added to favourites!" });
+                    this.$emit('favouriteProperty', response.data)
+                }
+            })
+            .catch( (error) => {
+                console.log(error)
+            })  
+        },
+
+        shareProperty() {
 
         }
+    },
+
+    computed: {
+        isPropertyFavouritedByUser() {
+            return !!( this.authenticatedUser?.favourite_properties?.find( obj => obj.property_id === this.property.property_id) )
+        },
     }
 }
 </script>

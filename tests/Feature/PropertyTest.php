@@ -24,24 +24,24 @@ class PropertyTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function homepage_shows_property_card_with_all_details()
-    {
-        $this->withoutExceptionHandling();
+    // public function homepage_shows_property_card_with_all_details()
+    // {
+    //     $this->withoutExceptionHandling();
 
-        $this->createAUserWithEverything(); //to set up the database with the properties
+    //     $this->createAUserWithEverything(); //to set up the database with the properties
 
-        $property = Property::latest()->first();
+    //     $property = Property::latest()->first();
 
-        $this->get('/')
-            ->assertSee($property->propertyType->type)
-            ->assertSee($property->town)
-            ->assertSee($property->address)
-            ->assertSeeInOrder($property->features->pluck('name')->toArray())
-            ->assertSee($property->reviews->average('rating'))
-            ->assertSee($property->reviews->count().' reviews')
-            ->assertSee($property->rent.' / month')
-        ;
-    }
+    //     $this->get('/')
+    //         ->assertSee($property->propertyType->type)
+    //         ->assertSee($property->town)
+    //         ->assertSee($property->address)
+    //         ->assertSeeInOrder($property->features->pluck('name')->toArray())
+    //         ->assertSee($property->reviews->average('rating'))
+    //         ->assertSee($property->reviews->count().' reviews')
+    //         ->assertSee($property->rent.' / month')
+    //     ;
+    // }
 
     /** @test */
     public function a_property_can_be_created()

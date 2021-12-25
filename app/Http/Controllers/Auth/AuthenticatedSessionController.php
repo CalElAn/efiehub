@@ -32,6 +32,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if($request->ajax())
+        {
+            return response(Auth::user(), 200);
+        }
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

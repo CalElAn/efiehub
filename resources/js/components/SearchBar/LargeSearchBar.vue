@@ -21,21 +21,21 @@
                     @click="isSearchBarFocused=true"
                     class="absolute z-10 w-max px-4 mt-5 transform -translate-x-1/2 left-full">
                     <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
-                        <div class="relative grid gap-4 bg-white p-7 grid-cols-2">
+                        <div class="relative text-sm grid gap-4 bg-white p-7 grid-cols-2">
                             <div class="col-span-1 flex items-center">
                                 <input
                                     v-model="selectAllPropertyTypes"
                                     type="checkbox"
                                     class="rounded border-gray-600 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
-                                <span class="ml-2 font-semibold">-- Select {{selectAllPropertyTypes ? 'none' : 'all'}} --</span>
+                                <span class="ml-2 font-semibold text-gray-700">-- Select {{selectAllPropertyTypes ? 'none' : 'all'}} --</span>
                             </div>
                             <div class="col-span-1"></div>
                             <div v-for="(item, index) in propertyTypes" :key="index" class="col-span-1 flex items-center">
                                 <input type="checkbox"
                                     v-model="form.types"
                                     :value="item['type']"
-                                    class="rounded border-gray-600 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
-                                <span class="ml-2">{{ item['type'] }}</span>
+                                    class="rounded border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
+                                <span class="ml-2 text-gray-700">{{ item['type'] }}</span>
                             </div>
                         </div>
                     </div>

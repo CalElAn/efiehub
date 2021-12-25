@@ -16,6 +16,7 @@ use DB;
 
 use App\Http\Helpers\HelperMethods;
 
+use Intervention\Image\ImageManagerStatic as Image;
 
 class PropertyController extends Controller
 {
@@ -26,9 +27,8 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        //!TODO write tests to check whether property typr is returned on every page (returned from AppServiceProvider)
         return view('home', [
-                            'properties' => Property::latest()->get(),
+                            'properties' => Property::with(['features', 'media', 'reviews', 'propertyType'])->latest()->get(),
                             ]);
     }
 
@@ -110,22 +110,24 @@ class PropertyController extends Controller
             }
         }
         
-        $property->features()->attach($attachArray); //*refresh propery before returning (if it will be returned)
+        $property->features()->attach($attachArray);
 
         foreach ($request->only('media')['media'] as $key => $value )
         {
             $newStoragePath = Auth::user()->id.'/'.$property->property_id.'/'.$value;
 
-            Storage::disk('public')->move('filepond/tmp/'.$value, $newStoragePath);
-
             /** @var \Illuminate\Filesystem\Filesystem */
             $storagePublicDisk = Storage::disk('public'); //otherwise PHP intelephense cant detect method and returns undefined method since it looks for it from interface
+
+            $storagePublicDisk->move('filepond/tmp/'.$value, $newStoragePath);
+
+            Image::make($storagePublicDisk->path($newStoragePath))->save(null, 60);
 
             $propertyMediaInsertArray[] = [
                                             'property_id' => $property->property_id, 
                                             'path' => $newStoragePath,
                                             'mime_type' => $storagePublicDisk->mimeType($newStoragePath),
-                                            'extension' => pathinfo(storage_path('app/public').'/'.$newStoragePath, PATHINFO_EXTENSION),
+                                            'extension' => pathinfo($storagePublicDisk->path($newStoragePath), PATHINFO_EXTENSION),
                                             'size_in_bytes' => $storagePublicDisk->size($newStoragePath),
                                             'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($newStoragePath)),
                                             'created_at' => date('Y-m-d H:i:s'),

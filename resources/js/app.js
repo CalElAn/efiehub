@@ -1,10 +1,10 @@
 require('./bootstrap');
 
-// require('alpinejs');
-
 import { createApp, defineAsyncComponent } from 'vue';
 
 import VueFinalModal from 'vue-final-modal'
+import Notifications from '@kyvg/vue3-notification'
+
 import { SearchIcon } from '@heroicons/vue/outline'
 
 import NavBar from './components/NavBar/NavBar.vue';
@@ -41,13 +41,18 @@ const app =
                 isScrollYPastMainHeader: false,
 
                 showWelcomeText: false,
+                welcomeText: '',
             }
         },
 
         methods: {
 
             showLogInModal(event) {
-                event?.showWelcomeText ? this.showWelcomeText = true : ''
+                if(event?.showWelcomeText) {
+                    this.showWelcomeText = true
+                    this.welcomeText = event.welcomeText
+                }
+                
                 this.$vfm.show('LogInModal')
             },
 
@@ -62,6 +67,19 @@ const app =
             onUserHasBeenAuthenticated(user) {
                 this.isUserAuthenticated = true
                 this.authenticatedUser = user
+            },
+
+            onUnfavouriteProperty(property_id) { 
+                this.authenticatedUser.favourite_properties.forEach((element, index) => {
+
+                    if ( element.property_id === property_id) {
+                        this.authenticatedUser.favourite_properties.splice(index, 1)
+                    }
+                });    
+            },
+
+            onFavouriteProperty(favourite_data) {console.log(favourite_data)
+                this.authenticatedUser.favourite_properties.unshift(favourite_data)
             },
         },
 
@@ -90,5 +108,6 @@ const app =
 app.component('SearchIcon', SearchIcon);
 
 app.use(VueFinalModal());
+app.use(Notifications)
 
 app.mount('#app');

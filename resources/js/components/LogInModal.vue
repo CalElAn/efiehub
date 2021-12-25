@@ -19,7 +19,7 @@
     </button>
     <div v-if="showWelcomeText" class="mb-4 text-center">
         <div class="font-bold">Welcome!</div>
-        Kindly login to complete the submission process, or             
+        {{welcomeText}}             
         <a 
             @click="showSignUpModal"
             class="underline text-sm text-indigo-600 hover:text-indigo-700" 
@@ -56,7 +56,7 @@
         <div class="mt-4">
             <div class="flex justify-between items-center">
                 <label for="password" class="font-medium text-gray-700" >Password</label>
-                <a class="underline text-sm text-indigo-600 hover:text-indigo-700" href="/forgot-password">
+                <a class="underline text-xs sm:text-sm text-indigo-600 hover:text-indigo-700" href="/forgot-password">
                     Forgot your password?
                 </a>
             </div>
@@ -80,6 +80,13 @@
                 <span class="ml-2 text-sm text-gray-600">Remember me</span>
             </label>
         </div>
+        
+        <div class="flex justify-end">
+            <button
+                class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Log In
+            </button>
+        </div>
 
         <div class="flex flex-col gap-2 items-center justify-end mt-4">
             <div class="flex">
@@ -91,12 +98,7 @@
                     >
                     Sign Up
                 </a>
-            </div>
-
-            <button 
-                class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Log In
-            </button>
+        </div>
         </div>
     </form>
 </vue-final-modal>
@@ -122,7 +124,7 @@ export default {
         XIcon
     },
 
-    props: ['showWelcomeText'],
+    props: ['showWelcomeText', 'welcomeText'],
 
     methods: {
         showSignUpModal() {

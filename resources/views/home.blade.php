@@ -2,18 +2,21 @@
 
 @section('main-content')
 <header>
-    <div ref="mainHeaderBg" class="w-full h-header-bg-min sm:h-header-bg flex flex-col sm:px-10 3xl:px-20 pt-10 bg-main-blue rounded-b-header-bg-min sm:rounded-3xl">
+    <div ref="mainHeaderBg" class="w-full h-header-bg-min sm:h-header-bg flex flex-col sm:px-10 3xl:px-20 pt-7 bg-main-blue rounded-b-header-bg-min sm:rounded-3xl">
         <div class="flex flex-col flex-grow sm:grid sm:grid-cols-2 sm:mt-5 md:pt-6">
             <div class="flex flex-col justify-start gap-5 3xl:gap-10 sm:relative">
-                <p class="text-4xl sm:text-5xl xl:text-6xl 3xl:text-7xl font-bold text-white text-center sm:text-left mt-6 mx-9 sm:mx-0">
+                <p class="text-4xl sm:text-5xl xl:text-6xl 3xl:text-7xl font-bold text-white text-center sm:text-left mt-3 mx-7 sm:mx-0">
                     Rent that meets your lifestyle
                 </p>
-                <p class="text-white sm:text-2xl 3xl:text-3xl text-center sm:text-left my-4 mx-20 sm:mx-0">
+                <p class="text-white sm:text-2xl 3xl:text-3xl text-center sm:text-left my-2">
                     Rent the easy way
                 </p>
                 <large-search-bar
                     :property-types="{{$propertyTypes}}"
-                    :is-search-bar-in-navbar="false"                      
+                    :regions = "{{$regions}}"
+                    :place-search-bar-in-nav-bar = "placeSearchBarInNavBar"
+                    @@scroll-y-is-past-search-bar="isScrollYPastSearchBar=true"                      
+                    @@scroll-y-is-not-past-search-bar="isScrollYPastSearchBar=false"                      
                 ></large-search-bar>
             </div>
             <div class="relative flex flex-grow">
@@ -30,17 +33,18 @@
             </div>
             <mobile-search-bar
                 :property-types="{{$propertyTypes}}"
+                :regions = "{{$regions}}"
                 :is-search-bar-in-navbar="false"                      
             ></mobile-search-bar>
         </div>
     </div>
 </header>
-<section class="flex justify-center mt-6 lg:mt-10 sm:justify-start sm:mx-10 xl:text-lg">
+<section class="flex justify-center mt-4 lg:mt-10 sm:justify-start sm:mx-10 xl:text-lg">
     <button class="bg-main-orange text-white rounded-full hover:bg-opacity-75 w-44 h-12 sm:w-52 sm:h-16">
         Book an agent
     </button>
 </section>
-<section class="mt-24 mx-5 sm:mx-10">
+<section class="mt-20 mx-5 sm:mx-10">
     <p class="font-semibold text-xl sm:text-2xl">
         Explore other locations
     </p>
@@ -91,7 +95,7 @@
         </div>
     </div>
 </section>
-<section class="mt-24 mx-5 sm:mx-10">
+<section class="mt-20 mx-5 sm:mx-10">
     <p class="font-semibold text-xl sm:text-2xl">
         Rent in Accra
     </p>
@@ -112,7 +116,7 @@
 
     </div>
 </section>
-<section class="mt-24 mx-5 sm:mx-10">
+<section class="mt-16 mx-5 sm:mx-10">
     <p class="font-semibold text-xl sm:text-2xl mx-5 text-center">
         Not sure where to rent?
     </p>
@@ -122,7 +126,7 @@
         </button>
     </div>
 </section>
-<section class="flex items-center mt-24 mx-2 sm:mx-10 rounded-3xl sm:rounded-main-card bg-cover bg-no-repeat bg-become-an-agent lg:bg-become-an-agent-2x h-96 sm:h-become-an-agent-card-max">
+<section class="flex items-center mt-20 mx-2 sm:mx-10 rounded-3xl sm:rounded-main-card bg-cover bg-no-repeat bg-become-an-agent lg:bg-become-an-agent-2x h-96 sm:h-become-an-agent-card-max">
     <div class="flex flex-col gap-5 px-1.5 sm:px-0 sm:mx-24">
         <p class="text-white text-center text-4xl font-semibold sm:text-5xl">
             Become an agent
@@ -137,7 +141,7 @@
         </div>
     </div>
 </section>
-<section class="mt-24 mx-5 sm:mx-10 flex flex-col gap-20 lg:grid lg:grid-cols-3 text-justify">
+<section class="mt-16 mx-5 sm:mx-10 flex flex-col gap-20 lg:grid lg:grid-cols-3 text-justify">
     <div class="flex flex-col gap-6">
         <p class="text-center font-semibold text-xl sm:text-2xl text-main-blue">
             Rent the easy way

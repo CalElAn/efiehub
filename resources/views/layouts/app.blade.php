@@ -13,9 +13,15 @@
 </noscript>  
 <body class="font-Poppins lg:px-5 2xl:px-10">
     <div id="app" class="min-h-screen flex flex-col justify-between">
+        <a href="/" class="sm:hidden">
+            <div class="sm:hidden bg-contain bg-center bg-no-repeat h-8 w-full bg-main-blue" style="background-image: url('/images/logo.png');" alt="logo"></div>
+        </a>        
         <nav-bar
-            :authenticated-user="authenticatedUser"
-            :is-user-authenticated="isUserAuthenticated"
+            :authenticated-user = "authenticatedUser"
+            :is-user-authenticated = "isUserAuthenticated"
+            :is-scroll-y-past-search-bar = "isScrollYPastSearchBar"
+            @@place-search-bar-in-nav-bar="placeSearchBarInNavBar=true"
+            @@remove-search-bar-from-nav-bar="placeSearchBarInNavBar=false"
             @@show-log-in-modal = "showLogInModal"
             @@show-sign-up-modal="showSignUpModal"
         ></nav-bar>
@@ -23,11 +29,11 @@
             @yield('main-content')
         </div>
         <mobile-nav-bar
-        :authenticated-user="authenticatedUser"
-        :is-user-authenticated="isUserAuthenticated"
-        @@show-mobile-search-bar = "showMobileSearchBarModal"
-        @@show-log-in-modal = "showLogInModal"
-        @@show-sign-up-modal="showSignUpModal"
+            :authenticated-user="authenticatedUser"
+            :is-user-authenticated="isUserAuthenticated"
+            @@show-mobile-search-bar = "showMobileSearchBarModal"
+            @@show-log-in-modal = "showLogInModal"
+            @@show-sign-up-modal="showSignUpModal"
         ></mobile-nav-bar>
         <footer class="p-5 text-base sm:text-lg">
             <hr class="my-5">

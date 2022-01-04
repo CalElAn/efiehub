@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\PropertyType;
+use Illuminate\Support\Facades\DB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,7 +27,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('*', function ($view) {
-            $view->with('propertyTypes', PropertyType::all());
+            $view
+                ->with('propertyTypes', PropertyType::all())
+                ->with('regions', 
+                    DB::table('region')->orderBy('name', 'asc')->get());
         });
     }
 }

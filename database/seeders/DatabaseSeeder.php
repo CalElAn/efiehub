@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PropertyTypeSeeder::class,
             PropertyFeatureSeeder::class,
             PropertyTypePropertyFeatureJoinSeeder::class,
+            RegionSeeder::class,
         ]);
     }
 }

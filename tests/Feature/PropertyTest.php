@@ -23,7 +23,8 @@ class PropertyTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    /** @test */  
+    //*move test to js
     // public function homepage_shows_property_card_with_all_details()
     // {
     //     $this->withoutExceptionHandling();
@@ -48,6 +49,8 @@ class PropertyTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
+        $this->get('/add-property')->assertStatus(200);
+
         Storage::fake('public');
 
         /**Asynchronously upload 4 pictures for processing */
@@ -57,6 +60,7 @@ class PropertyTest extends TestCase
         $response4 = $this->post('/filepond/process', ['filepond' => UploadedFile::fake()->image('testImage4.jpg')]);
 
         $input =  [
+            "region" => "Greater Accra",
             "city" => "Voluptas ipsa repud",
             "town" => "Et elit dicta eos",
             "address" => "Sapiente quis ut et",
@@ -92,6 +96,8 @@ class PropertyTest extends TestCase
 
         $this->assertDatabaseHas('property', [
                                             'user_id' =>$user->id,
+                                            'slug' => 'apartment-in-et-elit-dicta-eos',
+                                            "region" => "Greater Accra",
                                             'city' => 'Voluptas ipsa repud',
                                             'town' => 'Et elit dicta eos',
                                             'address' => 'Sapiente quis ut et',
@@ -167,6 +173,297 @@ class PropertyTest extends TestCase
                                                     'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($response4path)),
                                                 ]);                         
     }
+
+    /** @test */
+    public function regions_can_be_searched()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->get('/search-property')->assertStatus(200);
+
+        Property::factory()->create([
+            'region' => 'Greater Accra',
+        ]);
+        Property::factory()->create([
+            'region' => 'Greater Accra',
+        ]);
+        Property::factory()->create([
+            'region' => 'Not Greater Accra',
+        ]);
+        Property::factory()->create([
+            'region' => 'Volta',
+        ]);
+        Property::factory()->create([
+            'region' => 'Ashanti',
+        ]);
+
+        $searchInput =  [
+            "regions" => [
+                0 => "Greater Accra",
+                1 => 'Ashanti'
+            ]
+        ];
+
+        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('region')->all();
+
+        $this->assertEquals(3, count($response));
+
+        $this->assertContains('Greater Accra', $response);
+        $this->assertContains('Ashanti', $response);
+        $this->assertNotContains('Not Greater Accra', $response);
+        $this->assertNotContains('Volta', $response);
+    }
+
+    /** @test */
+    public function types_can_be_searched()
+    {
+        $this->withoutExceptionHandling();
+
+        Property::factory()->create([
+            'type' => 'Apartment',
+        ]);
+        Property::factory()->create([
+            'type' => 'Apartment',
+        ]);
+        Property::factory()->create([
+            'type' => 'House',
+        ]);
+        Property::factory()->create([
+            'type' => 'House',
+        ]);
+        Property::factory()->create([
+            'type' => 'Chamber and hall',
+        ]);
+        Property::factory()->create([
+            'type' => 'Single room',
+        ]);
+
+        $searchInput =  [
+            "types" => [
+                0 => "Apartment",
+                1 => "House"
+            ],
+        ];
+
+        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('type')->all();
+
+        $this->assertEquals(4, count($response));
+
+        $this->assertContains('Apartment', $response);
+        $this->assertContains('House', $response);
+        $this->assertNotContains('Chamber and hall', $response);
+        $this->assertNotContains('Single room', $response);
+    }
+
+    /** @test */
+    public function price_range_can_be_searched()
+    {
+        $this->withoutExceptionHandling();
+
+        Property::factory()->create([
+            'rent' => 100,
+        ]);
+        Property::factory()->create([
+            'rent' => 150,
+        ]);
+        Property::factory()->create([
+            'rent' => 200,
+        ]);
+        Property::factory()->create([
+            'rent' => 500,
+        ]);
+
+        $searchInput =  [
+            "types" => [
+                0 => "Apartment",
+            ],
+            "priceRange" => [
+                0 => "100",
+                1 => "250",
+            ],
+        ];
+
+        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties'];
+
+        // dd($response['properties']);
+
+        $this->assertEquals(3, count($response));
+
+        foreach ($response as $value)
+        {
+            $this->assertGreaterThanOrEqual(100, $value->rent );
+            $this->assertLessThanOrEqual(250, $value->rent );
+        }
+    }
+
+    /** @test */
+    public function properties_can_be_searched()
+    {
+        $this->withoutExceptionHandling();
+
+        Property::factory()->create([
+            'region' => 'Greater Accra',
+            'type' => 'Apartment',
+            'rent' => 100,
+        ]);
+        Property::factory()->create([
+            'region' => 'Ashanti',
+            'type' => 'House',
+            'rent' => 200,
+        ]);
+        Property::factory()->create([
+            'region' => 'Volta',  //region not in search input filter
+            'type' => 'House', 
+            'rent' => 200,
+        ]);
+        Property::factory()->create([
+            'region' => 'Ashanti',
+            'type' => 'Single room', //type not in search input filter
+            'rent' => 200,
+        ]);
+        Property::factory()->create([
+            'region' => 'Greater Accra',
+            'type' => 'Apartment',
+            'rent' => 300, //rent above search input filter range
+        ]);
+        Property::factory()->create([
+            'region' => 'Greater Accra',
+            'type' => 'Apartment',
+            'rent' => 99, //rent below search input filter range
+        ]);
+
+
+        $searchInput =  [
+            "regions" => [
+                0 => "Greater Accra",
+                1 => 'Ashanti'
+            ],
+            "types" => [
+                0 => "Apartment",
+                1 => "House"
+            ],
+            "priceRange" => [
+                0 => "100",
+                1 => "250",
+            ],
+        ];
+
+        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties'];
+
+        $this->assertEquals(2, count($response));
+
+        $typeArray = $response->pluck('type')->all();
+        $regionArray = $response->pluck('region')->all();
+
+        $this->assertContains('Apartment', $typeArray);
+        $this->assertContains('House', $typeArray);
+        $this->assertNotContains('Single room', $typeArray);
+        
+        $this->assertContains('Greater Accra', $regionArray);
+        $this->assertContains('Ashanti', $regionArray);
+        $this->assertNotContains('Volta', $regionArray);
+        
+        foreach ($response as $value)
+        {
+            $this->assertGreaterThanOrEqual(100, $value->rent );
+            $this->assertLessThanOrEqual(250, $value->rent );
+        }
+    }
+
+    /** @test */
+    public function properties_can_be_sorted()
+    {
+        $this->withoutExceptionHandling();
+
+        Property::factory()->create([
+            'created_at' => '2021-12-18 19:55:21',
+            'rent' => 400,
+        ]);
+        Property::factory()->create([
+            'created_at' => '2021-12-18 19:50:21',
+            'rent' => 100,
+        ]);
+        Property::factory()->create([
+            'created_at' => '2021-12-17 19:45:21',
+            'rent' => 300,
+        ]);
+
+        $searchInput =  [
+            //to check when no ordr by in request query
+        ];
+
+        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('created_at')->all();
+
+        $this->assertEquals(3, count($response));
+
+        $this->assertEquals('2021-12-18 19:55:21', $response[0]->toDateTimeString());
+        $this->assertEquals('2021-12-18 19:50:21', $response[1]->toDateTimeString());
+        $this->assertEquals('2021-12-17 19:45:21', $response[2]->toDateTimeString());
+
+        $searchInput =  [
+            "orderBy" => 'newest',
+        ];
+
+        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('created_at')->all();
+
+        $this->assertEquals(3, count($response));
+
+        $this->assertEquals('2021-12-18 19:55:21', $response[0]->toDateTimeString());
+        $this->assertEquals('2021-12-18 19:50:21', $response[1]->toDateTimeString());
+        $this->assertEquals('2021-12-17 19:45:21', $response[2]->toDateTimeString());
+
+        $searchInput =  [
+            "orderBy" => 'priceLowToHigh',
+        ];
+
+        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('rent')->all();
+
+        $this->assertEquals(3, count($response));
+
+        $this->assertEquals(100, $response[0]);
+        $this->assertEquals(300, $response[1]);
+        $this->assertEquals(400, $response[2]);
+
+        $searchInput =  [
+            "orderBy" => 'priceHighToLow',
+        ];
+
+        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('rent')->all();
+
+        $this->assertEquals(3, count($response));
+
+        $this->assertEquals(400, $response[0]);
+        $this->assertEquals(300, $response[1]);
+        $this->assertEquals(100, $response[2]);
+    }
+
+    // /** @test */
+    // public function properties_can_be_sorted_by_price_low_to_high()
+    // {
+    //     $this->withoutExceptionHandling();
+
+    //     Property::factory()->create([
+    //         'rent' => 400,
+    //     ]);
+    //     Property::factory()->create([
+    //         'rent' => 100,
+    //     ]);
+    //     Property::factory()->create([
+    //         'rent' => 300,
+    //     ]);
+
+    //     $searchInput =  [
+    //         "order" => 'priceLowToHigh',
+    //     ];
+
+    //     $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('created_at')->all();
+
+    //     $this->assertEquals(3, count($response));
+
+    //     $this->assertEquals('2021-12-18 19:55:21', $response[0]);
+    //     $this->assertEquals('2021-12-18 19:50:21', $response[1]);
+    //     $this->assertEquals('2021-12-17 19:45:21', $response[2]);
+    // }
 
     public function createAUserWithEverything()
     {

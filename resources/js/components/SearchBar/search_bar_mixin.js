@@ -2,10 +2,11 @@
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 
 import Slider from '@vueform/slider'
+import Multiselect from '@vueform/multiselect'
 
-import { ChevronDownIcon } from '@heroicons/vue/solid'
-import { LocationMarkerIcon } from '@heroicons/vue/solid'
+import { ChevronDownIcon, LocationMarkerIcon } from '@heroicons/vue/solid'
 
+import SearchBarFormInputs from './SearchBarFormInputs.vue'
 
 const searchBarMixin = {
 
@@ -16,9 +17,11 @@ const searchBarMixin = {
         ChevronDownIcon,
         LocationMarkerIcon,
         Slider,
+        Multiselect,
+        SearchBarFormInputs,
     },
 
-    props: ['propertyTypes', 'isSearchBarInNavbar'],
+    props: ['propertyTypes', 'regions'],
 
     data () {
         return {
@@ -33,8 +36,10 @@ const searchBarMixin = {
             },
 
             form: {
-                types: [],
-                priceRange: [0, 500]
+                types: this.searchQuery?.types ?? [],
+                priceRange: this.searchQuery?.priceRange ?? [0, 500],
+                regions: this.searchQuery?.regions ?? [],
+                orderBy: this.searchQuery?.orderBy ?? 'latest',
             },
         }
     },
@@ -63,35 +68,14 @@ const searchBarMixin = {
         onSearchBarNotFocused(event) {
 
             if (!this.$refs.searchBar?.contains(event.target)) {
-                //the click was outside the specifiedElement, do something
+                
                 this.isSearchBarFocused = false;
-                // console.log(this.$refs.searchBar)
             }
         },
     },
 
     mounted() {
-        document.addEventListener('click', this.onSearchBarNotFocused);
-
-        // if(!this.isSearchBarInNavbar) {
-        //     let searchBarOffsetTop = this.$refs.searchBar.offsetTop;
-        //     let searchBarOffsetHeight = this.$refs.searchBar.offsetHeight;
-        //     let navBarHeight = document.getElementById('nav-bar').offsetHeight;
-        //     let thisVar = this;
-    
-        //     window.addEventListener(
-        //         'scroll', 
-        //         _.throttle( function() {
-        //             if (window.scrollY >= searchBarOffsetTop + navBarHeight - (window.scrollY) ) {
-        //                 thisVar.isScrollYPastSearchBar = true
-        //                 // thisVar.$emit('onScrollYPastSearchBar')
-        //             } else {
-        //                 thisVar.isScrollYPastSearchBar = false
-        //                 // thisVar.$emit('onScrollYNotPastSearchBar')
-        //             }
-        //         }, 600)
-        //     );
-        // }    
+        document.addEventListener('click', this.onSearchBarNotFocused);   
     }   
 }
 

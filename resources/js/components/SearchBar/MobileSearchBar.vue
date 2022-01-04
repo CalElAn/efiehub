@@ -14,11 +14,12 @@
     classes="flex justify-center items-center"
     content-class="backdrop-blur-2xl backdrop-filter backdrop-opacity-90 bg-opacity-30 bg-white w-4/5 sm:max-w-md px-6 pb-6 pt-8 rounded-3xl relative flex flex-col max-h-full border"
 >
-    <button class="absolute top-0 right-0 mt-2 mr-2" @click="showMobileSearchBar=false">
+    <button class="absolute top-0 right-0 mt-2 mr-4" @click="showMobileSearchBar=false">
       <XIcon  class="h-5 w-5 text-white"/>
     </button>
 
-    <div ref="searchBar" class="grid grid-rows-3 gap-4 mt-2 text-white text-base">
+    <form action="/search-property" method="GET">
+    <div ref="searchBar" class="grid grid-rows-3 gap-4 h-52 mt-2 text-white text-base">
         <!-- Types Popover -->
         <Popover v-slot="{ open }" class="h-full relative hover:bg-opacity-75">
         <PopoverButton
@@ -26,15 +27,15 @@
             :class="open ? 'bg-opacity-75 shadow-2xl' : ''"
             class="w-full inline-flex items-center text-center h-full rounded-full group bg-white text-main-blue">
             <span class="w-3/4">Type</span>
-            <ChevronDownIcon :class="open ? '' : 'text-opacity-70'"
-                class="w-1/4 h-6" aria-hidden="true" />
+            <ChevronDownIcon :class="open ? 'rotate-180' : 'text-opacity-70'"
+                class="w-1/4 h-6 transform transition-transform" aria-hidden="true" />
         </PopoverButton>
         <transition enter-active-class="transition duration-200 ease-out" enter-from-class="translate-y-1 opacity-0"
             enter-to-class="translate-y-0 opacity-100" leave-active-class="transition duration-150 ease-in"
             leave-from-class="translate-y-0 opacity-100" leave-to-class="translate-y-1 opacity-0">
             <PopoverPanel
                 @click="isSearchBarFocused=true"
-                class="absolute z-10 w-max px-4 mt-3">
+                class="absolute z-20 w-max px-4 mt-3">
                 <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
                     <div class="relative grid gap-4 text-xs text-gray-700 bg-white p-7 grid-cols-1">
                         <div class="col-span-1 flex items-center">
@@ -59,19 +60,38 @@
         </Popover>
 
         <!-- Location Input box -->
-        <div 
+        <!-- <div 
             :class="[isInputFocused ? ' focus:bg-opacity-75 shadow-2xl' : 'group']"
             class="rounded-full flex items-center h-full focus-within:shadow-2xl bg-white text-main-blue">
-            <!-- <div style="height:32px; width:1px; background: #ddd; display:inline;"></div> -->
             <input
                 @focus="isInputFocused=true, isSearchBarFocused=true"
                 @blur="isInputFocused=false"
-                class="text-base lg:text-lg xl:text-xl text-center border-0 h-full pl-3 pr-0 w-full rounded-full focus:ring-0 focus:outline-none bg-transparent placeholder-main-blue"
+                class="text-base lg:text-lg xl:text-xl text-center border-0 h-full pl-3 pr-0 w-full rounded-full focus:ring-0 focus:outline-none bg-transparent placeholder-opacity-70 placeholder-main-blue"
                 type="text"
                 placeholder="Enter a location">
             <LocationMarkerIcon class="h-6 pl-1 pr-3"/>
-            <!-- <div style="height:32px; width:1px; background: #ddd; display:inline;"></div> -->
-        </div>
+        </div> -->
+        <Multiselect
+            class="pl-14 pr-2.5 rounded-full flex items-center h-full group focus-within:shadow-xl hover:shadow-lg focus-within:outline-none mobile-multiselect"
+            v-model="form.regions"
+            mode="multiple"
+            valueProp="name"
+            trackBy="name"
+            label="name"
+            placeholder="Region"
+            :close-on-select="false"
+            :searchable="false"
+            :options="regions" 
+            :classes="{
+                container: 'relative mx-auto w-full flex items-center justify-end box-border cursor-pointer rounded-full text-base lg:text-lg xl:text-xl text-center border-0 bg-white text-main-blue leading-snug outline-none',
+                placeholder: 'flex items-center justify-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-14 text-main-blue'
+            }">
+            <template v-slot:multiplelabel="{ values }">
+                <div class="multiselect-multiple-label text-sm">
+                    {{ values.length }} {{values.length > 1 ? 'regions' : 'region'}} selected
+                </div>
+            </template>
+        </Multiselect>
 
 
         <!-- Price Range Popover -->
@@ -81,8 +101,8 @@
                 :class="open ? 'focus:bg-opacity-75 shadow-2xl' : ''"
                 class="w-full flex items-center h-full rounded-full group bg-white text-main-blue">
                 <span class="w-3/4">Price range</span>
-                <ChevronDownIcon :class="open ? '' : 'text-opacity-70'"
-                    class="w-1/4 h-6" aria-hidden="true" />
+                <ChevronDownIcon :class="open ? 'rotate-180' : 'text-opacity-70'"
+                    class="w-1/4 h-6 transform transition-transform" aria-hidden="true" />
             </PopoverButton>
             <transition enter-active-class="transition duration-200 ease-out" enter-from-class="translate-y-1 opacity-0"
                 enter-to-class="translate-y-0 opacity-100" leave-active-class="transition duration-150 ease-in"
@@ -107,7 +127,9 @@
         <div 
             :class="[isSearchBarFocused ? '' : '']"
             class="h-full">
-            <button class="p-1 rounded-full focus:outline-none w-full h-full bg-main-orange hover:bg-opacity-75 flex items-center justify-center gap-0.5">
+            <button
+                type="submit"
+                class="p-1 rounded-full focus:outline-none w-full h-full bg-main-orange hover:bg-opacity-75 flex items-center justify-center gap-0.5">
                 <!-- Search -->
                 <search-icon 
                     :class="[isSearchBarFocused ? '' : '']"
@@ -118,6 +140,8 @@
             </button>
         </div>
     </div>
+        <SearchBarFormInputs :form="form"/>
+    </form>
 
 </vue-final-modal>
 </template>
@@ -145,3 +169,15 @@ export default {
    
 }
 </script>
+
+<style>
+    @import "./search_bar_styles.css";
+
+    .mobile-multiselect .multiselect-clear-icon {
+        --ms-clear-color: #4568ED;
+    }
+
+    .mobile-multiselect .multiselect-caret {
+        --ms-caret-color: #4568ED;
+    }
+</style>

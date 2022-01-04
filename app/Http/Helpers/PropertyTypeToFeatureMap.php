@@ -7,11 +7,11 @@ class PropertyTypeToFeatureMap
     static $propertyTypeArray = [
         ['type' => 'Chamber and hall'],
         ['type' => 'Apartment'],
-        ['type' => 'Studio apartment'],
-        ['type' => 'Service apartment'],
+        // ['type' => 'Studio apartment'],
+        // ['type' => 'Service apartment'],
         ['type' => 'House'],
         ['type' => 'Single room'],
-        ['type' => 'Bed'],
+        // ['type' => 'Bed'],
     ];
 
     static $propertyFeatureArray = [

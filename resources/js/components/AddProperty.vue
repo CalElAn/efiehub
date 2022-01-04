@@ -18,6 +18,17 @@
         <section v-show="step == 1">
             <div class="text-xl mb-3">Property Details</div>
             <div class="grid grid-cols-2 gap-6">
+                <div class="col-span-2 sm:col-span-2">
+                    <label for="region" class="block font-medium text-gray-700">Region <span
+                            class="text-red-600">*</span></label>
+                    <select v-model="form.region" id="region"
+                        class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option v-for="(item, index) in regions" :key="index">{{item.name}}</option>
+                    </select>
+                    <span class="text-red-600" v-if="v$.form.region.$error">{{ v$.form.region.$errors[0].$message }}
+                    </span>
+                </div>
+                <!-- <div class="hidden sm:block"></div> -->
                 <div class="col-span-2 sm:col-span-1">
                     <label for="city" class="block font-medium text-gray-700">City <span
                             class="text-red-600">*</span></label>
@@ -276,6 +287,7 @@ export default {
             triggerSubmitAfterLogin: false,
 
             form: {
+                region: '',
                 city: '',
                 town: '',
                 address: '',
@@ -301,6 +313,10 @@ export default {
     validations() {
         return {
             form: {
+                region: {
+                    required,
+                    $autoDirty: true
+                },
                 city: {
                     required,
                     $autoDirty: true
@@ -335,7 +351,7 @@ export default {
         };
     },
 
-    props: ['property', 'isUserAuthenticated', 'authenticatedUser'],
+    props: ['property', 'regions', 'isUserAuthenticated', 'authenticatedUser'],
 
     watch: {
         isUserAuthenticated(newValue, oldValue) {
@@ -413,7 +429,8 @@ export default {
             axios.post('/add-property', this.form)
                 .then( (response) => {
                     if( response.status == 200 ) {  
-                        window.location.replace('/'); //*should redirect to show property page
+                        // window.location.replace('/'); //TODO should redirect to show property page
+                        window.location.href = '/show-property/' + response.data.slug
                     }
                 })
                 .catch( (error) => {

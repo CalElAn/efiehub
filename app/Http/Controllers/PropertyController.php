@@ -28,7 +28,7 @@ class PropertyController extends Controller
     public function index()
     {
         return view('home', [
-                            'properties' => Property::with(['features', 'media', 'reviews', 'propertyType'])->latest()->get(),
+                            'properties' => Property::latest()->get(),
                             ]);
     }
 
@@ -61,6 +61,7 @@ class PropertyController extends Controller
     {
         // dd($request->input());
         $request->validate([
+            'region' => 'required',
             'city' => 'required',
             'town' => 'required',
             'address' => 'required',
@@ -72,6 +73,7 @@ class PropertyController extends Controller
 
         $property = Property::create([
             'user_id' => Auth::user()->id,
+            'region' => $request->region,
             'city' => $request->city,
             'town' => $request->town,
             'address' => $request->address,
@@ -124,19 +126,72 @@ class PropertyController extends Controller
             Image::make($storagePublicDisk->path($newStoragePath))->save(null, 60);
 
             $propertyMediaInsertArray[] = [
-                                            'property_id' => $property->property_id, 
-                                            'path' => $newStoragePath,
-                                            'mime_type' => $storagePublicDisk->mimeType($newStoragePath),
-                                            'extension' => pathinfo($storagePublicDisk->path($newStoragePath), PATHINFO_EXTENSION),
-                                            'size_in_bytes' => $storagePublicDisk->size($newStoragePath),
-                                            'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($newStoragePath)),
-                                            'created_at' => date('Y-m-d H:i:s'),
-                                            'updated_at' => date('Y-m-d H:i:s'),
-                                          ]; 
+                'property_id' => $property->property_id, 
+                'path' => $newStoragePath,
+                'mime_type' => $storagePublicDisk->mimeType($newStoragePath),
+                'extension' => pathinfo($storagePublicDisk->path($newStoragePath), PATHINFO_EXTENSION),
+                'size_in_bytes' => $storagePublicDisk->size($newStoragePath),
+                'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($newStoragePath)),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]; 
         }
 
         PropertyMedia::insert($propertyMediaInsertArray);
+
+        return $property;
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        // dd($request->input());
+        $properties = Property::query();
+
+        if(!empty($request->regions))
+        {
+            $properties->whereIn('region', $request->regions);
+        }
+
+        if(!empty($request->types))
+        {
+            $properties->whereIn('type', $request->types);
+        }
+
+        if(!empty($request->priceRange))
+        {
+            $properties->whereBetween('rent', $request->priceRange);
+        }
+
+        switch ($request->orderBy) {
+            case  'priceLowToHigh':
+                $properties->orderBy('rent', 'asc');
+                break;
+            
+            case  'priceHighToLow':
+                $properties->orderBy('rent', 'desc');
+                break;
+            
+            default:
+                $properties->latest();
+                break;
+        }
+
+        $response = ['properties' => $properties->get(), 'searchQuery' => $request->except('_token')];
+
+        if($request->ajax())
+        {
+            return response($response, 200);
+        }
+
+        return view('search-property', $response);
+    }
+
 
     /**
      * Display the specified resource.
@@ -146,7 +201,7 @@ class PropertyController extends Controller
      */
     public function show(Property $property)
     {
-        //
+        return view('show-property', ['property' => $property]);
     }
 
     /**

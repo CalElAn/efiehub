@@ -32,7 +32,7 @@ module.exports = {
             height: {
                 'header-img': '33rem',
                 'header-bg': '30rem',
-                'header-bg-min': '80vh',
+                'header-bg-min': '75vh',
                 'become-an-agent-card-max': '549px',
             },
             width: {
@@ -44,7 +44,10 @@ module.exports = {
             backgroundImage: {
                 'become-an-agent': "url('/images/become-an-agent.png')",
                 'become-an-agent-2x': "url('/images/become-an-agent-2x.png')",
-            }
+            },
+            inset: {
+                '0.1': '10%',
+            },
         },
     },
 
@@ -52,6 +55,9 @@ module.exports = {
         extend: {
             opacity: ['disabled'],
             placeholderColor: ['hover', 'group-hover'],
+            borderStyle: ['hover', 'focus'],
+            textColor: ['group-focus'],
+            borderWidth: ['hover',],
         },
     },
 

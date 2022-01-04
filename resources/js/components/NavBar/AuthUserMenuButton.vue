@@ -1,0 +1,94 @@
+<template>
+<Menu as="div" class="relative text-left">
+    <div class="flex">
+        <MenuButton
+            :class="[isScrollYPastNavBar ? 'border-main-orange text-main-orange' : '', isInMobileNavBar ? 'border-main-orange text-main-orange py-1' : 'border-white text-white h-9']"
+            class="inline-flex items-center justify-center w-max px-4 font-semibold border rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 hover:shadow-lg">
+            <div 
+                :class="[isInMobileNavBar ? 'h-8 w-8' : 'h-7 w-7']"
+                class="bg-contain bg-center bg-no-repeat -ml-2 rounded-full" 
+                :style="{'background-image': 'url('+(authenticatedUser.profile_picture_path ? 'https://ui-avatars.com/api/?size=25&rounded=true&bold=true&name='+authenticatedUser.name : 'https://ui-avatars.com/api/?size=50&rounded=true&name='+authenticatedUser.name)+')'}" alt="logo">
+            </div> 
+            <MenuIcon class="w-5 h-5 ml-2 -mr-1"
+                aria-hidden="true" />
+        </MenuButton>
+    </div>
+
+    <transition enter-active-class="transition duration-100 ease-out"
+        enter-from-class="transform scale-95 opacity-0" enter-to-class="transform scale-100 opacity-100"
+        leave-active-class="transition duration-75 ease-in" leave-from-class="transform scale-100 opacity-100"
+        leave-to-class="transform scale-95 opacity-0">
+        <!-- when move to one component remember deal with bottom-11 and chevron up icon on sm+ screens -->
+        <MenuItems
+            :class="[isInMobileNavBar ? 'bottom-12' : '']"
+            class="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+            <div class="px-1 py-1">
+                <MenuItem v-slot="{ active }">
+                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                        Favourites
+                    </button>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
+                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                        Alerts
+                    </button>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
+                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                        Applications
+                    </button>
+                </MenuItem>
+            </div>
+            <div class="px-1 py-1">
+                <MenuItem v-slot="{ active }">
+                <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                    'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                    Manage your listings
+                </button>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
+                <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                    'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                    Advertise on efiehub
+                </button>
+                </MenuItem>
+            </div>
+
+            <div class="px-1 py-1">
+                <MenuItem v-slot="{ active }">
+                <form method="POST" action="/logout">
+                    <input type="hidden" name="_token" :value="csrfToken" />
+                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                            'group flex rounded-md items-center w-full px-2 py-2 text-sm']">
+                        Log Out
+                    </button>
+                </form>
+                </MenuItem>
+            </div>
+        </MenuItems>
+    </transition>
+</Menu>
+</template>
+
+<script>
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+
+import { MenuIcon } from '@heroicons/vue/solid'
+
+export default {
+
+    components: {
+        Menu,
+        MenuButton,
+        MenuItems,
+        MenuItem,
+        MenuIcon,
+    },
+
+    props: ['authenticatedUser', 'isInMobileNavBar', 'isScrollYPastNavBar']
+
+}
+</script>

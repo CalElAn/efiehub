@@ -24,9 +24,10 @@ Route::get('/dashboard', function () {
 Route::post('/deploy', [DeployController::class, 'deploy']);
 
 Route::get('/', [PropertyController::class, 'index']);
-
 Route::get('/add-property', [PropertyController::class, 'create']);
 Route::post('/add-property', [PropertyController::class, 'store']);
+Route::get('/search-property', [PropertyController::class, 'search']);
+Route::get('/show-property/{property}', [PropertyController::class, 'show']);
 
 Route::post('/favourite-property', [UserController::class, 'favouriteProperty']);
 

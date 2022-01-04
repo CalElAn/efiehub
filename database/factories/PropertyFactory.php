@@ -5,6 +5,8 @@ namespace Database\Factories;
 use App\Models\Property;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
+
 
 class PropertyFactory extends Factory
 {
@@ -22,9 +24,14 @@ class PropertyFactory extends Factory
      */
     public function definition()
     {
+        $regionData = DB::table('region')
+                        ->pluck('name')->toArray();
+
+
         return [
             'user_id' => User::factory(),
             'unit_number' => $this->faker->randomDigitNotNull(),
+            'region' => $regionData[ array_rand($regionData) ],
             'city' => $this->faker->state(),
             'town' => $this->faker->streetName(),
             'address' => $this->faker->address(),

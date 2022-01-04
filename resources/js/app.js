@@ -1,9 +1,13 @@
 require('./bootstrap');
 
+import { Helpers } from './helpers';
+window.Helpers = Helpers
+
 import { createApp, defineAsyncComponent } from 'vue';
 
 import VueFinalModal from 'vue-final-modal'
 import Notifications from '@kyvg/vue3-notification'
+import VueProgressBar from "@aacassandra/vue3-progressbar";
 
 import { SearchIcon } from '@heroicons/vue/outline'
 
@@ -30,6 +34,10 @@ const app =
                 import('./components/PropertyCard.vue') ),
             AddProperty: defineAsyncComponent( () =>
                 import('./components/AddProperty.vue') ),
+            SearchProperty: defineAsyncComponent( () =>
+                import('./components/SearchProperty.vue') ),
+            ShowProperty: defineAsyncComponent( () =>
+                import('./components/ShowProperty.vue') ),
         },
 
         data() {
@@ -39,9 +47,13 @@ const app =
 
                 isScrollYPastSearchBar: false,
                 isScrollYPastMainHeader: false,
+                placeSearchBarInNavBar: false,
 
                 showWelcomeText: false,
                 welcomeText: '',
+
+                properties: typeof properties === 'undefined' ? [] : properties,
+                searchQuery: typeof searchQuery === 'undefined' ? {} : searchQuery,
             }
         },
 
@@ -81,33 +93,28 @@ const app =
             onFavouriteProperty(favourite_data) {console.log(favourite_data)
                 this.authenticatedUser.favourite_properties.unshift(favourite_data)
             },
+
+            updatePropertiesAndSearchQuery(data) {
+                this.properties = data?.properties
+                this.searchQuery = data?.searchQuery
+            }
         },
 
         mounted() {
-            // if (this.$refs.mainHeader && document.getElementById('nav-bar'))
-            // {
-            //     var mainHeaderOffsetHeight = this.$refs.mainHeader.offsetHeight;
-            //     var mainHeaderOffsetTop = this.$refs.mainHeader.offsetTop;
-            //     var navBarHeight = document.getElementById('nav-bar').offsetHeight;
-            //     var thisVar = this;
 
-            //     window.addEventListener(
-            //         'scroll',
-            //         _.throttle(function () {
-            //             if (window.scrollY >= mainHeaderOffsetTop + navBarHeight - (window.scrollY + mainHeaderOffsetHeight) ) {
-            //                 thisVar.isScrollYPastMainHeader = true
-            //             } else {
-            //                 thisVar.isScrollYPastMainHeader = false
-            //             }
-            //         }, 600)
-            //     );
-            // }
         }
     });
 
 app.component('SearchIcon', SearchIcon);
 
-app.use(VueFinalModal());
-app.use(Notifications)
+app.use(VueFinalModal())
+    .use(Notifications)
+    .use(VueProgressBar, {
+        color: "rgb(143, 255, 199)",
+        thickness: "3px",
+        position: "relative",
+        location: "top",
+    })
 
 app.mount('#app');
+

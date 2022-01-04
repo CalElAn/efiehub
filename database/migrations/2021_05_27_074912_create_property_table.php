@@ -16,7 +16,9 @@ class CreatePropertyTable extends Migration
         Schema::create('property', function (Blueprint $table) {
             $table->id('property_id');
             $table->unsignedBigInteger('user_id');
+            $table->string('slug')->nullable();
             $table->integer('unit_number')->default(1);
+            $table->string('region');
             $table->string('city');
             $table->string('town');
             $table->text('address');

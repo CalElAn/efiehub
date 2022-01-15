@@ -9,7 +9,7 @@ class PropertyType extends Model
 {
     use HasFactory;
 
-    protected $table = 'property_type';
+    protected $table = 'property_types';
 
     protected $primaryKey = 'type';
 
@@ -19,6 +19,6 @@ class PropertyType extends Model
 
     public function features()
     {
-        return $this->belongsToMany(PropertyFeature::class, 'PropertyType_PropertyFeature_join', 'type', 'feature', 'type', 'feature')->withTimestamps();
+        return $this->belongsToMany(PropertyFeature::class, 'PropertyTypes_PropertyFeatures_join', 'type', 'feature', 'type', 'feature')->withTimestamps();
     }
 }

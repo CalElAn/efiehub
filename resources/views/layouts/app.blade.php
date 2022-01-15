@@ -6,7 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/265cf3da75.js" crossorigin="anonymous"></script>
     <title>@yield('title', 'efiehub')</title>
+    @isset($property->title )
+    <meta property="og:title" content="{{$property?->title}}"/>
+    <meta property="og:url" content=" {{url("show-property/{$property?->slug}")}}"/>    
+    @endisset
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="{{asset('/images/logo.png')}}"/>
 </head>
 <noscript>
     <strong>We're sorry but this page doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
@@ -25,6 +32,7 @@
             @@show-log-in-modal = "showLogInModal"
             @@show-sign-up-modal="showSignUpModal"
         ></nav-bar>
+        <vue-progress-bar id="vue-progress-bar" ></vue-progress-bar>
         <div>    
             @yield('main-content')
         </div>
@@ -59,6 +67,17 @@
                 </div>
             </div>
         </footer>
+
+        <notifications position="bottom right" />
+        
+        <mobile-search-bar
+            :property-types="{{$propertyTypes}}"
+            :regions = "{{$regions}}"
+            :is-search-bar-in-navbar="false"                      
+        ></mobile-search-bar>
+
+        <share-property-modal></share-property-modal>
+
         <log-in-modal
             :show-welcome-text="showWelcomeText"
             :welcome-text="welcomeText"
@@ -66,6 +85,7 @@
             @@user-has-been-authenticated="onUserHasBeenAuthenticated"
             @@closed-log-in-modal = "showWelcomeText = false"
         ></log-in-modal>
+
         <sign-up-modal
             @@show-log-in-modal="showLogInModal"
             @@user-has-been-authenticated="onUserHasBeenAuthenticated"
@@ -77,6 +97,16 @@
 <script type="application/javascript">
     var isUserAuthenticatedVar = @JSON(Auth::check());
     var authenticatedUserVar = @JSON(Auth::user());
+
+    let minPrice = {{$minPrice}}
+    let maxPrice = {{$maxPrice}}
 </script>
 
 <script src="{{ mix('js/app.js') }}"></script>
+
+<style>
+    #vue-progress-bar {
+        z-index: 10 !important; 
+    }
+</style>
+

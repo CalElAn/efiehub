@@ -36,7 +36,7 @@
         <div>
             <a :href="'/show-property/' + property.slug">
                 <p class="font-medium text-sm sm:text-base tracking-wide hover:underline">
-                    {{property?.property_type?.type}} in {{property?.town}}
+                    {{property?.title}}
                 </p>
             </a>
         </div>
@@ -48,7 +48,7 @@
                 <svg  width="5" height="5" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="2.5" cy="2.5" r="2.5" fill="white"/>
                 </svg>
-                <p> {{numberOfBedroomsAndBathrooms.numberOfBathrooms}} washrooms </p>
+                <p> {{numberOfBedroomsAndBathrooms.numberOfBathrooms}} bathrooms </p>
             </div>
             <div class="flex flex-row justify-center items-center gap-2">
                 <p> {{property?.features?.find(obj => obj.input_type == 'radio')?.feature}} </p>
@@ -64,7 +64,6 @@
         </div>
     </div>
 </div>
-<notifications position="bottom right" />
 </template>
 
 <script>

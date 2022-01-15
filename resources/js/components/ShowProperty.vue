@@ -71,7 +71,7 @@
         </swiper>
         <div class="mt-12 flex flex-col sm:flex-row gap-3 sm:gap-0 justify-between">
             <p class="font-semibold text-xl sm:text-2xl">
-                {{property.type}} in {{property.town}}
+                {{property.title}}
             </p>
             <div class="flex justify-between sm:justify-start">
                 <div class="flex sm:hidden items-center gap-1">
@@ -97,7 +97,7 @@
                 </div>
             </div>
         </div>
-        <section class="mt-4 sm:mt-8 w-full flex flex-col sm:flex-row gap-5 sm:gap-4">
+        <section class="mt-4 pb-6 sm:mt-8 w-full flex flex-col sm:flex-row gap-5 sm:gap-4 border-b">
             <div class="w-full sm:w-3/4">
                 <div class="flex flex-col sm:flex-row gap-4 justify-between">
                     <div class="hidden sm:flex items-center gap-2">
@@ -127,7 +127,7 @@
                         <svg  width="5" height="5" class="bg-main-blue rounded-full" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="2.5" cy="2.5" r="2.5" fill="none"/>
                         </svg>
-                        <p> {{numberOfBedroomsAndBathrooms.numberOfBathrooms}} washrooms </p>
+                        <p> {{numberOfBedroomsAndBathrooms.numberOfBathrooms}} bathrooms </p>
                     </div>
                     <div class="flex flex-row justify-center items-center gap-2 pb-3 border-b">
                         <svg  width="5" height="5" class="bg-main-blue rounded-full" xmlns="http://www.w3.org/2000/svg">
@@ -145,48 +145,68 @@
                     </ul>
                 </div>          
             </div>
-            <div class="flex flex-col gap-4 text-sm lg:text-base shadow sm:shadow-lg rounded-lg w-full h-full sm:w-1/4 p-3 py-7 border">
-                <div>
-                    <span class="font-semibold text-base lg:text-lg">GH&#8373; {{property.rent}}</span> / month
-                </div>
-                <div class="flex items-center justify-center gap-2">
-                    <div class="bg-contain bg-center bg-no-repeat h-8 w-8 rounded-full" 
-                        :style="{'background-image': 'url('+(property.user.profile_picture_path ? 'https://ui-avatars.com/api/?size=50&rounded=true&bold=true&name='+property.user.name : 'https://ui-avatars.com/api/?size=50&rounded=true&name='+property.user.name)+')'}" alt="profile picture">
+            <div class="w-full h-full sm:w-1/4 text-sm lg:text-base">
+                <div class="flex flex-col gap-4 shadow sm:shadow-lg rounded-lg p-3 py-7 border">
+                    <div>
+                        <span class="font-semibold text-base lg:text-lg">GH&#8373; {{property.rent}}</span> / month
                     </div>
-                    <p>{{property.user.name}}</p>
+                    <div class="flex items-center justify-center gap-2">
+                        <div class="bg-contain bg-center bg-no-repeat h-8 w-8 rounded-full"
+                            :style="{'background-image': 'url('+(property.user.profile_picture_path ? 'https://ui-avatars.com/api/?size=50&rounded=true&bold=true&name='+property.user.name : 'https://ui-avatars.com/api/?size=50&rounded=true&name='+property.user.name)+')'}" alt="profile picture">
+                        </div>
+                        <p>{{property.user.name}}</p>
+                    </div>
+                    <button class="flex items-center justify-center gap-2 bg-main-orange bg-opacity-95 hover:bg-white text-white hover:text-main-orange hover:border hover:border-main-orange p-2 rounded-lg">
+                        <PhoneIcon class="h-5 w-5 md:h-4 md:w-4"/> Show contact
+                    </button>
+                    <button class="flex items-center justify-center gap-2 border border-main-orange text-main-orange hover:text-white bg-white hover:bg-main-orange bg-opacity-95 p-1 rounded-lg">
+                        <ChatAltIcon class="h-5 w-5 md:h-4 md:w-4"/> Chat
+                    </button>
+                    <button
+                        style="text-decoration-color: #4568ED;"
+                        class="rounded-xl underline hover:border hover:shadow-md p-2 md:p-1">
+                        Request call back
+                    </button>
+                    <div class="flex items-center gap-1 text-xs">
+                        <StarIcon class="h-4 lg:h-5 w-4 lg:w-5 text-main-orange"/>
+                        {{'0'}}<span>({{'0'}} agent reviews)</span>
+                    </div>
                 </div>
-                <button class="flex items-center justify-center gap-2 bg-main-orange bg-opacity-95 hover:bg-white text-white hover:text-main-orange hover:border hover:border-main-orange p-2 rounded-lg">
-                    <PhoneIcon class="h-5 w-5 md:h-4 md:w-4"/> Show contact
+                <button 
+                    @click="reportProperty"
+                    class="flex underline gap-2 mt-6 text-gray-600">
+                    <FlagIcon  class="h-4 lg:h-5 w-4 lg:w-5"/>
+                    Report this property
                 </button>
-                <button class="flex items-center justify-center gap-2 border border-main-orange text-main-orange hover:text-white bg-white hover:bg-main-orange bg-opacity-95 p-1 rounded-lg">
-                    <ChatAltIcon class="h-5 w-5 md:h-4 md:w-4"/> Chat
-                </button>
-                <button
-                    style="text-decoration-color: #4568ED;" 
-                    class="rounded-xl underline hover:border hover:shadow-md p-2 md:p-1">
-                    Request call back
-                </button>
-                <div class="flex items-center gap-1 text-xs">
-                    <StarIcon class="h-4 lg:h-5 w-4 lg:w-5 text-main-orange"/>
-                    {{'0'}}<span>({{'0'}} agent reviews)</span>
-                </div>
             </div>
-        </section>      
+        </section>   
+        <section class="mt-12">
+            <p class="flex gap-1 items-center font-semibold text-lg sm:text-xl">
+                <StarIcon class="h-6 sm:h-7 w-6 sm:w-7 text-main-orange"/>
+                {{propertyReviews.average}} 
+                <span>({{propertyReviews.count}} reviews)</span>
+            </p>
+        </section>
     </div>
+    <report-modal :slug="property.slug"></report-modal>
 </template>
 
 <script>
 import { Helpers } from '../helpers.js';
 import propertyMixin from "./property_mixin.js";
 
-import { PhoneIcon } from '@heroicons/vue/solid'
+import ReportModal from './Modals/ReportModal.vue'
+
+import { PhoneIcon, FlagIcon } from '@heroicons/vue/solid'
 import { ChatAltIcon } from '@heroicons/vue/outline'
 
 export default {
 
     components: {
         PhoneIcon,
-        ChatAltIcon
+        ChatAltIcon,
+        FlagIcon,
+        ReportModal,
     },
 
     data() {
@@ -204,6 +224,17 @@ export default {
 
         searchPropertyUrl() {
             return '/search-property?'+Helpers.serialize({regions: [this.property.region]})
+        },
+
+        reportProperty() {
+
+            if (!this.isUserAuthenticated) {
+
+                this.$emit('showLogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to report this property, or'})
+                return
+            }
+
+            this.$vfm.show('ReportModal')
         }
     }
 }

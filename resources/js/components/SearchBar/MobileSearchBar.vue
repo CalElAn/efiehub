@@ -72,7 +72,7 @@
             <LocationMarkerIcon class="h-6 pl-1 pr-3"/>
         </div> -->
         <Multiselect
-            class="pl-14 pr-2.5 rounded-full flex items-center h-full group focus-within:shadow-xl hover:shadow-lg focus-within:outline-none mobile-multiselect"
+            class="pr-2.5 sm:pr-7 rounded-full flex items-center h-full group focus-within:shadow-xl hover:shadow-lg focus-within:outline-none mobile-multiselect"
             v-model="form.regions"
             mode="multiple"
             valueProp="name"
@@ -83,8 +83,8 @@
             :searchable="false"
             :options="regions" 
             :classes="{
-                container: 'relative mx-auto w-full flex items-center justify-end box-border cursor-pointer rounded-full text-base lg:text-lg xl:text-xl text-center border-0 bg-white text-main-blue leading-snug outline-none',
-                placeholder: 'flex items-center justify-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-14 text-main-blue'
+                container: 'relative mx-auto w-full flex items-center justify-end box-border cursor-pointer rounded-full text-base text-center border-0 bg-white text-main-blue leading-snug outline-none',
+                placeholder: 'flex items-center justify-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug w-3/4 text-main-blue'
             }">
             <template v-slot:multiplelabel="{ values }">
                 <div class="multiselect-multiple-label text-sm">
@@ -112,8 +112,8 @@
                     <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
                         <div class="bg-white pb-7 pt-14 px-12 w-80 relative">
                             <Slider 
-                                :min="0"
-                                :max="500"
+                                :min="form.priceRange?.[0]"
+                                :max="form.priceRange?.[1]"
                                 :format="sliderFormat"
                                 v-model="form.priceRange" 
                             />

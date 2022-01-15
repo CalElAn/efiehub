@@ -16,10 +16,10 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         
         $this->call([
-            PropertyTypeSeeder::class,
-            PropertyFeatureSeeder::class,
-            PropertyTypePropertyFeatureJoinSeeder::class,
-            RegionSeeder::class,
+            PropertyTypesSeeder::class,
+            PropertyFeaturesSeeder::class,
+            PropertyTypesPropertyFeaturesJoinSeeder::class,
+            RegionsSeeder::class,
         ]);
     }
 }

@@ -31,11 +31,6 @@
                     </svg>
                 </button>
             </div>
-            <mobile-search-bar
-                :property-types="{{$propertyTypes}}"
-                :regions = "{{$regions}}"
-                :is-search-bar-in-navbar="false"                      
-            ></mobile-search-bar>
         </div>
     </div>
 </header>
@@ -97,7 +92,7 @@
 </section>
 <section class="mt-20 mx-5 sm:mx-10">
     <p class="font-semibold text-xl sm:text-2xl">
-        Rent in Accra
+        Uploaded properties
     </p>
     <div class="flex flex-col items-center mt-12 gap-16 lg:grid lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-5 xl:gap-20">
         

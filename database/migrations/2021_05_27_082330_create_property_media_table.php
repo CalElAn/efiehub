@@ -25,7 +25,7 @@ class CreatePropertyMediaTable extends Migration
 
             $table->foreign('property_id')
                     ->references('property_id')
-                    ->on('property')
+                    ->on('properties')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');  
         });

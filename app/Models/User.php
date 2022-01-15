@@ -55,11 +55,6 @@ class User extends Authenticatable
         return $this->hasMany(Property::class);
     }
 
-    public function reviews()
-    {
-        return $this->hasMany(PropertyReview::class);
-    }
-
     public function favouriteProperties()
     {
         return $this->hasMany(FavouriteProperty::class, 'user_id', 'id');
@@ -68,6 +63,16 @@ class User extends Authenticatable
     public function articles()
     {
         return $this->hasMany(Article::class);
+    }
+
+    public function reports()
+    {
+        return $this->morphMany(Report::class, 'reportable');
+    }
+
+    public function reviews()
+    {
+        return $this->morphMany(Review::class, 'reviewable');
     }
 
     public function isPropertyFavourited($property_id)

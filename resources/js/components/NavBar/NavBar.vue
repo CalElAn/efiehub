@@ -2,7 +2,7 @@
 <div class="relative w-full">
     <nav ref="navBar"
         id="nav-bar"
-        :class="[isScrollYPastNavBar ? 'bg-white p-3 z-20 rounded-b-md shadow-xl sm:fixed left-0' : 'pt-5 sm:absolute', {'h-36': isSearchBarInNavBar}]"
+        :class="[isScrollYPastNavBar ? 'bg-white p-3 z-20 rounded-b-md shadow-xl sm:fixed left-0' : 'pt-3 sm:absolute', {'h-36': isSearchBarInNavBar}, isInHomepage ? '' : 'border-b pb-2']"
         class="hidden top-0 w-full sm:flex justify-center sm:justify-between sm:px-10 3xl:px-20">
         <a href="/">
             <div class="bg-contain bg-left bg-no-repeat h-8 w-32" style="background-image: url('/images/logo.png');" alt="logo"></div>
@@ -10,13 +10,13 @@
         <!-- Mini Search Bar -->
         <transition name="fade">
         <div
-            v-show="isScrollYPastSearchBar && showMiniSearchBar"
-            class="bg-white rounded-full shadow w-1/4 hover:shadow-lg">
+            v-show="shouldShowMiniSearchBar()"
+            class="bg-white rounded-full shadow hover:shadow-lg">
             <button 
                 @click="onClickMiniSearchBar"
-                class="rounded-full pr-2 pl-2 xl:pl-6 py-1 border border-main-blue bg-white text-main-blue focus:outline-none w-full h-full flex items-center justify-between">
+                class="rounded-full gap-2 px-3 xl:pl-6 py-1 border border-main-blue bg-white text-main-blue focus:outline-none w-full h-full flex items-center justify-between">
                 <div
-                    class="text-xs lg:text-base xl:text-lg flex-grow text-center tracking-wide">Begin your search</div>
+                    class="text-xs lg:text-base flex-grow text-center tracking-wide">Begin your search</div>
                 <search-icon
                     class="text-white p-1 rounded-full w-7 h-7 bg-main-orange hover:bg-opacity-75"/>
             </button>
@@ -69,6 +69,7 @@ export default {
             isScrollYPastNavBar: false,
             showMiniSearchBar: true,
             isSearchBarInNavBar: false,
+            isInHomepage: window.location.pathname === '/'
         }
     }, 
 
@@ -98,8 +99,28 @@ export default {
 
     methods: {
         onClickMiniSearchBar() {
+
+            if (window.location.pathname !== '/' && window.location.pathname !== '/search-property') {
+
+                this.$vfm.show('MobileSearchBarModal')
+                return
+            }
+
             this.showMiniSearchBar=false
         },
+
+        shouldShowMiniSearchBar() {
+
+            if (window.location.pathname !== '/' && window.location.pathname !== '/search-property') {
+                return true
+            }
+
+            return (this.isScrollYPastSearchBar && this.showMiniSearchBar)
+        },
+
+        // isInHomepage() {
+        //     return window.location.pathname === '/'
+        // },
 
         scrollEventListener() { 
             this.showMiniSearchBar = true 

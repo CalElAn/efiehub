@@ -5,17 +5,8 @@ use App\Http\Controllers\DeployController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilePondController;
+use App\Http\Controllers\AnalyticsController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -27,9 +18,13 @@ Route::get('/', [PropertyController::class, 'index']);
 Route::get('/add-property', [PropertyController::class, 'create']);
 Route::post('/add-property', [PropertyController::class, 'store']);
 Route::get('/search-property', [PropertyController::class, 'search']);
-Route::get('/show-property/{property}', [PropertyController::class, 'show']);
+Route::get('/show-property/{property}', [PropertyController::class, 'show'])->name('show-property');
+Route::post('/report-property/{property}', [PropertyController::class, 'report']);
+
 
 Route::post('/favourite-property', [UserController::class, 'favouriteProperty']);
+
+Route::post('/add-analytics', [AnalyticsController::class, 'store']);
 
 Route::post('/filepond/process', [FilePondController::class, 'process']);
 Route::delete('/filepond/revert', [FilePondController::class, 'revert']);

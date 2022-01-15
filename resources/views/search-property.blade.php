@@ -13,7 +13,9 @@
         @@update-properties-and-search-query="updatePropertiesAndSearchQuery"
     ></search-property>
 
-    <vue-progress-bar id="vue-progress-bar" ></vue-progress-bar>
+    <div class="flex justify-end px-6 pt-1 text-xs sm:text-sm font-medium">
+        @{{properties.length}} properties found
+    </div>
 
     <div class="flex flex-col items-center mt-12 gap-16 lg:grid lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-5 xl:gap-20">
 
@@ -33,13 +35,7 @@
 
 @endsection 
 
-<style>
-    #vue-progress-bar {
-        z-index: 10 !important; 
-    }
-</style>
-
 <script type="application/javascript">
-    var properties = @JSON($properties);
-    var searchQuery = @JSON($searchQuery);
+    let properties = @JSON($properties);
+    let searchQuery = @JSON($searchQuery);
 </script>

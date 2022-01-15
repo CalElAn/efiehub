@@ -235,6 +235,7 @@
         </section>
     </div>
 </div>
+<notifications position="top center" />
 </template>
 
 <script>
@@ -362,6 +363,17 @@ export default {
         }
     },
 
+    computed: {
+        enterDefaultValueForPickedFeatures() { //to make sure that default value always exists
+            if( this.property[this.form.type].find(item => item['input_type'] === 'radio') ) {
+
+                this.form.pickedFeatures = 'Unfurnished'
+            } else {
+                this.form.pickedFeatures = ''
+            }
+        }
+    },
+
     emits: ['showLogInModal'],
 
     methods: {
@@ -412,9 +424,9 @@ export default {
             this.form.media.length = 0;
             this.$refs.filepond.getFiles().forEach((value, key) => this.form.media.push(value.serverId))
             
-            if(this.form.media.length == 0)
+            if(this.form.media.length < 5)
             {
-                this.mediaError = 'At least one image is required';
+                this.mediaError = 'At least 5 images are required';
                 return
             }
 
@@ -426,14 +438,20 @@ export default {
                 return
             }
 
+            this.$Progress.start();
+
             axios.post('/add-property', this.form)
                 .then( (response) => {
-                    if( response.status == 200 ) {  
-                        // window.location.replace('/'); //TODO should redirect to show property page
+                    if( response.status == 201 ) {  
+
+                        this.$notify({ type: "success", text: "Property added!" });
+                        this.$Progress.finish();
                         window.location.href = '/show-property/' + response.data.slug
                     }
                 })
                 .catch( (error) => {
+
+                    this.$Progress.fail();
                     console.log(error)
                 })  
         },

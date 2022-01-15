@@ -40,19 +40,6 @@
             </transition>
         </Popover>
 
-        <!-- <div 
-            :class="[isInputFocused ? 'hover:bg-opacity-75 shadow-xl' : '']"
-            class="col-start-2 col-span-2 pl-3 rounded-full flex items-center border border-main-blue h-full group focus-within:shadow-xl hover:shadow-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-main-orange">
-            <input
-                @focus="isInputFocused=true"
-                @blur="isInputFocused=false"
-                :class="[placeSearchBarInNavBar ? ' placeholder-main-blue' : ' placeholder-white']"
-                class="text-sm sm:text-base lg:text-lg xl:text-xl text-left placeholder-opacity-70 border-0 h-full pl-1 pr-0 w-full rounded-full focus:ring-0 focus:outline-none bg-transparent placeholder-main-blue"
-                type="text"
-                placeholder="location">
-            <LocationMarkerIcon class="h-6 pr-1"/>
-        </div> -->
-
         <Multiselect
             class="col-start-2 col-span-2 pl-3 rounded-full flex items-center border border-main-blue h-full group focus-within:shadow-xl hover:shadow-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-main-orange"
             v-model="form.regions"
@@ -61,12 +48,13 @@
             valueProp="name"
             trackBy="name"
             label="name"
-            placeholder="Region"
+            placeholder="All regions"
             :close-on-select="false"
             :searchable="false"
             :options="regions" 
             :classes="{
                 container: 'relative mx-auto w-full flex items-center justify-end box-border cursor-pointer border rounded-full border-main-blue bg-white text-xs sm:text-sm leading-snug outline-none',
+                placeholder: 'multiselect-placeholder min-w-max'
             }">
             <template v-slot:multiplelabel="{ values }">
                 <div class="multiselect-multiple-label">
@@ -154,7 +142,7 @@ export default {
                         if( response.status == 200 ) {  
 
                             this.$emit('updatePropertiesAndSearchQuery', response.data)
-                            window.history.replaceState(null, document.title, 'search-property?'+Helpers.serialize(this.form))
+                            window.history.pushState(null, document.title, 'search-property?'+Helpers.serialize(this.form))
                             this.$Progress.finish();
                         }            
                     })

@@ -115,8 +115,8 @@
                     <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
                         <div class="bg-white pb-7 pt-14 px-12 w-80 relative">
                             <Slider 
-                                :min="0"
-                                :max="500"
+                                :min="form.priceRange?.[0]"
+                                :max="form.priceRange?.[1]"
                                 :format="sliderFormat"
                                 v-model="form.priceRange" 
                             />

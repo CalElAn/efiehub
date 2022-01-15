@@ -9,7 +9,7 @@ class FavouriteProperty extends Model
 {
     use HasFactory;
 
-    protected $table = 'favourite_property';
+    protected $table = 'favourite_properties';
 
     protected $primaryKey = 'favourite_id';
 

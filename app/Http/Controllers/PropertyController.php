@@ -143,7 +143,7 @@ class PropertyController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Search for the specified resources.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -201,7 +201,17 @@ class PropertyController extends Controller
      */
     public function show(Property $property)
     {
-        return view('show-property', ['property' => $property]);
+        $similarProperties = 
+            Property::where([
+                ['region', $property->region],
+                ['type', $property->type]
+            ])
+            ->get()
+            ->reject(function ($value) use ($property) {
+                return $value->slug === $property->slug;
+            });
+
+        return view('show-property', ['property' => $property, 'similarProperties' => $similarProperties]);
     }
 
     /**
@@ -237,4 +247,13 @@ class PropertyController extends Controller
     {
         //
     }
+
+    public function report(Request $request, Property $property)
+    {
+        return $property->reports()->create([
+                    'user_id' => Auth::user()->id,
+                    'body' => $request->body
+                ]);
+    }
+
 }

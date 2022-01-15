@@ -2,15 +2,6 @@
 
 namespace App\Http\Helpers;
 
-use App\Models\User;
-use App\Models\Property;
-use App\Models\PropertyFeature;
-use App\Models\FavouriteProperty;
-use App\Models\PropertyMedia;
-use App\Models\PropertyReview;
-use App\Models\Article;
-use DB;
-
 class HelperMethods
 {  
     static function formatSizeUnits($bytes)

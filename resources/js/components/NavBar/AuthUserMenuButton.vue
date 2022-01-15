@@ -2,7 +2,7 @@
 <Menu as="div" class="relative text-left">
     <div class="flex">
         <MenuButton
-            :class="[isScrollYPastNavBar ? 'border-main-orange text-main-orange' : '', isInMobileNavBar ? 'border-main-orange text-main-orange py-1' : 'border-white text-white h-9']"
+            :class="[isInHomepage && isScrollYPastNavBar ? 'border-main-orange text-main-orange' : '', isInMobileNavBar ? 'border-main-orange text-main-orange py-1' : 'h-9', isInHomepage && !isInMobileNavBar ? 'border-white text-white' : 'border-main-orange text-main-orange']"
             class="inline-flex items-center justify-center w-max px-4 font-semibold border rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 hover:shadow-lg">
             <div 
                 :class="[isInMobileNavBar ? 'h-8 w-8' : 'h-7 w-7']"
@@ -86,6 +86,13 @@ export default {
         MenuItems,
         MenuItem,
         MenuIcon,
+    },
+
+    data() {
+        return {
+            csrfToken: csrfToken,
+            isInHomepage: window.location.pathname === '/'
+        }
     },
 
     props: ['authenticatedUser', 'isInMobileNavBar', 'isScrollYPastNavBar']

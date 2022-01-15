@@ -24,7 +24,7 @@ class PropertyFactory extends Factory
      */
     public function definition()
     {
-        $regionData = DB::table('region')
+        $regionData = DB::table('regions')
                         ->pluck('name')->toArray();
 
 

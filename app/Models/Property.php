@@ -12,11 +12,18 @@ class Property extends Model
     use HasFactory;
     use Sluggable;
 
-    protected $table = 'property';
+    protected $table = 'properties';
 
     protected $guarded = [];
 
     protected $primaryKey = 'property_id';
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['title'];
 
     /**
      * The "booted" method of the model.
@@ -50,6 +57,11 @@ class Property extends Model
         return $this->type . ' in ' . $this->town;
     }
 
+    public function getTitleAttribute()
+    {
+        return "{$this->type} in {$this->town}";
+    }
+
     /**
      * Get the route key for the model.
      *
@@ -62,17 +74,12 @@ class Property extends Model
 
     public function features()
     {
-        return $this->belongsToMany(PropertyFeature::class, 'Property_PropertyFeature_join', 'property_id', 'feature', 'property_id', 'feature')->withPivot('number')->withTimestamps();
+        return $this->belongsToMany(PropertyFeature::class, 'Properties_PropertyFeatures_join', 'property_id', 'feature', 'property_id', 'feature')->withPivot('number')->withTimestamps();
     }
 
     public function media()
     {
         return $this->hasMany(PropertyMedia::class, 'property_id', 'property_id');
-    }
-
-    public function reviews()
-    {
-        return $this->hasMany(PropertyReview::class, 'property_id', 'property_id');
     }
 
     public function propertyType() //changed name from 'type' cos it conflicted with a property on the model
@@ -83,5 +90,15 @@ class Property extends Model
     public function user() 
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function reports()
+    {
+        return $this->morphMany(Report::class, 'reportable');
+    }
+
+    public function reviews()
+    {
+        return $this->morphMany(Review::class, 'reviewable');
     }
 }

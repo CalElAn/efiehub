@@ -39,6 +39,7 @@
         "swiper": "^7.3.3",
         "vue": "^3.2.21",
         "vue-filepond": "^7.0.2",
-        "vue-final-modal": "^3.4.3"
+        "vue-final-modal": "^3.4.3",
+        "vue-social-sharing": "^4.0.0-alpha4"
     }
 }

@@ -8,13 +8,15 @@ import { createApp, defineAsyncComponent } from 'vue';
 import VueFinalModal from 'vue-final-modal'
 import Notifications from '@kyvg/vue3-notification'
 import VueProgressBar from "@aacassandra/vue3-progressbar";
+import VueSocialSharing from 'vue-social-sharing'
 
 import { SearchIcon } from '@heroicons/vue/outline'
 
 import NavBar from './components/NavBar/NavBar.vue';
 import MobileNavBar from './components/NavBar/MobileNavBar.vue';
-import LogInModal from './components/LogInModal.vue';
-import SignUpModal from './components/SignUpModal.vue';
+import LogInModal from './components/Modals/LogInModal.vue';
+import SignUpModal from './components/Modals/SignUpModal.vue';
+import SharePropertyModal from './components/Modals/SharePropertyModal.vue';
 
 window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
@@ -25,6 +27,7 @@ const app =
             MobileNavBar,
             LogInModal,
             SignUpModal,
+            SharePropertyModal,
 
             LargeSearchBar: defineAsyncComponent( () =>
                 import('./components/SearchBar/LargeSearchBar.vue') ),
@@ -111,10 +114,11 @@ app.use(VueFinalModal())
     .use(Notifications)
     .use(VueProgressBar, {
         color: "rgb(143, 255, 199)",
-        thickness: "3px",
-        position: "relative",
+        thickness: "5px",
+        position: "fixed",
         location: "top",
     })
+    .use(VueSocialSharing)
 
 app.mount('#app');
 

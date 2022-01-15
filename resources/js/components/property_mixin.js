@@ -62,7 +62,7 @@ const propertyMixin = {
         },
 
         shareProperty() {
-
+            this.$vfm.show('SharePropertyModal', this.property)
         },
     },
 
@@ -83,12 +83,12 @@ const propertyMixin = {
         numberOfBedroomsAndBathrooms() {
 
             if( this.property?.features?.find(obj => obj.feature == 'Number of bedrooms') 
-                && this.property?.features?.find(obj => obj.feature == 'Number of washrooms') ) {
+                && this.property?.features?.find(obj => obj.feature == 'Number of bathrooms') ) {
 
                 return {
                     exists: true,
                     numberOfBedrooms: this.property?.features?.find(obj => obj.feature == 'Number of bedrooms')?.pivot?.number,
-                    numberOfBathrooms: this.property?.features?.find(obj => obj.feature == 'Number of washrooms')?.pivot?.number
+                    numberOfBathrooms: this.property?.features?.find(obj => obj.feature == 'Number of bathrooms')?.pivot?.number
                 }
             }
 

@@ -37,7 +37,7 @@ const searchBarMixin = {
 
             form: {
                 types: this.searchQuery?.types ?? [],
-                priceRange: this.searchQuery?.priceRange ?? [0, 500],
+                priceRange: this.searchQuery?.priceRange ?? [minPrice, maxPrice],
                 regions: this.searchQuery?.regions ?? [],
                 orderBy: this.searchQuery?.orderBy ?? 'latest',
             },

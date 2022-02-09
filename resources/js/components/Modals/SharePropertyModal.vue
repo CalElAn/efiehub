@@ -80,11 +80,11 @@ export default {
 
     methods: {
         shareNetworkUrl(property) {
-            return `${window.location.href}show-property/${property.slug}`
+            return `${window.location.href}properties/${property.slug}`
         },
 
         onOpenLink(network, url) {
-            axios.post('/add-analytics', {
+            axios.post('/analytics', {
                     event: 'clicked share property button',
                     details: {
                         network: network,

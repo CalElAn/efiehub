@@ -30,9 +30,9 @@ const propertyMixin = {
         LocationMarkerIcon
     },
 
-    props: ['property', 'isUserAuthenticated', 'authenticatedUser'],
+    props: ['property'],
 
-    emits: ['showLogInModal', 'unfavouriteProperty', 'favouriteProperty'],
+    emits: ['showLogInModal', 'unfavouritedProperty', 'favouritedProperty'],
 
     methods: {
         favouriteProperty() {
@@ -43,17 +43,18 @@ const propertyMixin = {
                 return
             }
 
-            axios.post('/favourite-property', { 'propertyId': this.property.property_id,})
+            axios.post(`/properties/${this.property.slug}/favourites`, {})
             .then( (response) => {
                 if( response.status === 200 ) { 
 
-                    this.$emit('unfavouriteProperty', this.property.property_id)
+                    this.$emit('unfavouritedProperty', this.property.property_id)
+                    this.$notify({ type: "warn", text: "Removed from favourites!" });
                 }
 
                 if( response.status === 201 ) { 
 
+                    this.$emit('favouritedProperty', response.data)
                     this.$notify({ type: "success", text: "Added to favourites!" });
-                    this.$emit('favouriteProperty', response.data)
                 }
             })
             .catch( (error) => {
@@ -68,7 +69,7 @@ const propertyMixin = {
 
     computed: {
         isPropertyFavouritedByUser() {
-            return !!( this.authenticatedUser?.favourite_properties?.find( obj => obj.property_id === this.property.property_id) )
+            return !!( this.authenticatedUser?.favourited_properties?.find( obj => obj.property_id === this.property.property_id) )
         },
 
         propertyReviews() {

@@ -9,7 +9,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Property;
 use App\Models\PropertyFeature;
-use App\Models\FavouriteProperty;
+use App\Models\FavouritedProperty;
 use App\Models\PropertyMedia;
 use App\Models\PropertyReview;
 use App\Models\Article;
@@ -40,7 +40,7 @@ class PropertyControllerTest extends TestCase
     //         ->assertSeeInOrder($property->features->pluck('name')->toArray())
     //         ->assertSee($property->reviews->average('rating'))
     //         ->assertSee($property->reviews->count().' reviews')
-    //         ->assertSee($property->rent.' / month')
+    //         ->assertSee($property->price.' / month')
     //     ;
     // }
 
@@ -49,7 +49,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->get('/add-property')->assertStatus(200);
+        $this->get('/properties/create')->assertStatus(200);
 
         Storage::fake('public');
 
@@ -79,8 +79,12 @@ class PropertyControllerTest extends TestCase
                 "Number of bedrooms" => "9",
                 "Number of bathrooms" => "7",
             ],
-            "description" => "Accusamus sint offic",
-            "rent" => "400",
+            "otherFeatures" => [
+                0 => "Other feature 1",
+                1 => "Other feature 2",
+                2 => "other freature 3",
+            ],
+            "price" => "400",
             "negotiable" => true,
             "media" => [ /**location ID of stored media is returned to the frontend, and added as inout when form is submitted */
                 0 => $response1->content(),
@@ -92,7 +96,7 @@ class PropertyControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable */
         $user = User::factory()->create();
-        $this->actingAs($user)->post('/add-property', $input)->assertStatus(201); //means created
+        $this->actingAs($user)->post('/properties', $input)->assertStatus(201); //means created
 
         $this->assertDatabaseHas('properties', [
                                             'user_id' =>$user->id,
@@ -103,8 +107,8 @@ class PropertyControllerTest extends TestCase
                                             'address' => 'Sapiente quis ut et',
                                             'gps_location' => '5.6295424,-0.19005439999999998',
                                             'type' => 'Apartment',
-                                            'description' => "Accusamus sint offic",
-                                            'rent' => "400",
+                                            'other_features' => json_encode($input['otherFeatures']),
+                                            'price' => "400",
                                             'is_rent_negotiable' => true,
                                             'is_advance_negotiable' => false,
                                             'contact_phone_number' => "+1 (891) 437-5757",
@@ -179,7 +183,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->get('/search-property')->assertStatus(200);
+        $this->get('/properties/search')->assertStatus(200);
 
         Property::factory()->create([
             'region' => 'Greater Accra',
@@ -204,7 +208,7 @@ class PropertyControllerTest extends TestCase
             ]
         ];
 
-        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('region')->all();
+        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('region')->all();
 
         $this->assertEquals(3, count($response));
 
@@ -245,7 +249,7 @@ class PropertyControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('type')->all();
+        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('type')->all();
 
         $this->assertEquals(4, count($response));
 
@@ -261,16 +265,16 @@ class PropertyControllerTest extends TestCase
         $this->withoutExceptionHandling();
 
         Property::factory()->create([
-            'rent' => 100,
+            'price' => 100,
         ]);
         Property::factory()->create([
-            'rent' => 150,
+            'price' => 150,
         ]);
         Property::factory()->create([
-            'rent' => 200,
+            'price' => 200,
         ]);
         Property::factory()->create([
-            'rent' => 500,
+            'price' => 500,
         ]);
 
         $searchInput =  [
@@ -283,7 +287,7 @@ class PropertyControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties'];
+        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties'];
 
         // dd($response['properties']);
 
@@ -291,8 +295,8 @@ class PropertyControllerTest extends TestCase
 
         foreach ($response as $value)
         {
-            $this->assertGreaterThanOrEqual(100, $value->rent );
-            $this->assertLessThanOrEqual(250, $value->rent );
+            $this->assertGreaterThanOrEqual(100, $value->price );
+            $this->assertLessThanOrEqual(250, $value->price );
         }
     }
 
@@ -304,32 +308,32 @@ class PropertyControllerTest extends TestCase
         Property::factory()->create([
             'region' => 'Greater Accra',
             'type' => 'Apartment',
-            'rent' => 100,
+            'price' => 100,
         ]);
         Property::factory()->create([
             'region' => 'Ashanti',
             'type' => 'House',
-            'rent' => 200,
+            'price' => 200,
         ]);
         Property::factory()->create([
             'region' => 'Volta',  //region not in search input filter
             'type' => 'House', 
-            'rent' => 200,
+            'price' => 200,
         ]);
         Property::factory()->create([
             'region' => 'Ashanti',
             'type' => 'Single room', //type not in search input filter
-            'rent' => 200,
+            'price' => 200,
         ]);
         Property::factory()->create([
             'region' => 'Greater Accra',
             'type' => 'Apartment',
-            'rent' => 300, //rent above search input filter range
+            'price' => 300, //rent above search input filter range
         ]);
         Property::factory()->create([
             'region' => 'Greater Accra',
             'type' => 'Apartment',
-            'rent' => 99, //rent below search input filter range
+            'price' => 99, //rent below search input filter range
         ]);
 
 
@@ -348,7 +352,7 @@ class PropertyControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties'];
+        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties'];
 
         $this->assertEquals(2, count($response));
 
@@ -365,8 +369,8 @@ class PropertyControllerTest extends TestCase
         
         foreach ($response as $value)
         {
-            $this->assertGreaterThanOrEqual(100, $value->rent );
-            $this->assertLessThanOrEqual(250, $value->rent );
+            $this->assertGreaterThanOrEqual(100, $value->price );
+            $this->assertLessThanOrEqual(250, $value->price );
         }
     }
 
@@ -377,22 +381,22 @@ class PropertyControllerTest extends TestCase
 
         Property::factory()->create([
             'created_at' => '2021-12-18 19:55:21',
-            'rent' => 400,
+            'price' => 400,
         ]);
         Property::factory()->create([
             'created_at' => '2021-12-18 19:50:21',
-            'rent' => 100,
+            'price' => 100,
         ]);
         Property::factory()->create([
             'created_at' => '2021-12-17 19:45:21',
-            'rent' => 300,
+            'price' => 300,
         ]);
 
         $searchInput =  [
             //to check when no order by in request query (should be auto ordered by latest)
         ];
 
-        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('created_at')->all();
+        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('created_at')->all();
 
         $this->assertEquals(3, count($response));
 
@@ -404,7 +408,7 @@ class PropertyControllerTest extends TestCase
             "orderBy" => 'newest',
         ];
 
-        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('created_at')->all();
+        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('created_at')->all();
 
         $this->assertEquals(3, count($response));
 
@@ -416,7 +420,7 @@ class PropertyControllerTest extends TestCase
             "orderBy" => 'priceLowToHigh',
         ];
 
-        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('rent')->all();
+        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('price')->all();
 
         $this->assertEquals(3, count($response));
 
@@ -428,7 +432,7 @@ class PropertyControllerTest extends TestCase
             "orderBy" => 'priceHighToLow',
         ];
 
-        $response = $this->get('/search-property?'.http_build_query($searchInput))['properties']->pluck('rent')->all();
+        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('price')->all();
 
         $this->assertEquals(3, count($response));
 
@@ -447,7 +451,7 @@ class PropertyControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable */
         $user = User::factory()->create();
-        $this->actingAs($user)->post("/report-property/{$property->slug}", $input)->assertStatus(201); 
+        $this->actingAs($user)->post("/properties/{$property->slug}/reports", $input)->assertStatus(201); 
 
         $this->assertDatabaseHas('reports', [
                                             'user_id' =>$user->id,
@@ -455,6 +459,48 @@ class PropertyControllerTest extends TestCase
                                             'reportable_id' => $property->property_id,
                                             'reportable_type' => 'App\Models\Property',
                                         ]);
+    }
+
+    /** @test */
+    public function a_property_can_be_reviewed()
+    {
+        $this->withoutExceptionHandling();
+
+        $input = [
+            'rating' => 3.5,
+            'body' => 'random review string'
+        ];
+
+        $property = Property::factory()->create();
+
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+        $this->actingAs($user)->post("/properties/{$property->slug}/reviews", $input)->assertStatus(201); 
+
+        $this->assertDatabaseHas('reviews', [
+                                            'user_id' =>$user->id,
+                                            'rating' => $input['rating'],
+                                            'review' => $input['body'],
+                                            'reviewable_id' => $property->property_id,
+                                            'reviewable_type' => 'App\Models\Property',
+                                        ]);
+    }
+
+    /** @test */
+    public function a_property_cannot_be_reviewed_more_than_once_by_the_same_user()
+    {
+        $input = [
+            'rating' => 3.5,
+            'body' => 'random review string'
+        ];
+
+        $property = Property::factory()->create();
+
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+        $this->actingAs($user)->post("/properties/{$property->slug}/reviews", $input)->assertStatus(201);
+
+        $this->actingAs($user)->post("/properties/{$property->slug}/reviews", $input)->assertStatus(403); 
     }
 
     public function createAUserWithEverything()
@@ -466,7 +512,7 @@ class PropertyControllerTest extends TestCase
 
         $articleFactory = Article::factory()->count(2);
 
-        $favouritePropertyFactory = FavouriteProperty::factory()->count(2);
+        $favouritedPropertyFactory = FavouritedProperty::factory()->count(2);
 
         $propertyReviewFactory = PropertyReview::factory()->count(2);
 
@@ -483,7 +529,7 @@ class PropertyControllerTest extends TestCase
                                         ->has($propertyMediaFactory, 'media')
                                         ->has($propertyReviewFactory, 'reviews');
         
-        $userFactory = User::factory()->count(1)->has($favouritePropertyFactory, 'favouriteProperties')
+        $userFactory = User::factory()->count(1)->has($favouritedPropertyFactory, 'favouritedProperties')
                                                 ->has($articleFactory, 'articles')
                                                 ->has($propertyFactory, 'properties')
                                                 ->create();

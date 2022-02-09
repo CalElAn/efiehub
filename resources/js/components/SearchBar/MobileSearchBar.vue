@@ -18,7 +18,7 @@
       <XIcon  class="h-5 w-5 text-white"/>
     </button>
 
-    <form action="/search-property" method="GET">
+    <form action="/properties/search" method="GET">
     <div ref="searchBar" class="grid grid-rows-3 gap-4 h-52 mt-2 text-white text-base">
         <!-- Types Popover -->
         <Popover v-slot="{ open }" class="h-full relative hover:bg-opacity-75">

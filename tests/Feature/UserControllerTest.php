@@ -9,7 +9,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Property;
 use App\Models\PropertyFeature;
-use App\Models\FavouriteProperty;
+use App\Models\FavouritedProperty;
 use App\Models\PropertyMedia;
 use App\Models\Article;
 
@@ -29,9 +29,9 @@ class UserControllerTest extends TestCase
 
         $property = Property::factory()->create();
 
-        $this->actingAs($user)->post('/favourite-property', ['propertyId' => $property->property_id]);
+        $this->actingAs($user)->post("/properties/{$property->slug}/favourites", []);
 
-        $this->assertDatabaseHas('favourite_properties', ['user_id' => $user->id, 'property_id' => $property->property_id]);
+        $this->assertDatabaseHas('favourited_properties', ['user_id' => $user->id, 'property_id' => $property->property_id]);
     }
 
     /** @test */
@@ -44,10 +44,36 @@ class UserControllerTest extends TestCase
 
         $property = Property::factory()->create();
 
-        $this->actingAs($user)->post('/favourite-property', ['propertyId' => $property->property_id]);
+        $this->actingAs($user)->post("/properties/{$property->slug}/favourites", []);
 
-        $this->actingAs($user)->post('/favourite-property', ['propertyId' => $property->property_id]);
+        $this->actingAs($user)->post("/properties/{$property->slug}/favourites", []);
 
-        $this->assertDatabaseMissing('favourite_properties', ['user_id' => $user->id, 'property_id' => $property->property_id]);
+        $this->assertDatabaseMissing('favourited_properties', ['user_id' => $user->id, 'property_id' => $property->property_id]);
+    }
+
+    /** @test */
+    public function a_user_can_request_call_back()
+    {
+        $this->withoutExceptionHandling();
+
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+
+        $user2 = User::factory()->create(); 
+
+        $this->actingAs($user)->post(
+            "/users/{$user2->id}/request-call-back", 
+            $input = ['user_id' => $user->id, 'phoneNumber' => '0244233402']
+        );
+
+        $this->assertDatabaseHas(
+            'notifications', 
+            [
+            'type' => 'App\Notifications\CallBackRequested', 
+            'notifiable_type' => 'App\Models\User',
+            'notifiable_id' => $user2->id,
+            'data' => json_encode(['user_id' => $user->id, 'phone_number' => '0244233402'])
+            ]
+        );
     }
 }

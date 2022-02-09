@@ -31,12 +31,12 @@ class UserModelTest extends TestCase
     }
 
     /** @test */
-    public function a_user_has_favourite_properties()
+    public function a_user_has_favourited_properties()
     {
-        $favouriteProperty = \App\Models\FavouriteProperty::factory()->create(['user_id' => $this->user->id]);
+        $favouritedProperty = \App\Models\FavouritedProperty::factory()->create(['user_id' => $this->user->id]);
 
-        $this->assertTrue($this->user->favouriteProperties->contains($favouriteProperty));
-        $this->assertInstanceOf('App\Models\FavouriteProperty', $this->user->favouriteProperties[0]);
+        $this->assertTrue($this->user->favouritedProperties->contains($favouritedProperty));
+        $this->assertInstanceOf('App\Models\FavouritedProperty', $this->user->favouritedProperties[0]);
     }
 
     /** @test */
@@ -44,11 +44,11 @@ class UserModelTest extends TestCase
     {
         $property = \App\Models\Property::factory()->create(['user_id' => $this->user->id]);
 
-        $this->assertFalse($this->user->isPropertyFavourited($property->property_id));
+        $this->assertFalse($this->user->isPropertyFavourited($property));
 
-        \App\Models\FavouriteProperty::factory()->create(['user_id' => $this->user->id, 'property_id' => $property->property_id]);
+        \App\Models\FavouritedProperty::factory()->create(['user_id' => $this->user->id, 'property_id' => $property->property_id]);
 
-        $this->assertTrue($this->user->isPropertyFavourited($property->property_id));
+        $this->assertTrue($this->user->isPropertyFavourited($property));
     }
 
     /** @test */

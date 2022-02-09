@@ -2,10 +2,11 @@
 <div class="relative w-full">
     <nav ref="navBar"
         id="nav-bar"
-        :class="[isScrollYPastNavBar ? 'bg-white p-3 z-20 rounded-b-md shadow-xl sm:fixed left-0' : 'pt-3 sm:absolute', {'h-36': isSearchBarInNavBar}, isInHomepage ? '' : 'border-b pb-2']"
+        :class="[isScrollYPastNavBar ? 'bg-white p-3 z-20 rounded-b-md shadow sm:fixed left-0' : 'pt-3 sm:absolute', {'h-36': isSearchBarInNavBar}, isInHomepage ? '' : 'border-b pb-2']"
         class="hidden top-0 w-full sm:flex justify-center sm:justify-between sm:px-10 3xl:px-20">
-        <a href="/">
-            <div class="bg-contain bg-left bg-no-repeat h-8 w-32" style="background-image: url('/images/logo.png');" alt="logo"></div>
+        <a href="/" :class="{'flex items-center': isInHomepage && !isScrollYPastNavBar}">
+            <div v-if="isInHomepage && !isScrollYPastNavBar" class="bg-contain bg-left bg-no-repeat h-7 w-32 bg-logo" alt="logo"></div>
+            <div v-else class="bg-contain bg-left bg-no-repeat h-8 w-32 bg-logo-blue" alt="logo"></div>
         </a>
         <!-- Mini Search Bar -->
         <transition name="fade">
@@ -24,7 +25,7 @@
         </transition>
 
         <div class="sm:flex gap-3 text-sm sm:text-base">
-            <a href="/add-property"
+            <a href="/properties/create"
                 class="px-5 h-9 flex items-center border rounded-full hover:text-opacity-75 hover:shadow-lg"
                 :class="[isScrollYPastNavBar ? 'border-main-blue bg-white text-main-blue' : 'border-white bg-main-blue text-white']">
                 Add a property
@@ -32,7 +33,6 @@
             <div v-if="isUserAuthenticated"
                 class="text-right">
                 <AuthUserMenuButton
-                    :authenticatedUser="authenticatedUser"
                     :isInMobileNavBar="false"
                     :isScrollYPastNavBar="isScrollYPastNavBar"
                 ></AuthUserMenuButton>
@@ -69,7 +69,6 @@ export default {
             isScrollYPastNavBar: false,
             showMiniSearchBar: true,
             isSearchBarInNavBar: false,
-            isInHomepage: window.location.pathname === '/'
         }
     }, 
 
@@ -89,9 +88,7 @@ export default {
         }
     },
     
-    props: [
-        'authenticatedUser', 
-        'isUserAuthenticated', 
+    props: [ 
         'isScrollYPastSearchBar',
     ],
 
@@ -100,7 +97,7 @@ export default {
     methods: {
         onClickMiniSearchBar() {
 
-            if (window.location.pathname !== '/' && window.location.pathname !== '/search-property') {
+            if (window.location.pathname !== '/' && window.location.pathname !== '/properties/search') {
 
                 this.$vfm.show('MobileSearchBarModal')
                 return
@@ -111,7 +108,7 @@ export default {
 
         shouldShowMiniSearchBar() {
 
-            if (window.location.pathname !== '/' && window.location.pathname !== '/search-property') {
+            if (window.location.pathname !== '/' && window.location.pathname !== '/properties/search') {
                 return true
             }
 

@@ -10,7 +10,7 @@
                 </p>
             </div>
         </button>
-        <a href="/add-property">
+        <a href="/properties/create">
             <div class="flex flex-col items-center">
                 <HomeIcon class="w-5 h-5"/>
                 <p>
@@ -21,7 +21,6 @@
         <div v-if="isUserAuthenticated"
             class="text-right">
             <AuthUserMenuButton
-                :authenticatedUser="authenticatedUser"
                 :isInMobileNavBar="true"
                 :isScrollYPastNavBar="false"
             ></AuthUserMenuButton>
@@ -59,11 +58,6 @@ export default {
         HeartIcon,
         AuthUserMenuButton
     },
-
-    props: [
-        'authenticatedUser', 
-        'isUserAuthenticated', 
-    ],
 
     data () {
         return {

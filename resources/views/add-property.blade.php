@@ -8,8 +8,6 @@
     <add-property
     :property = "{{$property}}"
     :regions = "{{$regions}}"
-    :is-user-authenticated = "isUserAuthenticated"
-    :authenticated-user = "authenticatedUser"
     @@show-log-in-modal = "showLogInModal"
     ></add-property>
 </div>

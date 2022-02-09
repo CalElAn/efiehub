@@ -15,16 +15,16 @@ Route::get('/dashboard', function () {
 Route::post('/deploy', [DeployController::class, 'deploy']);
 
 Route::get('/', [PropertyController::class, 'index']);
-Route::get('/add-property', [PropertyController::class, 'create']);
-Route::post('/add-property', [PropertyController::class, 'store']);
-Route::get('/search-property', [PropertyController::class, 'search']);
-Route::get('/show-property/{property}', [PropertyController::class, 'show'])->name('show-property');
-Route::post('/report-property/{property}', [PropertyController::class, 'report']);
+Route::get('/properties/create', [PropertyController::class, 'create']);
+Route::post('/properties', [PropertyController::class, 'store']);
+Route::get('/properties/search', [PropertyController::class, 'search']);
+Route::get('/properties/{property}', [PropertyController::class, 'show']);
+Route::post('/properties/{property}/reports', [PropertyController::class, 'createReport']);
+Route::post('/properties/{property}/reviews', [PropertyController::class, 'createReview']);
+Route::post('/properties/{property}/favourites', [UserController::class, 'createFavouritedProperty']);
+Route::post('/users/{user}/request-call-back', [UserController::class, 'requestCallBack']);
 
-
-Route::post('/favourite-property', [UserController::class, 'favouriteProperty']);
-
-Route::post('/add-analytics', [AnalyticsController::class, 'store']);
+Route::post('/analytics', [AnalyticsController::class, 'store']);
 
 Route::post('/filepond/process', [FilePondController::class, 'process']);
 Route::delete('/filepond/revert', [FilePondController::class, 'revert']);

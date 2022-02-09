@@ -131,18 +131,18 @@ export default {
 
     methods: {
         searchProperty() {
-            // console.log(Helpers.serialize(this.form))
+            // console.log(this.serialize(this.form))
 
             this.$Progress.start();
 
             this.$nextTick( () => {
-                axios.get('/search-property?' + Helpers.serialize(this.form))
+                axios.get('/properties/search?' + this.serialize(this.form))
                     .then( (response) => {
 
                         if( response.status == 200 ) {  
 
                             this.$emit('updatePropertiesAndSearchQuery', response.data)
-                            window.history.pushState(null, document.title, 'search-property?'+Helpers.serialize(this.form))
+                            window.history.pushState(null, document.title, 'properties/search?'+ this.serialize(this.form))
                             this.$Progress.finish();
                         }            
                     })

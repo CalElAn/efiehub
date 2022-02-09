@@ -32,9 +32,9 @@ class AppServiceProvider extends ServiceProvider
                 ->with('regions', 
                     DB::table('regions')->orderBy('name', 'asc')->get())
                 ->with('minPrice',
-                    DB::table('properties')->min('rent'))
+                    DB::table('properties')->min('price'))
                 ->with('maxPrice',
-                    DB::table('properties')->max('rent'));
+                    DB::table('properties')->max('price'));
         });
     }
 }

@@ -142,14 +142,42 @@
                     </div>
                 </template>
                 <div class="col-span-2 col-start-1">
-                    <label for="description" class="block font-medium text-gray-700">
-                    Other Features
-                    </label>
-                    <div class="mt-1">
-                    <textarea id="description" rows="3" class="shadow-sm focus:ring-indigo-500 text-xs sm:text-sm focus:border-indigo-500 mt-1 block w-full sm border border-gray-300 rounded-md" 
-                        @input="autoGrowTextarea"
-                        v-model="form.description"
-                        placeholder="Add any other features we might have missed"></textarea>
+                    <!-- <div class="flex justify-between items-center"> -->
+                        <label for="description" class="block font-medium text-gray-700">
+                        Other Features
+                        </label>
+                    <!-- </div> -->
+                    <div class="mt-1 flex justify-between items-center gap-3">
+                        <p class="text-gray-500 text-xs">
+                            Add any other features we might have missed
+                        </p>
+                        <button 
+                            @click="form.otherFeatures.push('')"
+                            class="flex items-center gap-0.5 text-indigo-600 hover:bg-indigo-600 hover:text-white border border-indigo-600 rounded-full p-1">
+                            <PlusCircleIcon class="h-5 w-5"/>
+                            Add
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-1.5 mt-2">
+                        <div
+                            v-for="(item, index) in form.otherFeatures"
+                            :key="index"
+                            class="flex gap-2">
+                                <input
+                                    v-model="form.otherFeatures[index]"
+                                    type="text"
+                                    class="text-xs sm:text-sm block w-full p-0.5 px-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <button 
+                                    @click="form.otherFeatures.splice(index, 1)"
+                                    class="flex items-center gap-0.5 text-main-orange hover:border rounded-full hover:border-main-orange p-1 underline text-xs">
+                                    <MinusCircleIcon class="h-4 w-4"/>
+                                    Remove
+                                </button>
+                        </div>
+                        <!-- <textarea id="description" rows="3" class="shadow-sm focus:ring-indigo-500 text-xs sm:text-sm focus:border-indigo-500 mt-1 block w-full sm border border-gray-300 rounded-md" 
+                            @input="autoGrowTextarea"
+                            v-model="form.description"
+                            placeholder="Add any other features we might have missed"></textarea> -->
                     </div>
                 </div>
                 <div class="col-span-2 col-start-1">
@@ -158,9 +186,9 @@
                             class="block font-medium text-gray-700">{{ 'Rent (GH&#8373; / month)' }}
                             <span class="text-red-600">*</span></label>
                         <input type="number" step="any" id="address"
-                            v-model="form.rent"
+                            v-model="form.price"
                             class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                        <span class="text-red-600" v-if="v$.form.rent.$error">{{ v$.form.rent.$errors[0].$message }}
+                        <span class="text-red-600" v-if="v$.form.price.$error">{{ v$.form.price.$errors[0].$message }}
                         </span>
                     </div>
                     <div class="col-span-1 col-start-1 inline-flex items-center mt-2">
@@ -187,14 +215,16 @@
             <div>
                 <div class="text-xl mb-3">Upload photos</div>
                 <div>
-                    <!-- <label class="block font-medium text-gray-700">
-                        Upload photos or videos
-                    </label> -->
+                    <label class="block text-gray-700">
+                        Upload 5 to 15 photos
+                    </label>
                     <file-pond
                         name="filepond"
                         ref="filepond"
                         label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
                         allow-multiple="true"
+                        max-files="15"
+                        itemInsertLocation="after"
                         allow-reorder="true"
                         :accepted-file-types="['image/*']"
                         :server = "{
@@ -267,6 +297,7 @@ const FilePond = vueFilePond(
 import useVuelidate from '@vuelidate/core';
 import { required, email, numeric } from '@vuelidate/validators';
 
+import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/outline'
 
 export default {
     setup() {
@@ -299,8 +330,9 @@ export default {
                 checkedFeatures: [],
                 pickedFeatures: '',
                 inputFeatures: {},
-                description: '',
-                rent: '',
+                otherFeatures: [],
+                // description: '',
+                price: '',
                 negotiable: false, //lalter check when submitted if I need to change true/false value to 0 or 1
                 media: [],
             }
@@ -308,7 +340,9 @@ export default {
     },
 
     components: {
-      FilePond
+      FilePond,
+      PlusCircleIcon,
+      MinusCircleIcon,
     },
 
     validations() {
@@ -343,7 +377,7 @@ export default {
                     required,
                     $autoDirty: true
                 },
-                rent: {
+                price: {
                     required,
                     $autoDirty: true,
                     numeric
@@ -352,12 +386,12 @@ export default {
         };
     },
 
-    props: ['property', 'regions', 'isUserAuthenticated', 'authenticatedUser'],
+    props: ['property', 'regions'],
 
     watch: {
         isUserAuthenticated(newValue, oldValue) {
             if (newValue == true && this.triggerSubmitAfterLogin == true) {
-                console.log('triggerSubmit')
+                
                 this.submitForm()
             }
         }
@@ -411,7 +445,7 @@ export default {
             this.form.checkedFeatures.length = 0;
             this.form.pickedFeatures = '';
             this.form.inputFeatures = {};
-        }, 
+        },
 
         autoGrowTextarea(element) {
             element.target.style.height = "";
@@ -440,13 +474,13 @@ export default {
 
             this.$Progress.start();
 
-            axios.post('/add-property', this.form)
+            axios.post('/properties', this.form)
                 .then( (response) => {
-                    if( response.status == 201 ) {  
+                    if( response.status === 201 ) {  
 
                         this.$notify({ type: "success", text: "Property added!" });
                         this.$Progress.finish();
-                        window.location.href = '/show-property/' + response.data.slug
+                        window.location.href = '/properties/' + response.data.slug
                     }
                 })
                 .catch( (error) => {

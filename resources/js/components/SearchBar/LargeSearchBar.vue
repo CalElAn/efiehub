@@ -1,5 +1,5 @@
 <template>
-    <form action="/search-property" method="GET">
+    <form action="/properties/search" method="GET">
     <!-- <transition name="fade"> -->
     <div
         ref="searchBar"

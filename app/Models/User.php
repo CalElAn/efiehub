@@ -32,6 +32,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        // 'id',
     ];
 
     /**
@@ -48,16 +49,16 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $with = ['favouriteProperties'];
+    protected $with = ['favouritedProperties'];
 
     public function properties()
     {
         return $this->hasMany(Property::class);
     }
 
-    public function favouriteProperties()
+    public function favouritedProperties()
     {
-        return $this->hasMany(FavouriteProperty::class, 'user_id', 'id');
+        return $this->hasMany(FavouritedProperty::class, 'user_id', 'id');
     }
 
     public function articles()
@@ -75,8 +76,8 @@ class User extends Authenticatable
         return $this->morphMany(Review::class, 'reviewable');
     }
 
-    public function isPropertyFavourited($property_id)
+    public function isPropertyFavourited($property)
     {
-        return $this->favouriteProperties()->where('property_id', $property_id)->get()->isNotEmpty();
+        return $this->favouritedProperties()->where('property_id', $property->property_id)->get()->isNotEmpty();
     }
 }

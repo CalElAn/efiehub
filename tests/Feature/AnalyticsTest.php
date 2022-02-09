@@ -24,7 +24,7 @@ class AnalyticsTest extends TestCase
             ]
         ];
 
-        $response = $this->post('/add-analytics', $input);
+        $response = $this->post('/analytics', $input);
 
         $response->assertStatus(200);
 

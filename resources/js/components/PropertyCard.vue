@@ -1,6 +1,6 @@
 <template>
 <div
-    class="cursor-pointer rounded-3xl sm:rounded-main-card shadow-2xl transform hover:scale-105 relative flex flex-col bg-main-blue h-96 w-64 sm:w-96">
+    class="cursor-pointer rounded-3xl sm:rounded-main-card transform hover:scale-105 relative flex flex-col bg-main-blue h-96 w-64 sm:w-96">
     <div class="absolute top-3 right-6 z-10 text-white flex flex-col gap-3">
         <button @click="favouriteProperty">
             <HeartIcon class="h-6 w-6" :class="{'text-main-orange': isPropertyFavouritedByUser}"/>
@@ -34,7 +34,7 @@
 
     <div class="h-1/3 flex flex-col text-white text-xs sm:text-sm justify-around gap-2 p-4">
         <div>
-            <a :href="'/show-property/' + property.slug">
+            <a :href="'/properties/' + property.slug">
                 <p class="font-medium text-sm sm:text-base tracking-wide hover:underline">
                     {{property?.title}}
                 </p>
@@ -60,7 +60,7 @@
                 {{propertyReviews.average}} <span class="hidden sm:inline">({{propertyReviews.count}} reviews)</span>
             </div>
             <div v-else></div>
-            <p> GH&#8373; {{property?.rent}} / month </p>
+            <p> GH&#8373; {{property?.price}} / month </p>
         </div>
     </div>
 </div>

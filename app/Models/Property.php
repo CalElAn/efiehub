@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Support\Facades\Auth;
 
 class Property extends Model
 {
@@ -19,23 +20,43 @@ class Property extends Model
     protected $primaryKey = 'property_id';
 
     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        // 'property_id',
+        // 'user_id',
+    ];
+
+
+    /**
      * The accessors to append to the model's array form.
      *
      * @var array
      */
-    protected $appends = ['title'];
+    protected $appends = [
+        'title', 
+        'is_property_favourited_by_the_authenticated_user', 
+        'is_property_reviewed_by_the_authenticated_user',
+    ];
 
     /**
-     * The "booted" method of the model.
+     * The attributes that should be cast.
      *
-     * @return void
+     * @var array
      */
-    protected static function booted()
-    {
-        static::addGlobalScope('withRelationships', function (Builder $builder) {
-            $builder->with(['features', 'media', 'reviews', 'propertyType', 'user']);
-        });
-    }
+    protected $casts = [
+        'other_features' => 'array',
+    ];
+
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['features', 'media', 'reviews', 'propertyType', 'user'];
+
 
     /**
      * Return the sluggable configuration array for this model.
@@ -61,6 +82,35 @@ class Property extends Model
     {
         return "{$this->type} in {$this->town}";
     }
+
+    /**
+     * Determine if the property is favourited by the currently authenticated user 
+     *
+     * @return bool
+     */
+    public function getIsPropertyFavouritedByTheAuthenticatedUserAttribute()
+    {
+        if (Auth::check()) 
+        {   
+            /** @var \App\Models\User */
+            $user = Auth::user(); 
+
+            return $user->isPropertyFavourited($this);
+        }
+
+        return false;
+    }
+  
+    public function getIsPropertyReviewedByTheAuthenticatedUserAttribute()
+    {
+        if (Auth::check()) 
+        {
+            return $this->reviews()->where('user_id', Auth::user()->id)->get()->isNotEmpty();
+        }
+
+        return false;
+    }
+
 
     /**
      * Get the route key for the model.

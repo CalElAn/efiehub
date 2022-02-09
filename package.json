@@ -23,9 +23,12 @@
     },
     "dependencies": {
         "@aacassandra/vue3-progressbar": "^1.0.3",
+        "@googlemaps/js-api-loader": "^1.13.5",
         "@headlessui/vue": "^1.4.2",
         "@heroicons/vue": "^1.0.5",
         "@kyvg/vue3-notification": "^2.3.4",
+        "@sentry/tracing": "^6.17.4",
+        "@sentry/vue": "^6.17.4",
         "@vueform/multiselect": "^2.3.1",
         "@vueform/slider": "^2.0.5",
         "@vuelidate/core": "*",
@@ -37,9 +40,12 @@
         "sass": "^1.45.0",
         "sass-loader": "^12.4.0",
         "swiper": "^7.3.3",
+        "v-pagination-3": "^0.1.7",
         "vue": "^3.2.21",
         "vue-filepond": "^7.0.2",
         "vue-final-modal": "^3.4.3",
-        "vue-social-sharing": "^4.0.0-alpha4"
+        "vue-social-sharing": "^4.0.0-alpha4",
+        "vue-star-rating": "^2.1.0",
+        "vue3-google-map": "^0.8.3"
     }
 }

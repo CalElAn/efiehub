@@ -24,8 +24,8 @@ class CreatePropertiesTable extends Migration
             $table->text('address');
             $table->string('gps_location')->unique()->nullable();
             $table->string('type')->nullable(); //nullable because of the foreign key relationship (on delete set null)
-            $table->text('description')->nullable();
-            $table->integer('rent');
+            $table->json('other_features')->nullable();
+            $table->decimal('price');
             $table->boolean('is_rent_negotiable')->default(0);
             $table->integer('advance')->nullable();
             $table->boolean('is_advance_negotiable')->default(0);

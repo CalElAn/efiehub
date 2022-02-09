@@ -44,48 +44,48 @@
         Explore other locations
     </p>
     <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-5 mt-5 gap-8">
+        <a href="/properties/search?region='Greater Accra'" class="flex gap-2.5">
+            <img src="images/accra.png" alt="accra" class="rounded-3xl w-16 h-16">
+            <div class="flex flex-col justify-center gap-1">
+                <p class="font-medium text-base sm:text-lg">
+                    Greater Accra Region
+                </p>
+                {{-- <p class="text-gray-700 text-sm sm:text-base">
+                    Greater Accra Region
+                </p> --}}
+            </div>
+        </a>
+        <a href="/properties/search?region='Ashanti'" class="flex gap-2.5">
+            <img src="images/kumasi.png" alt="accra" class="rounded-3xl w-16 h-16">
+            <div class="flex flex-col justify-center gap-1">
+                <p class="font-medium text-base sm:text-lg">
+                    Ashanti Region
+                </p>
+                {{-- <p class="text-gray-700 text-sm sm:text-base">
+                    Ashanti Region
+                </p> --}}
+            </div>
+        </a>
+        <a href="/properties/search?region='Northern'" class="flex gap-2.5">
+            <img src="images/tamale.png" alt="accra" class="rounded-3xl w-16 h-16">
+            <div class="flex flex-col justify-center gap-1">
+                <p class="font-medium text-base sm:text-lg">
+                    Northern Region 
+                </p>
+                {{-- <p class="text-gray-700 text-sm sm:text-base">
+                    Northern Region
+                </p> --}}
+            </div>
+        </a>
         <div class="flex gap-2.5">
             <img src="images/accra.png" alt="accra" class="rounded-3xl w-16 h-16">
             <div class="flex flex-col justify-center gap-1">
                 <p class="font-medium text-base sm:text-lg">
-                    Accra
+                    Volta Region
                 </p>
-                <p class="text-gray-700 text-sm sm:text-base">
-                    Greater Accra Region
-                </p>
-            </div>
-        </div>
-        <div class="flex gap-2.5">
-            <img src="images/kumasi.png" alt="accra" class="rounded-3xl w-16 h-16">
-            <div class="flex flex-col justify-center gap-1">
-                <p class="font-medium text-base sm:text-lg">
-                    Kumasi
-                </p>
-                <p class="text-gray-700 text-sm sm:text-base">
+                {{-- <p class="text-gray-700 text-sm sm:text-base">
                     Ashanti Region
-                </p>
-            </div>
-        </div>
-        <div class="flex gap-2.5">
-            <img src="images/tamale.png" alt="accra" class="rounded-3xl w-16 h-16">
-            <div class="flex flex-col justify-center gap-1">
-                <p class="font-medium text-base sm:text-lg">
-                    Tamale
-                </p>
-                <p class="text-gray-700 text-sm sm:text-base">
-                    Northern Region
-                </p>
-            </div>
-        </div>
-        <div class="flex gap-2.5">
-            <img src="images/kumasi.png" alt="accra" class="rounded-3xl w-16 h-16">
-            <div class="flex flex-col justify-center gap-1">
-                <p class="font-medium text-base sm:text-lg">
-                    Kumasi
-                </p>
-                <p class="text-gray-700 text-sm sm:text-base">
-                    Ashanti Region
-                </p>
+                </p> --}}
             </div>
         </div>
     </div>
@@ -94,22 +94,29 @@
     <p class="font-semibold text-xl sm:text-2xl">
         Uploaded properties
     </p>
-    <div class="flex flex-col items-center mt-12 gap-16 lg:grid lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-5 xl:gap-20">
-        
-        @isset($properties)
-        @foreach($properties as $property)
+    <div class="flex flex-col items-center mt-12 mb-10 gap-16 lg:grid lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-5 xl:gap-20">
+
         <property-card
-            :property="{{$property}}"
-            :is-user-authenticated = "isUserAuthenticated"
-            :authenticated-user = "authenticatedUser"
-            @@show-log-in-modal = "showLogInModal"
-            @@unfavourite-property = "onUnfavouriteProperty"
-            @@favourite-property = "onFavouriteProperty"
+        v-for="(item, index) in paginatedProperties.data"
+        :key="index"
+        :property="item"
+        @@show-log-in-modal = "showLogInModal"
+        @@unfavourited-property = "onUnfavouritedProperty"
+        @@favourited-property = "onFavouritedProperty"
         ></property-card>
-        @endforeach
-        @endisset
+
 
     </div>
+    
+    {{-- {{ $paginatedProperties->links() }} --}}
+
+    <pagination 
+        v-model="page" 
+        :records="paginatedProperties.total" 
+        :per-page="paginatedProperties.per_page" 
+        @paginate="getPaginatedProperties"    
+        :options="paginationOptions"   
+    />
 </section>
 <section class="mt-16 mx-5 sm:mx-10">
     <p class="font-semibold text-xl sm:text-2xl mx-5 text-center">
@@ -163,3 +170,7 @@
     </div>
 </section>
 @endsection
+
+<script type="application/javascript">
+    let paginatedProperties = @JSON($paginatedProperties);
+</script>

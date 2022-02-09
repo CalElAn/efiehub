@@ -15,7 +15,7 @@ use Illuminate\Filesystem\Filesystem;
 use DB;
 
 use App\Http\Helpers\HelperMethods;
-
+use Illuminate\Database\Eloquent\Collection;
 use Intervention\Image\ImageManagerStatic as Image;
 
 class PropertyController extends Controller
@@ -25,11 +25,23 @@ class PropertyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('home', [
-                            'properties' => Property::latest()->get(),
-                            ]);
+        $response = ['paginatedProperties' => Property::latest()->paginate(5)->withPath('/')];
+
+        if($request->ajax())
+        {
+            return response($response, 200);
+        }
+
+        return view('home', $response);
+    }
+
+    public function paginateProperties($propertyQuery = null, $itemsPerPage = 5, Request $request = null)
+    {
+        if( !is_null($request) && $request->path() === 'properties/search' ) $itemsPerPage = 10;
+        
+        return (is_null($propertyQuery) ? Property::latest() : $propertyQuery)->paginate($itemsPerPage)->withPath('/properties/paginate');
     }
 
     /**
@@ -68,7 +80,7 @@ class PropertyController extends Controller
             'contactPhoneNumber' => 'required',
             'contactEmail' => 'required|email',
             'type' => 'required',//add check for exists|type,type, write tests for validation, show failed validation errors in vue form
-            'rent' => 'required|numeric',
+            'price' => 'required|numeric',
         ]);
 
         $property = Property::create([
@@ -81,8 +93,8 @@ class PropertyController extends Controller
             'contact_phone_number' => $request->contactPhoneNumber,
             'contact_email' => $request->contactEmail,
             'type' => $request->type,
-            'rent' => $request->rent,
-            'description' => $request->description,
+            'price' => $request->price,
+            'other_features' => $request->otherFeatures,
             'is_rent_negotiable' => $request->negotiable, //test what happens in database when negotiable os not ticked
         ]);
 
@@ -151,38 +163,41 @@ class PropertyController extends Controller
     public function search(Request $request)
     {
         // dd($request->input());
-        $properties = Property::query();
+        $propertyQuery = Property::query();
 
         if(!empty($request->regions))
         {
-            $properties->whereIn('region', $request->regions);
+            $propertyQuery->whereIn('region', $request->regions);
         }
 
         if(!empty($request->types))
         {
-            $properties->whereIn('type', $request->types);
+            $propertyQuery->whereIn('type', $request->types);
         }
 
         if(!empty($request->priceRange))
         {
-            $properties->whereBetween('rent', $request->priceRange);
+            $propertyQuery->whereBetween('price', $request->priceRange);
         }
 
         switch ($request->orderBy) {
             case  'priceLowToHigh':
-                $properties->orderBy('rent', 'asc');
+                $propertyQuery->orderBy('price', 'asc');
                 break;
             
             case  'priceHighToLow':
-                $properties->orderBy('rent', 'desc');
+                $propertyQuery->orderBy('price', 'desc');
                 break;
             
             default:
-                $properties->latest();
+                $propertyQuery->latest();
                 break;
         }
 
-        $response = ['properties' => $properties->get(), 'searchQuery' => $request->except('_token')];
+        /** @var Illuminate\Pagination\LengthAwarePaginator */
+        $paginatedPropertyQuery = $propertyQuery->paginate(10);
+
+        $response = ['paginatedProperties' => $paginatedPropertyQuery->withPath('/properties/search'), 'searchQuery' => $request->except('_token')];
 
         if($request->ajax())
         {
@@ -199,19 +214,25 @@ class PropertyController extends Controller
      * @param  \App\Models\Property  $property
      * @return \Illuminate\Http\Response
      */
-    public function show(Property $property)
+    public function show(Property $property, Request $request)
     {
-        $similarProperties = 
+        $paginatedSimilarProperties = 
             Property::where([
                 ['region', $property->region],
-                ['type', $property->type]
+                ['type', $property->type],
+                ['slug', '!=', $property->slug], //for some reason using !== instead of == displays no records at all
             ])
-            ->get()
-            ->reject(function ($value) use ($property) {
-                return $value->slug === $property->slug;
-            });
+            ->paginate(10)
+            ->withPath("/properties/{$property->slug}");
 
-        return view('show-property', ['property' => $property, 'similarProperties' => $similarProperties]);
+        $response = ['property' => $property, 'paginatedProperties' => $paginatedSimilarProperties];
+
+        if($request->ajax())
+        {
+            return response($response, 200);
+        }
+
+        return view('show-property', $response);
     }
 
     /**
@@ -248,12 +269,35 @@ class PropertyController extends Controller
         //
     }
 
-    public function report(Request $request, Property $property)
+    public function createReport(Request $request, Property $property)
     {
+        $request->validate([
+            'body' => 'required'
+        ]);
+
         return $property->reports()->create([
                     'user_id' => Auth::user()->id,
                     'body' => $request->body
                 ]);
+    }
+
+    public function createReview(Request $request, Property $property)
+    {
+        abort_if($property->is_property_reviewed_by_the_authenticated_user, 403);
+
+        $request->validate([
+            'rating' => 'required|numeric|min:0|max:5',
+        ]);
+
+        return response(
+                $property->reviews()->create([
+                    'user_id' => Auth::user()->id,
+                    'rating' => $request->rating,
+                    'review' => $request->body,
+                ])
+                ->fresh()
+                ,201
+            );
     }
 
 }

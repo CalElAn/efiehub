@@ -2,19 +2,19 @@
 
 namespace Database\Factories;
 
-use App\Models\FavouriteProperty;
+use App\Models\FavouritedProperty;
 use App\Models\User;
 use App\Models\Property;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class FavouritePropertyFactory extends Factory
+class FavouritedPropertyFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = FavouriteProperty::class;
+    protected $model = FavouritedProperty::class;
 
     /**
      * Define the model's default state.

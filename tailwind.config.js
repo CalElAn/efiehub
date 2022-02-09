@@ -44,6 +44,8 @@ module.exports = {
             backgroundImage: {
                 'become-an-agent': "url('/images/become-an-agent.png')",
                 'become-an-agent-2x': "url('/images/become-an-agent-2x.png')",
+                'logo': "url('/images/logo.png')",
+                'logo-blue': "url('/images/logo-blue.png')",
             },
             inset: {
                 '0.1': '10%',

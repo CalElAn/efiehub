@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Property;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use DB;
 
 class PropertyModelTest extends TestCase
@@ -76,6 +78,36 @@ class PropertyModelTest extends TestCase
         $this->assertInstanceOf('App\Models\Property', $review->reviewable);
         $this->assertTrue($this->property->reviews->contains($review));
         $this->assertInstanceOf('App\Models\Review', $this->property->reviews[0]);
+    }
+    
+    /** @test */
+    public function a_property_knows_if_it_has_been_favourited_by_the_authenticated_user()
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+        
+        Auth::login($user);
+
+        $this->assertFalse($this->property->is_property_favourited_by_the_authenticated_user);
+
+        $this->actingAs($user)->post("/properties/{$this->property->slug}/favourites", []);
+
+        $this->assertTrue($this->property->is_property_favourited_by_the_authenticated_user);
+    }
+    
+    /** @test */
+    public function a_property_knows_if_it_has_been_reviewed_by_the_authenticated_user()
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+        
+        Auth::login($user);
+
+        $this->assertFalse($this->property->is_property_reviewed_by_the_authenticated_user);
+
+        $this->actingAs($user)->post("/properties/{$this->property->slug}/reviews", ['rating' => 3.5, 'body' => 'random review string']);
+
+        $this->assertTrue($this->property->is_property_reviewed_by_the_authenticated_user);
     }
 }
 

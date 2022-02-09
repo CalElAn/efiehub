@@ -2,14 +2,21 @@
 <Menu as="div" class="relative text-left">
     <div class="flex">
         <MenuButton
+            v-slot="{ open }"
             :class="[isInHomepage && isScrollYPastNavBar ? 'border-main-orange text-main-orange' : '', isInMobileNavBar ? 'border-main-orange text-main-orange py-1' : 'h-9', isInHomepage && !isInMobileNavBar ? 'border-white text-white' : 'border-main-orange text-main-orange']"
             class="inline-flex items-center justify-center w-max px-4 font-semibold border rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 hover:shadow-lg">
             <div 
                 :class="[isInMobileNavBar ? 'h-8 w-8' : 'h-7 w-7']"
                 class="bg-contain bg-center bg-no-repeat -ml-2 rounded-full" 
-                :style="{'background-image': 'url('+(authenticatedUser.profile_picture_path ? 'https://ui-avatars.com/api/?size=25&rounded=true&bold=true&name='+authenticatedUser.name : 'https://ui-avatars.com/api/?size=50&rounded=true&name='+authenticatedUser.name)+')'}" alt="logo">
+                :style="{'background-image': 'url(' + authenticatedUser.profile_picture_path + ')'}" alt="profile picture">
             </div> 
-            <MenuIcon class="w-5 h-5 ml-2 -mr-1"
+            <XIcon
+                v-if="open" 
+                class="w-5 h-5 ml-2 -mr-1"
+                aria-hidden="true" />
+            <MenuIcon 
+                v-else
+                class="w-5 h-5 ml-2 -mr-1"
                 aria-hidden="true" />
         </MenuButton>
     </div>
@@ -76,7 +83,7 @@
 <script>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
-import { MenuIcon } from '@heroicons/vue/solid'
+import { MenuIcon, XIcon } from '@heroicons/vue/solid'
 
 export default {
 
@@ -86,6 +93,7 @@ export default {
         MenuItems,
         MenuItem,
         MenuIcon,
+        XIcon,
     },
 
     data() {
@@ -95,7 +103,7 @@ export default {
         }
     },
 
-    props: ['authenticatedUser', 'isInMobileNavBar', 'isScrollYPastNavBar']
+    props: ['isInMobileNavBar', 'isScrollYPastNavBar']
 
 }
 </script>

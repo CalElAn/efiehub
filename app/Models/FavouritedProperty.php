@@ -15,6 +15,10 @@ class FavouritedProperty extends Model
 
     protected $guarded = [];
 
-    protected $hidden = ['user_id'];
+    // protected $hidden = ['user_id'];
 
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id', 'property_id');
+    }
 }

@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import searchBarMixin from "./SearchBar/search_bar_mixin.js"
+import searchBarMixin from "../SearchBar/search_bar_mixin.js"
 
 import { AdjustmentsIcon } from '@heroicons/vue/solid'
 
@@ -162,7 +162,7 @@ export default {
 </script>
 
 <style>
-    @import "./SearchBar/search_bar_styles.css";
+    @import "../SearchBar/search_bar_styles.css";
 
     .multiselect-clear-icon {
         --ms-clear-color: #4568ED;

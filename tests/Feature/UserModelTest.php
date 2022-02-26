@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Auth;
 
 class UserModelTest extends TestCase
 {
@@ -49,6 +50,35 @@ class UserModelTest extends TestCase
         \App\Models\FavouritedProperty::factory()->create(['user_id' => $this->user->id, 'property_id' => $property->property_id]);
 
         $this->assertTrue($this->user->isPropertyFavourited($property));
+    }
+
+        /** @test */
+    public function a_user_knows_if_it_has_been_reviewed_by_the_authenticated_user()
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+        
+        Auth::login($user);
+
+        $this->assertFalse($this->user->is_user_reviewed_by_the_authenticated_user);
+
+        $this->actingAs($user)->post("/users/{$this->user->id}/reviews", ['rating' => 3.5, 'body' => 'random review string']);
+
+        $this->assertTrue($this->user->is_user_reviewed_by_the_authenticated_user);
+    }
+
+    /** @test */
+    public function a_user_knows_if_it_is_the_authenticated_user()
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $userToAuthenticate = User::factory()->create();
+        
+        Auth::login($userToAuthenticate);
+
+        $otherUser = User::factory()->create();
+
+        $this->assertFalse($otherUser->is_user_the_authenticated_user);
+        $this->assertTrue($userToAuthenticate->is_user_the_authenticated_user);
     }
 
     /** @test */

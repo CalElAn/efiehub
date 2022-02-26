@@ -13,7 +13,21 @@
     </ul>
 </div>
 <div class="flex justify-center items-center h-3/4">
-    <div class="rounded-2xl border text-xs sm:text-sm bg-white p-6" :class="[animation, step == 3 ? 'w-11/12 md:w-1/2' : '']">
+    <div class="rounded-2xl border shadow-md text-xs sm:text-sm bg-white p-6" :class="[animation, step == 3 ? 'w-11/12 md:w-1/2' : '']">
+        <button
+            v-if="mode==='edit'"
+            @click="deleteProperty" 
+            class="flex gap-1 items-center mx-auto mb-3 border border-red-600 text-red-600 p-2 rounded-lg hover:underline hover:bg-gray-100">
+            <!-- <svg class="w-4 h-4 text-main-orange" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <path fill="currentColor" d="M212.333 224.333H12c-6.627 0-12-5.373-12-12V12C0 5.373 5.373 0 12 0h48c6.627 0 12 5.373 12 12v78.112C117.773 
+                39.279 184.26 7.47 258.175 8.007c136.906.994 246.448 111.623 246.157 248.532C504.041 393.258 393.12 504 256.333 504c-64.089 
+                0-122.496-24.313-166.51-64.215-5.099-4.622-5.334-12.554-.467-17.42l33.967-33.967c4.474-4.474 11.662-4.717 16.401-.525C170.76 
+                415.336 211.58 432 256.333 432c97.268 0 176-78.716 176-176 0-97.267-78.716-176-176-176-58.496 0-110.28 28.476-142.274 
+                72.333h98.274c6.627 0 12 5.373 12 12v48c0 6.627-5.373 12-12 12z"/>
+            </svg> -->
+            <TrashIcon class="w-4 h-4 text-red-600"/>
+            Delete
+        </button>
         <!-- Details -->
         <section v-show="step == 1">
             <div class="text-xl mb-3">Property Details</div>
@@ -60,8 +74,8 @@
                             class="block w-full mt-1 rounded-t-md sm:rounded-l-md sm:rounded-r-none border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
                         <button
                             @click="getLocation"
-                            class="py-0.5 sm:py-0 bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 border sm:mt-1 border-gray-300 border-b-0 sm:border-l-0 inline-flex justify-center items-center px-3 rounded-b-md sm:rounded-r-md  sm:rounded-l-none sm:w-2/3 shadow-sm text-gray-500 font-medium">
-                            Click to add location
+                            class="text-xs py-0.5 sm:py-0 bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 border sm:mt-1 border-gray-300 border-b-0 sm:border-l-0 inline-flex justify-center items-center px-2 rounded-b-md sm:rounded-r-md  sm:rounded-l-none sm:w-2/3 shadow-sm text-gray-500 font-medium">
+                            Click to use current location
                         </button>
                         <span class="text-red-600" v-if="gpsLocationError">{{ gpsLocationError }}
                         </span>
@@ -95,7 +109,7 @@
         <!-- Features -->
         <section v-show="step == 2">
             <div class="text-xl mb-3">Property Features</div>
-            <div class="grid gap-6" :class="[property[form.type]?.[0] ? 'grid-cols-2' : 'grid-cols-1']">
+            <div class="grid gap-6" :class="[propertyTypesAndFeatures[form.type]?.[0] ? 'grid-cols-2' : 'grid-cols-1']">
                 <div class="col-span-2">
                     <label for="type" class="block font-medium text-gray-700">Type <span
                             class="text-red-600">*</span></label>
@@ -105,7 +119,7 @@
                         id="type"
                         class="block w-full mt-1 text-xs sm:text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                         <option value="">-- Select property type --</option>
-                        <option v-for="(item, index) in property" :key="index" 
+                        <option v-for="(item, index) in propertyTypesAndFeatures" :key="index" 
                             :value="index">
                             {{ index }}
                         </option>
@@ -113,8 +127,7 @@
                     <span class="text-red-600" v-if="v$.form.type.$error">{{ v$.form.type.$errors[0].$message }}
                     </span>
                 </div>
-                <!-- <div v-if="property[form.type]?.[0]" class="col-span-1"></div> -->
-                <template v-for="(item, index) in property[form.type]" :key="index">
+                <template v-for="(item, index) in propertyTypesAndFeatures[form.type]" :key="index">
                     <div v-if="item['input_type'] == 'number'" class="col-span-1">
                         <label for="address" class="block font-medium text-gray-700">{{ item['feature'] }}</label>
                         <input type="number"
@@ -122,7 +135,7 @@
                             class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
                     </div>
                 </template>
-                <template v-for="(item, index) in property[form.type]" :key="index">
+                <template v-for="(item, index) in propertyTypesAndFeatures[form.type]" :key="index">
                     <div v-if="item['input_type'] == 'checkbox'" class="col-span-1 flex items-center">
                         <input type="checkbox"
                             v-model="form.checkedFeatures"
@@ -131,12 +144,12 @@
                         <span class="ml-2">{{ item['feature'] }}</span>
                     </div>
                 </template>
-                <template v-for="(item, index) in property[form.type]" :key="index">
+                <template v-for="(item, index) in propertyTypesAndFeatures[form.type]" :key="index">
                     <div v-if="item['input_type'] == 'radio'" class="col-span-1 flex items-center">
                         <input  type="radio"
                             v-model="form.pickedFeatures"
                             :value="item['feature']"
-                            :checked="item.feature == 'Unfurnished'"
+                            
                             class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"> 
                        <span class="ml-2">{{ item['feature'] }}</span>
                     </div>
@@ -226,6 +239,7 @@
                         max-files="15"
                         itemInsertLocation="after"
                         allow-reorder="true"
+                        :files="filepondInitialMedia"
                         :accepted-file-types="['image/*']"
                         :server = "{
                             url: '/filepond',
@@ -234,6 +248,7 @@
                             restore: '/restore',
                             load: '/load',
                             fetch: '/fetch',
+                            remove: handleFilePondRemove,
                             headers: {
                                 'X-CSRF-TOKEN': csrfToken
                             }
@@ -250,6 +265,9 @@
                         <li v-for="error of v$.form.$errors" :key="error.$uid">{{ error.$message +' on "'+ error.$property +'"'  }}</li>
                     </ul>
                 </div>
+                <label class="block text-xs lg:text-sm text-gray-700">
+                    (Wait for photos to finish uploading before clicking submit)
+                </label>                
                 <div class="mt-7 col-span-2 flex justify-between">
                     <button @click="previousStep"
                         class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -257,7 +275,7 @@
                     </button>
                     <button
                         @click="submitForm"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        class="disabled:opacity-40 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Submit
                     </button>
                 </div>
@@ -297,7 +315,7 @@ const FilePond = vueFilePond(
 import useVuelidate from '@vuelidate/core';
 import { required, email, numeric } from '@vuelidate/validators';
 
-import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/outline'
+import { PlusCircleIcon, MinusCircleIcon, TrashIcon } from '@heroicons/vue/outline'
 
 export default {
     setup() {
@@ -318,22 +336,23 @@ export default {
 
             triggerSubmitAfterLogin: false,
 
+            filepondInitialMedia: [],
+
             form: {
-                region: '',
-                city: '',
-                town: '',
-                address: '',
-                gpsLocation: '',
-                contactPhoneNumber: this.authenticatedUser?.phone_number,
-                contactEmail: this.authenticatedUser?.email,
-                type: '',
-                checkedFeatures: [],
-                pickedFeatures: '',
-                inputFeatures: {},
-                otherFeatures: [],
-                // description: '',
-                price: '',
-                negotiable: false, //lalter check when submitted if I need to change true/false value to 0 or 1
+                region: this.property.region,
+                city: this.property.city,
+                town: this.property.town,
+                address: this.property.address,
+                gpsLocation: this.property.gps_location,
+                contactPhoneNumber: this.mode === 'create' ? this.authenticatedUser?.phone_number : this.property.contact_phone_number,
+                contactEmail: this.mode === 'create' ? this.authenticatedUser?.email : this.property.contact_email,
+                type: this.property.type ?? '',
+                checkedFeatures: this.mode === 'create' ? [] : this.property.features.filter(obj => obj.input_type === 'checkbox')?.map(obj => obj.feature),
+                pickedFeatures: this.mode === 'create' ? 'Furnished' : this.property.features.find(obj => obj.input_type === 'radio')?.feature,
+                inputFeatures: this.mode === 'create' ? {} : this.property.features.filter(obj => obj.input_type === 'number')?.reduce((obj, key) => ({ ...obj, [key.feature]: key.pivot.number }), {}),
+                otherFeatures: this.mode === 'create' ? [] : this.property.other_features,
+                price: this.property.price,
+                negotiable: this.mode === 'create' ? false : this.property.is_rent_negotiable, //later check when submitted if I need to change true/false value to 0 or 1
                 media: [],
             }
         };
@@ -343,6 +362,7 @@ export default {
       FilePond,
       PlusCircleIcon,
       MinusCircleIcon,
+      TrashIcon,
     },
 
     validations() {
@@ -386,7 +406,9 @@ export default {
         };
     },
 
-    props: ['property', 'regions'],
+    inject: ['isUserAuthenticated', 'authenticatedUser'],
+
+    props: ['property', 'propertyTypesAndFeatures', 'regions', 'mode'],
 
     watch: {
         isUserAuthenticated(newValue, oldValue) {
@@ -399,16 +421,21 @@ export default {
 
     computed: {
         enterDefaultValueForPickedFeatures() { //to make sure that default value always exists
-            if( this.property[this.form.type].find(item => item['input_type'] === 'radio') ) {
+
+            if(this.mode === 'edit') return 
+
+            if( this.propertyTypesAndFeatures[this.form.type].find(item => item['input_type'] === 'radio') ) {
 
                 this.form.pickedFeatures = 'Unfurnished'
             } else {
                 this.form.pickedFeatures = ''
             }
+        },
+
+        filepondInitialMediaSourceArray() {
+            return this.filepondInitialMedia.map(obj => obj.source)
         }
     },
-
-    emits: ['showLogInModal'],
 
     methods: {
         nextStep() {
@@ -427,6 +454,75 @@ export default {
                 this.animation = 'card-slide-in-from-left';
                 this.step--;
             }, 300);
+        },
+
+        handleFilePondRemove(source, load, error) {
+            this.$swal.fire({
+                title: 'Delete picture?',
+                text: "You won't be able to undo this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4568ED',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    axios.delete(`/filepond/remove${source}`)
+                        .then( (response) => {
+                            if( response.status === 200 && response.data === 1 ) {
+                                _.remove(this.filepondInitialMedia, value => value.source === source)  
+                                this.$swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted',
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                })
+                                load()
+                            }
+                        })
+                        .catch( (axiosError) => {
+                            error('Server error, could not delete');
+                            console.log(axiosError)
+                        })  
+                }
+            })
+        },
+
+        deleteProperty() {
+            this.$swal.fire({
+                title: 'Delete property?',
+                text: "You won't be able to undo this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4568ED',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    axios.delete(`/properties/${this.property.slug}`)
+                        .then( (response) => {
+                            if( response.status === 200 ) {
+                                this.$swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted',
+                                    showConfirmButton: false,
+                                    timer: 500
+                                })
+                                window.location.href = '/users/'+this.authenticatedUser.id
+                            }
+                        })
+                        .catch( (axiosError) => {
+                            error('Server error, could not delete');
+                            console.log(axiosError)
+                        })  
+                }
+            })
+        },
+
+        undoChanges() {
+            location.reload()
         },
 
         getLocation() {
@@ -456,10 +552,12 @@ export default {
             this.v$.$touch()
 
             this.form.media.length = 0;
-            this.$refs.filepond.getFiles().forEach((value, key) => this.form.media.push(value.serverId))
+            this.$refs.filepond.getFiles()
+                .forEach((value, key) => {
+                    if( !this.filepondInitialMediaSourceArray.includes(value.source) ) this.form.media.push(value.serverId)
+                }); 
             
-            if(this.form.media.length < 5)
-            {
+            if(this.form.media.length + this.filepondInitialMedia.length < 5) {
                 this.mediaError = 'At least 5 images are required';
                 return
             }
@@ -468,23 +566,26 @@ export default {
 
             if (!this.isUserAuthenticated) {
                 this.triggerSubmitAfterLogin = true
-                this.$emit('showLogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to complete the submission, or'})
+                this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to complete the submission, or'})
                 return
             }
 
             this.$Progress.start();
 
-            axios.post('/properties', this.form)
+            axios[this.mode === 'edit' ? 'patch' : 'post']
+                (this.mode === 'edit' ? `/properties/${this.property.slug}` : '/properties', this.form)
                 .then( (response) => {
-                    if( response.status === 201 ) {  
-
-                        this.$notify({ type: "success", text: "Property added!" });
+                    if( response.status === 201 || 200 ) {  
+                        this.toast.fire({
+                            icon: 'success',
+                            position: 'center',
+                            title: this.mode === 'edit' ? "Saved!" : "Property added!"
+                        })
                         this.$Progress.finish();
                         window.location.href = '/properties/' + response.data.slug
                     }
                 })
                 .catch( (error) => {
-
                     this.$Progress.fail();
                     console.log(error)
                 })  
@@ -503,11 +604,13 @@ export default {
 
         onFilePondProcessFile() {
             this.mediaError = '';
-        }
+        },
     },
 
     mounted() {
         setInterval(this.keepTokenAlive, 1000 * 60 * 60); // every 60 mins 
+
+        if(this.mode === 'edit') this.filepondInitialMedia = this.property.media.map(obj => ({source: '/' + obj.property_media_id, options: {type: 'local'}}))
     },
 }
 </script>

@@ -70,7 +70,7 @@ export default {
 
     data: () => ({
         showReportOrReviewModal: false,
-        mode: 'report', //initially set to 'report' so v-model on textarea works when initialized
+        mode: 'report', //initially set to 'report' so v-model on textarea works when initialized, its set by "beforeOpen" event
         form: {
             report: {
                 body: '',
@@ -88,9 +88,19 @@ export default {
         XIcon
     },
 
-    props: ['slug'],
+    props: ['slug', 'model'],
 
     emits: ['reviewedProperty'],
+
+    computed: {
+        getUrl() {
+            return ({
+                'Property': 'properties',
+                'User': 'users',
+            })
+            [this.model]
+        }
+    },
 
     methods: {
         beforeOpen(event) {
@@ -98,26 +108,33 @@ export default {
         },
 
         onSubmit() {
-            axios.post(`/properties/${this.slug}/${this.mode}s`, this.form[this.mode])
+            axios.post(`/${this.getUrl}/${this.slug}/${this.mode}s`, this.form[this.mode])
             .then( (response) => {
-
                 if( response.status === 201 ) {  
-
                     if(this.mode === 'review') this.$emit('reviewedProperty', response.data)
 
                     this.showReportOrReviewModal = false; 
-                    this.$notify({ type: "success", text: `Property ${this.mode}ed!` });
+
+                    this.toast.fire({
+                        icon: 'success',
+                        position: 'bottom-end',
+                        title: `${this.mode} submitted!`
+                    })
                 }
             })
-            .catch( (error) => {console.log(error, error.response.status)
-
+            .catch( (error) => {
                 if( error.response.status === 403 ) {  
 
                     this.showReportOrReviewModal = false; 
 
-                    if(this.mode === 'review') this.$notify({ type: "warn", text: `Cannot review a property more than once` });
+                    if(this.mode === 'review') { 
+                        this.toast.fire({
+                            icon: 'error',
+                            position: 'bottom-end',
+                            title: `Cannot review a ${this.model} more than once` 
+                        })
+                    }
                 }
-
             })
         },
     },

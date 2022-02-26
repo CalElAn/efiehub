@@ -1,5 +1,20 @@
 <template>
     <div class="text-sm md:text-base">
+        <div
+            v-if="property.user_id === authenticatedUser?.id" 
+            class="class mb-2 gap-4 flex justify-end">
+            <!-- hidden till after launch -->
+            <!-- <button class="flex gap-1 items-center border border-main-blue text-main-blue p-2 rounded-lg hover:underline hover:bg-gray-100">
+                <EyeOffIcon class="w-5 h-5 text-main-orange"/>
+                Mark as unavailable
+            </button> -->
+            <a 
+                 class="flex gap-1 items-center border border-main-blue text-main-blue p-2 rounded-lg hover:underline hover:bg-gray-100"
+                :href="`/properties/${property.slug}/edit`">
+                <PencilAltIcon class="w-5 h-5 text-main-orange"/>
+                Edit
+            </a>
+        </div>
         <swiper
             :style="{
                 '--swiper-navigation-color': '#fff',
@@ -74,7 +89,7 @@
                 {{property.title}}
             </p>
             <div class="flex justify-between sm:justify-start">
-                <div class="flex sm:hidden items-center gap-1">
+                <div class="flex sm:hidden text-xs sm:text-sm md:text-base items-center gap-1">
                     <StarIcon class="h-4 sm:h-5 w-4 sm:w-5 text-main-orange"/>
                     {{propertyReviews.average}} <span>({{propertyReviews.count}} reviews)</span>
                 </div>
@@ -87,7 +102,7 @@
                     </button>
                     <button
                         :class="[isPropertyFavouritedByUser ? 'bg-main-orange text-white' : 'underline']"
-                        class="flex items-center gap-1 sm:gap-2 p-1 sm:p-2 rounded-xl hover:border hover:shadow-md"
+                        class="flex items-center gap-0.5 text-xs sm:text-sm md:text-base sm:gap-2 p-1 sm:p-2 rounded-xl hover:border hover:shadow-md"
                         @click="favouriteProperty">
                         <HeartIcon
                             :class="[isPropertyFavouritedByUser ? '' : 'text-main-blue']"
@@ -156,63 +171,11 @@
                 </div>          
             </div>
             <div class="w-full h-full sm:w-1/4 text-sm lg:text-base">
-                <div class="flex flex-col gap-4 shadow sm:shadow-lg rounded-lg p-3 py-7 border">
-                    <div>
-                        <span class="font-semibold text-base lg:text-lg">GH&#8373; {{property.price}}</span> / month
-                    </div>
-                    <div class="flex items-center justify-center gap-2">
-                        <div class="bg-contain bg-center bg-no-repeat h-8 w-8 rounded-full"
-                            :style="{'background-image': 'url('+(property.user.profile_picture_path ? 'https://ui-avatars.com/api/?size=50&rounded=true&bold=true&name='+property.user.name : 'https://ui-avatars.com/api/?size=50&rounded=true&name='+property.user.name)+')'}" alt="profile picture">
-                        </div>
-                        <p>{{property.user.name}}</p>
-                    </div>
-                    <button class="flex items-center justify-center gap-2 bg-main-orange bg-opacity-95 hover:bg-white text-white hover:text-main-orange hover:border hover:border-main-orange p-2 rounded-lg">
-                        <PhoneIcon class="h-5 w-5 md:h-4 md:w-4"/> Show contact
-                    </button>
-                    <button class="flex items-center justify-center gap-2 border border-main-orange text-main-orange hover:text-white bg-white hover:bg-main-orange bg-opacity-95 p-1 rounded-lg">
-                        <ChatAltIcon class="h-5 w-5 md:h-4 md:w-4"/> Chat
-                    </button>
-                    <button
-                        v-show="!requestCallBackToggle"
-                        :disabled="authenticatedUser?.id === property.user_id"
-                        @click="requestCallBackToggle = true"
-                        style="text-decoration-color: #4568ED;"
-                        class="rounded-xl underline hover:border hover:shadow-md p-2 md:p-1">
-                        Request call back
-                    </button>
-                    <div 
-                        v-show="requestCallBackToggle"
-                        class="flex text-xs">
-                        <form
-                            @submit.prevent="requestCallBack"
-                            class="w-full flex flex-col xl:flex-row gap-1">
-                            <input
-                                required
-                                v-model="phoneNumberForRequestCallback"
-                                type="text"
-                                placeholder="enter phone number"
-                                class="text-xs block w-full xl:w-3/5 rounded-md border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
-                            <div class="flex gap-1 xl:w-2/5">
-                                <button
-                                    type="submit"
-                                    class="flex w-1/2 xl:w-1/2 py-1 xl:py-0 justify-center items-center border border-transparent shadow-sm rounded-md xl:rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    request
-                                </button>
-                                <button
-                                    @click="requestCallBackToggle = false"
-                                    type="button"
-                                    class="flex w-1/2 xl:w-1/2 py-1 xl:py-0 justify-center items-center border border-transparent shadow-sm rounded-md xl:rounded-lg text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                    cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <div class="flex justify-center items-center gap-1 text-xs">
-                        <StarIcon class="h-4 lg:h-5 w-4 lg:w-5 text-main-orange"/>
-                        {{'0'}}<span>({{'0'}} agent reviews)</span>
-                    </div>
-                </div>
+                <UserCard
+                    :user="property.user"
+                    :property="property"
+                    :showFullCard="false"
+                />
                 <button 
                     @click="reportProperty"
                     class="flex underline gap-2 mt-6 text-gray-600">
@@ -239,105 +202,45 @@
             </p>
         </section> 
         <section class="mt-12">
-            <div class="flex flex-col sm:flex-row gap-3">
-                <p class="flex gap-1 items-center font-semibold text-lg sm:text-xl">
-                    <StarIcon class="h-6 sm:h-6 w-6 sm:w-6 text-main-orange"/>
-                    {{propertyReviews.average}}
-                    <span>({{propertyReviews.count}} {{(propertyReviews.count > 1 || propertyReviews.count === 0) ? 'reviews' : 'review'}})</span>
-                </p>
-                <button
-                    v-if="!property.is_property_reviewed_by_the_authenticated_user"
-                    @click="reviewProperty"
-                    class="flex items-center justify-center gap-0.5 w-1/2 sm:w-auto mx-auto sm:mx-0 text-indigo-600 hover:bg-indigo-600 hover:text-white border border-indigo-600 rounded-full py-1 px-2">
-                    <PlusCircleIcon class="h-5 w-5"/>
-                    Add review
-                </button>
-            </div>
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mt-6">
-                <div 
-                    v-for="(item, index) in reviewsToDisplay"
-                    :key="index"
-                    class="flex flex-col gap-2 h-44 overflow-auto">
-                    <div class="flex flex-col justify-center gap-2 h-2/5">
-                        <div class="flex items-center gap-2">
-                            <div
-                                class="bg-contain bg-center bg-no-repeat rounded-full h-8 w-8"
-                                :style="{'background-image': 'url('+ item.user.profile_picture_path +')'}"
-                                alt="profile picture">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <p class="font-medium">
-                                    {{item.user.name}}
-                                </p>
-                                <p class="text-sm text-gray-600">
-                                    {{item.updated_at}}
-                                </p>
-                            </div>
-                        </div>
-                        <star-rating
-                            v-model:rating="item.rating"
-                            :round-start-rating="true"
-                            :clearable="true"
-                            :inline="true"
-                            :read-only="true"
-                            :increment="0.5"
-                            :star-size="15"
-                            :padding="2"
-                            active-color="#FF5B1A"
-                            :show-rating="false"
-                        >
-                        </star-rating>
-                    </div>
-                    <p class="overflow-auto">
-                        {{item.review}}
-                    </p>
-                </div>
-            </div>
-            <button
-                v-if="reviewsWithReview.length > 5" 
-                @click="showAllReviews = !showAllReviews"
-                class="border border-black p-2 rounded-md hover:underline hover:bg-gray-100">
-                Show {{showAllReviews ? 'less' : 'more reviews'}}
-            </button>
+            <Reviews
+                :initialReviewsData="property.reviews"
+                :hasAuthUserReviewed="property.is_property_reviewed_by_the_authenticated_user"
+                :model="'Property'"
+                :slug="property.slug"
+            />
         </section>
     </div>
-    <report-or-review-modal 
-        :slug="property.slug"
-        @reviewedProperty="onReviewedProperty"
-    >
-    </report-or-review-modal>
 </template>
 
 <script>
 
-import StarRating from 'vue-star-rating'
 import { GoogleMap, Marker } from 'vue3-google-map'
 
 import propertyMixin from "./property_mixin.js";
-import ReportOrReviewModal from './Modals/ReportOrReviewModal.vue'
+import UserCard from '../User/Card.vue'
+import Reviews from '../Reviews.vue'
 
-import { PhoneIcon, FlagIcon } from '@heroicons/vue/solid'
-import { ChatAltIcon, PlusCircleIcon } from '@heroicons/vue/outline'
+import { FlagIcon, EyeOffIcon } from '@heroicons/vue/solid'
+import { PencilAltIcon } from '@heroicons/vue/outline'
 
 export default {
 
     components: {
-        StarRating,
-        PhoneIcon,
-        ChatAltIcon,
-        FlagIcon,
-        ReportOrReviewModal,
-        PlusCircleIcon,
         GoogleMap, 
         Marker,
+
+        UserCard,
+        Reviews,
+
+        FlagIcon,
+        EyeOffIcon,
+        PencilAltIcon,
     },
 
     data() {
         return {
             thumbsSwiper: null,
             propertyReviewsData: this.property.reviews,
-            phoneNumberForRequestCallback: this.authenticatedUser?.phone_number,
-            requestCallBackToggle: false,
             gpsLocationArray: this.property.gps_location?.split(','), 
             showAllReviews: false,
         }
@@ -346,14 +249,6 @@ export default {
     mixins: [propertyMixin],
 
     computed: {
-        reviewsWithReview() {
-            return this.propertyReviewsData.filter(obj => obj.review !== null)
-        },
-
-        reviewsToDisplay() {
-            return this.showAllReviews ? this.reviewsWithReview : this.reviewsWithReview.slice(0, 5)
-        },
-
         mapCenter() {
             return { lat: parseFloat(this.gpsLocationArray?.[0]), lng: parseFloat(this.gpsLocationArray?.[1]) }
         }
@@ -372,52 +267,12 @@ export default {
 
             if (!this.isUserAuthenticated) {
 
-                this.$emit('showLogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to report this property, or'})
+                this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to report this property, or'})
                 return
             }
 
             this.$vfm.show('ReportOrReviewModal', {mode: 'report'})
         },
-
-        requestCallBack() {
-            
-            if (!this.isUserAuthenticated) {
-
-                this.$emit('showLogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to request a call back, or'})
-                return
-            }  
-
-            if (!this.phoneNumberForRequestCallback) return
-
-            axios.post(`/users/${this.property.user_id}/request-call-back`, {phoneNumber: this.phoneNumberForRequestCallback})
-                .then( (response) => {
-                    if( response.status === 200 ) { 
-
-                        this.$notify({ type: "success", text: "Callback requested!" });
-
-                        this.requestCallBackToggle = false;
-                    }
-                })
-                .catch( (error) => {
-                    console.log(error)
-            })  
-        },
-
-        reviewProperty() {
-
-            if (!this.isUserAuthenticated) {
-
-                this.$emit('showLogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to review this property, or'})
-                return
-            }
-
-            this.$vfm.show('ReportOrReviewModal', {mode: 'review'})
-        },
-
-        onReviewedProperty(reviewData) {
-
-            this.propertyReviewsData.unshift(reviewData)
-        }
     },
 }
 </script>

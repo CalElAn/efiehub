@@ -25,7 +25,7 @@
                 :isScrollYPastNavBar="false"
             ></AuthUserMenuButton>
         </div>    
-        <button v-if="!isUserAuthenticated" @click="$emit('showSignUpModal')">
+        <button v-if="!isUserAuthenticated" @click="$vfm.show('SignUpModal')"> 
             <div class="flex flex-col items-center">
                 <UserAddIcon class="w-5 h-5"/>
                 <p>
@@ -33,7 +33,7 @@
                 </p>
             </div>
         </button>
-        <button v-if="!isUserAuthenticated" @click="$emit('showLogInModal')">
+        <button v-if="!isUserAuthenticated" @click="$vfm.show('LogInModal')">
             <div class="flex flex-col items-center">
                 <UserCircleIcon class="w-5 h-5"/>
                 <p>
@@ -58,6 +58,9 @@ export default {
         HeartIcon,
         AuthUserMenuButton
     },
+
+    inject: ['isUserAuthenticated'],
+
 
     data () {
         return {

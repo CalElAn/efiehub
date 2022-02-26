@@ -22,7 +22,7 @@ class CreatePropertiesTable extends Migration
             $table->string('city');
             $table->string('town');
             $table->text('address');
-            $table->string('gps_location')->unique()->nullable();
+            $table->string('gps_location')->nullable();
             $table->string('type')->nullable(); //nullable because of the foreign key relationship (on delete set null)
             $table->json('other_features')->nullable();
             $table->decimal('price');

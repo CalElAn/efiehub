@@ -20,6 +20,65 @@ class UserControllerTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+    public function a_user_can_be_shown()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->get("/users/{$user->id}");
+
+        $response->assertStatus(200);
+        $response->assertViewHasAll([
+            'user' => $user->load('reviews'),
+            'paginatedProperties' => $user->getPaginatedProperties(url()->current().'?category=paginatedProperties'),
+            'reviews' => $user->reviews,
+            'paginatedFavouritedProperties' => $user->getPaginatedFavouritedProperties(url()->current().'?category=paginatedFavouritedProperties'),
+            'notifications' => $user->notifications,
+        ]);
+    }
+
+    /** @test */
+    public function the_page_to_edit_a_user_can_be_shown()
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get("/users/{$user->id}/edit");
+        $response->assertStatus(200); 
+        $response->assertViewHasAll([
+            'user' => $user
+        ]);
+
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $userWhoIsNotAuthenticated = User::factory()->create();
+        $this->actingAs($userWhoIsNotAuthenticated)->get("/users/{$user->id}/edit")->assertStatus(403);
+    }
+    
+    /** @test */
+    public function a_user_can_be_updated()
+    {
+        $this->withoutExceptionHandling();
+
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+
+        $input = [
+            'name' => 'changed name',
+            'email' => 'email@changed.com',
+            'phone_number' => 'changed phone_number',           
+        ];
+
+        $response = $this->actingAs($user)->patch("/users/{$user->id}", $input);
+
+        $response->assertRedirect("/users/{$user->id}");
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'changed name',
+            'email' => 'email@changed.com',
+            'phone_number' => 'changed phone_number',           
+        ]);
+    }
+
+    /** @test */
     public function a_user_can_favourite_a_property()
     {
         $this->withoutExceptionHandling();
@@ -76,4 +135,30 @@ class UserControllerTest extends TestCase
             ]
         );
     }
+
+    /** @test */
+    public function a_user_can_be_reviewed()
+    {
+        $input = [
+            'rating' => 3.5,
+            'body' => 'random review string'
+        ];
+
+        $userToBeReviewed = User::factory()->create();
+
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $userToMakeTheReview = User::factory()->create();
+        $this->actingAs($userToMakeTheReview)->post("/users/{$userToBeReviewed->id}/reviews", $input)->assertStatus(201);
+
+        $this->assertDatabaseHas('reviews', [
+                                            'user_id' =>$userToMakeTheReview->id,
+                                            'rating' => $input['rating'],
+                                            'review' => $input['body'],
+                                            'reviewable_id' => $userToBeReviewed->id,
+                                            'reviewable_type' => 'App\Models\User',
+                                        ]);
+
+        $this->actingAs($userToMakeTheReview)->post("/users/{$userToBeReviewed->id}/reviews", $input)->assertStatus(403); 
+    }
+
 }

@@ -73,6 +73,7 @@ class PropertyTypesToFeaturesMap
         'House' => [
             'Number of bedrooms',
             'Number of bathrooms',
+            'Self contained',
             'Porch / Balcony',
             'Kitchen',
             'Dining room',

@@ -18,20 +18,23 @@
 </head>
 <noscript>
     <strong>We're sorry but this page doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-</noscript>  
-<body class="font-Poppins lg:px-5 2xl:px-10">
+</noscript> 
+<body class="font-Poppins container sm:px-3 2xl:px-10">
     <div id="app" class="min-h-screen flex flex-col justify-between">
-        <div class="sm:hidden bg-main-blue border-main-blue h-2"></div>
+        <div 
+            class="sm:hidden bg-main-blue border-main-blue h-2"
+            :class="{'hidden': !isInHomepage}"
+        ></div>
         <a
             :class="[isInHomepage ? 'bg-logo bg-main-blue' : 'bg-logo-blue mt-3']"
-            class="sm:hidden bg-contain bg-center bg-no-repeat h-7 block w-full" alt="logo"
+            class="sm:hidden bg-contain bg-center bg-no-repeat h-7 block w-full" 
+            href="/"
+            alt="logo"
         ></a>        
         <nav-bar
             :is-scroll-y-past-search-bar = "isScrollYPastSearchBar"
             @@place-search-bar-in-nav-bar="placeSearchBarInNavBar=true"
             @@remove-search-bar-from-nav-bar="placeSearchBarInNavBar=false"
-            @@show-log-in-modal = "showLogInModal"
-            @@show-sign-up-modal="showSignUpModal"
         ></nav-bar>
         <vue-progress-bar id="vue-progress-bar" ></vue-progress-bar>
         <div>    
@@ -39,8 +42,6 @@
         </div>
         <mobile-nav-bar
             @@show-mobile-search-bar = "showMobileSearchBarModal"
-            @@show-log-in-modal = "showLogInModal"
-            @@show-sign-up-modal="showSignUpModal"
         ></mobile-nav-bar>
         <footer class="p-5 text-base sm:text-lg">
             <hr class="my-5">
@@ -51,7 +52,7 @@
             </div>
             <hr class="my-5">
             <div class="flex justify-center items-center gap-12">
-                <span>&copy; efiehub</span>
+                <span class="flex flex-shrink-0">&copy; efiehub</span>
                 <div class="flex gap-3 justify-center items-center">
                     <a href="#" class="text-gray-500 hover:text-gray-900">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -86,15 +87,10 @@
         <share-property-modal></share-property-modal>
 
         <log-in-modal
-            :show-welcome-text="showWelcomeText"
-            :welcome-text="welcomeText"
-            @@show-sign-up-modal="showSignUpModal"
             @@user-has-been-authenticated="onUserHasBeenAuthenticated"
-            @@closed-log-in-modal = "showWelcomeText = false"
         ></log-in-modal>
 
         <sign-up-modal
-            @@show-log-in-modal="showLogInModal"
             @@user-has-been-authenticated="onUserHasBeenAuthenticated"
         ></sign-up-modal>
 

@@ -2,7 +2,7 @@ require('./bootstrap');
 
 import app_mixin from './app_mixin';
 
-import { createApp, defineAsyncComponent, markRaw } from 'vue';
+import { createApp, defineAsyncComponent, markRaw, computed } from 'vue';
 
 import * as Sentry from "@sentry/vue";
 import { BrowserTracing } from "@sentry/tracing";
@@ -11,6 +11,8 @@ import Notifications from '@kyvg/vue3-notification' //types are success, warn, e
 import VueProgressBar from "@aacassandra/vue3-progressbar";
 import VueSocialSharing from 'vue-social-sharing'
 import Pagination from 'v-pagination-3';
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 import { SearchIcon } from '@heroicons/vue/outline'
 
@@ -22,6 +24,8 @@ import SharePropertyModal from './components/Modals/SharePropertyModal.vue';
 import CustomPagination from './components/CustomPagination.vue'
 
 window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content') //move to mixin
+
+import '../css/swal_styles.css';
 
 const app = 
     createApp({
@@ -37,13 +41,19 @@ const app =
             MobileSearchBar: defineAsyncComponent( () =>
                 import('./components/SearchBar/MobileSearchBar.vue') ),
             PropertyCard: defineAsyncComponent( () =>
-                import('./components/PropertyCard.vue') ),
-            AddProperty: defineAsyncComponent( () =>
-                import('./components/AddProperty.vue') ),
+                import('./components/Property/Card.vue') ),
+            CreateOrEditProperty: defineAsyncComponent( () =>
+                import('./components/Property/CreateOrEdit.vue') ),
             SearchProperty: defineAsyncComponent( () =>
-                import('./components/SearchProperty.vue') ),
+                import('./components/Property/Search.vue') ),
             ShowProperty: defineAsyncComponent( () =>
-                import('./components/ShowProperty.vue') ),
+                import('./components/Property/Show.vue') ),
+            PaginatedProperties: defineAsyncComponent( () =>
+                import('./components/Property/PaginatedProperties.vue') ),
+            UserCard: defineAsyncComponent( () =>
+                import('./components/User/Card.vue') ),
+            UserProfileNavBar: defineAsyncComponent( () =>
+                import('./components/User/ProfileNavBar.vue') ),
         },
 
         data() {
@@ -52,11 +62,11 @@ const app =
                 isScrollYPastMainHeader: false,
                 placeSearchBarInNavBar: false,
 
-                showWelcomeText: false,
-                welcomeText: '',
-
                 paginatedProperties: typeof paginatedProperties === 'undefined' ? [] : paginatedProperties,
                 searchQuery: typeof searchQuery === 'undefined' ? {} : searchQuery,
+
+                isUserAuthenticated: isUserAuthenticatedVar,
+                authenticatedUser: authenticatedUserVar,  
 
                 page: 1,
                 paginationOptions: {
@@ -67,21 +77,14 @@ const app =
             }
         },
 
+        provide() {
+            return {
+                isUserAuthenticated: computed(() => this.isUserAuthenticated),
+                authenticatedUser: computed(() => this.authenticatedUser)
+            }
+        },
+
         methods: {
-
-            showLogInModal(event) {
-                if(event?.showWelcomeText) {
-                    this.showWelcomeText = true
-                    this.welcomeText = event.welcomeText
-                }
-                
-                this.$vfm.show('LogInModal')
-            },
-
-            showSignUpModal() {
-                this.$vfm.show('SignUpModal')
-            },
-
             showMobileSearchBarModal() {
                 this.$vfm.show('MobileSearchBarModal')
             },
@@ -89,19 +92,6 @@ const app =
             onUserHasBeenAuthenticated(user) {
                 this.isUserAuthenticated = true
                 this.authenticatedUser = user
-            },
-
-            onUnfavouritedProperty(property_id) { 
-                this.authenticatedUser.favourited_properties.forEach((element, index) => {
-
-                    if ( element.property_id === property_id) {
-                        this.authenticatedUser.favourited_properties.splice(index, 1)
-                    }
-                });    
-            },
-
-            onFavouritedProperty(favouriteData) {
-                this.authenticatedUser.favourited_properties.unshift(favouriteData)
             },
 
             updatePropertiesAndSearchQuery(data) {
@@ -127,6 +117,8 @@ const app =
 app.component('SearchIcon', SearchIcon);
 app.component('pagination', Pagination);
 app.mixin(app_mixin)
+
+app.config.unwrapInjectedRef = true  //remove after updating to vue3.3
 
 if (process.env.MIX_APP_ENV === 'production') {
 
@@ -155,6 +147,7 @@ app.use(VueFinalModal())
         location: "top",
     })
     .use(VueSocialSharing)
+    .use(VueSweetalert2);
 
 app.mount('#app');
 

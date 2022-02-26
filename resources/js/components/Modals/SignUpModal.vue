@@ -144,7 +144,7 @@ export default {
     methods: {
         showLogInModal() {
             this.showSignUpModal = false;
-            this.$emit('showLogInModal')
+            this.$vfm.show('LogInModal')
         },
 
         onSubmit() {
@@ -154,6 +154,12 @@ export default {
                     // console.log(response.data)
                     this.$emit('userHasBeenAuthenticated', response.data)
                     this.showSignUpModal = false; 
+                    this.toast.fire({
+                        icon: 'success',
+                        position: 'top-end',
+                        title: `Successfully registered!`
+                    })
+
                }
             })
             .catch( (error) => {

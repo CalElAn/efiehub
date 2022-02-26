@@ -2,7 +2,7 @@
 <div class="relative w-full">
     <nav ref="navBar"
         id="nav-bar"
-        :class="[isScrollYPastNavBar ? 'bg-white p-3 z-20 rounded-b-md shadow sm:fixed left-0' : 'pt-3 sm:absolute', {'h-36': isSearchBarInNavBar}, isInHomepage ? '' : 'border-b pb-2']"
+        :class="[isScrollYPastNavBar ? 'bg-white p-3 z-20 rounded-b-md shadow sm:fixed left-0' : 'pt-3 sm:absolute sm:mt-3', {'h-36': isSearchBarInNavBar}, isInHomepage ? '' : 'border-b pb-2']"
         class="hidden top-0 w-full sm:flex justify-center sm:justify-between sm:px-10 3xl:px-20">
         <a href="/" :class="{'flex items-center': isInHomepage && !isScrollYPastNavBar}">
             <div v-if="isInHomepage && !isScrollYPastNavBar" class="bg-contain bg-left bg-no-repeat h-7 w-32 bg-logo" alt="logo"></div>
@@ -39,13 +39,13 @@
             </div>    
             <div v-else class="flex gap-2">
                 <button
-                    @click="$emit('showSignUpModal')"
+                    @click="$vfm.show('SignUpModal')"
                     class="px-4 h-9 rounded-full hover:bg-opacity-75 hover:shadow-lg"
                     :class="[isScrollYPastNavBar ? 'bg-main-blue text-white' : 'bg-white text-main-blue']">
                     Sign up
                 </button>
                 <button
-                    @click="$emit('showLogInModal')"
+                    @click="$vfm.show('LogInModal')"
                     class="px-4 h-9 bg-main-orange text-white rounded-full hover:bg-opacity-75 hover:shadow-lg">
                     Log in
                 </button>
@@ -62,6 +62,8 @@ export default {
     components: {
         AuthUserMenuButton
     },
+
+    inject: ['isUserAuthenticated', 'authenticatedUser'],
 
     data () {
         return {
@@ -92,7 +94,7 @@ export default {
         'isScrollYPastSearchBar',
     ],
 
-    emits: ['showSignUpModal', 'showLogInModal', 'placeSearchBarInNavBar'],
+    emits: ['placeSearchBarInNavBar'],
 
     methods: {
         onClickMiniSearchBar() {
@@ -114,10 +116,6 @@ export default {
 
             return (this.isScrollYPastSearchBar && this.showMiniSearchBar)
         },
-
-        // isInHomepage() {
-        //     return window.location.pathname === '/'
-        // },
 
         scrollEventListener() { 
             this.showMiniSearchBar = true 

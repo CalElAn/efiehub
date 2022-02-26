@@ -2,7 +2,7 @@
 <vue-final-modal
     v-model="showLogInModal"
     name = 'LogInModal'
-    @closed = "this.$emit('closedLoginModal')"
+    @beforeOpen="event => beforeOpen(event)"
     :transition="{
         'enter-active-class': 'transition duration-200 ease-in-out transform',
         'enter-from-class': 'translate-y-full',
@@ -93,12 +93,18 @@
                 <span>Don't have an account?&nbsp;</span>
                 <a
                     @click="showSignUpModal"
-                    class="underline text-sm text-indigo-600 hover:text-indigo-700"
+                    class="underline text-indigo-600 hover:text-indigo-700"
                     href="#"
                     >
                     Sign Up
                 </a>
+            </div>
         </div>
+
+        <div class="flex justify-center mt-6">
+            <a href="/forgot-password" class="underline text-gray-600">
+                Forgot password?
+            </a>
         </div>
     </form>
 </vue-final-modal>
@@ -112,6 +118,8 @@ export default {
 
     data: () => ({
         showLogInModal: false,
+        showWelcomeText: false,
+        welcomeText: '',
         errors: {},
         form: {
                 email: '',
@@ -124,11 +132,14 @@ export default {
         XIcon
     },
 
-    props: ['showWelcomeText', 'welcomeText'],
-
     methods: {
+        beforeOpen(event) {
+            this.showWelcomeText = event.ref.params.value.showWelcomeText
+            this.welcomeText = event.ref.params.value.welcomeText
+        },
+
         showSignUpModal() {
-            this.$emit('showSignUpModal');
+            this.$vfm.show('SignUpModal');
             this.showLogInModal = false;
         },
 
@@ -138,7 +149,13 @@ export default {
                 if( response.status === 200 ) {  
                     // console.log(response.data)
                     this.$emit('userHasBeenAuthenticated', response.data)
-                    this.showLogInModal = false; 
+                    this.showLogInModal = false;
+
+                    this.toast.fire({
+                        icon: 'success',
+                        position: 'top-end',
+                        title: `Logged in!`
+                    })
                }
             })
             .catch( (error) => {
@@ -147,8 +164,6 @@ export default {
         },
 
         clearErrors() {
-            // console.log(this.errors[error])
-            // if (this.errors[error]) this.errors[error].length = 0
             this.errors = {}
         }
     },

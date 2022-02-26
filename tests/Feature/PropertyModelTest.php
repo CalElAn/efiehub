@@ -109,5 +109,20 @@ class PropertyModelTest extends TestCase
 
         $this->assertTrue($this->property->is_property_reviewed_by_the_authenticated_user);
     }
+    
+    /** @test */
+    public function a_property_knows_if_it_was_uploaded_by_the_authenticated_user()
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+        
+        Auth::login($user);
+
+        $property1 = Property::factory()->create();
+        $property2 = Property::factory(['user_id' => $user->id])->create();
+
+        $this->assertFalse($property1->does_property_belong_to_the_authenticated_user);
+        $this->assertTrue($property2->does_property_belong_to_the_authenticated_user);
+    }
 }
 

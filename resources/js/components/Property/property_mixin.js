@@ -30,16 +30,15 @@ const propertyMixin = {
         LocationMarkerIcon
     },
 
-    props: ['property'],
+    inject: ['isUserAuthenticated', 'authenticatedUser'],
 
-    emits: ['showLogInModal', 'unfavouritedProperty', 'favouritedProperty'],
+    props: ['property'],
 
     methods: {
         favouriteProperty() {
 
             if (!this.isUserAuthenticated) {
-
-                this.$emit('showLogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to add to favourites, or'})
+                this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to add to favourites, or'})
                 return
             }
 
@@ -47,14 +46,27 @@ const propertyMixin = {
             .then( (response) => {
                 if( response.status === 200 ) { 
 
-                    this.$emit('unfavouritedProperty', this.property.property_id)
-                    this.$notify({ type: "warn", text: "Removed from favourites!" });
+                    this.authenticatedUser.favourited_properties.forEach((element, index) => {
+                        if ( element.property_id === this.property.property_id) {
+                            this.authenticatedUser.favourited_properties.splice(index, 1)
+                        }
+                    });    
+    
+                    this.toast.fire({
+                        icon: 'warning',
+                        position: 'bottom-end',
+                        title: `Removed from favourites!`
+                    })
                 }
 
                 if( response.status === 201 ) { 
 
-                    this.$emit('favouritedProperty', response.data)
-                    this.$notify({ type: "success", text: "Added to favourites!" });
+                    this.authenticatedUser.favourited_properties.unshift(response.data)
+                    this.toast.fire({
+                        icon: 'success',
+                        position: 'bottom-end',
+                        title: `Added to favourites!`
+                    })
                 }
             })
             .catch( (error) => {

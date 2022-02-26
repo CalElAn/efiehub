@@ -2,7 +2,7 @@
 
 @section('main-content')
 <header>
-    <div ref="mainHeaderBg" class="w-full h-header-bg-min sm:h-header-bg flex flex-col sm:px-10 3xl:px-20 pt-7 bg-main-blue rounded-b-header-bg-min sm:rounded-3xl">
+    <div ref="mainHeaderBg" class="w-full h-header-bg-min sm:h-header-bg flex flex-col sm:px-10 3xl:px-20 pt-7 sm:mt-3 bg-main-blue rounded-b-header-bg-min sm:rounded-3xl">
         <div class="flex flex-col flex-grow sm:grid sm:grid-cols-2 sm:mt-5 md:pt-6">
             <div class="flex flex-col justify-start gap-5 3xl:gap-10 sm:relative">
                 <p class="text-4xl sm:text-5xl xl:text-6xl 3xl:text-7xl font-bold text-white text-center sm:text-left mt-3 mx-7 sm:mx-0">
@@ -94,29 +94,12 @@
     <p class="font-semibold text-xl sm:text-2xl">
         Uploaded properties
     </p>
-    <div class="flex flex-col items-center mt-12 mb-10 gap-16 lg:grid lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-5 xl:gap-20">
 
-        <property-card
-        v-for="(item, index) in paginatedProperties.data"
-        :key="index"
-        :property="item"
-        @@show-log-in-modal = "showLogInModal"
-        @@unfavourited-property = "onUnfavouritedProperty"
-        @@favourited-property = "onFavouritedProperty"
-        ></property-card>
-
-
-    </div>
+    <paginated-properties
+        :initial-paginated-properties="paginatedProperties"
+    >
+    </paginated-properties>
     
-    {{-- {{ $paginatedProperties->links() }} --}}
-
-    <pagination 
-        v-model="page" 
-        :records="paginatedProperties.total" 
-        :per-page="paginatedProperties.per_page" 
-        @paginate="getPaginatedProperties"    
-        :options="paginationOptions"   
-    />
 </section>
 <section class="mt-16 mx-5 sm:mx-10">
     <p class="font-semibold text-xl sm:text-2xl mx-5 text-center">

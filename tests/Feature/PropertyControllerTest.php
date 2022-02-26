@@ -11,7 +11,8 @@ use App\Models\Property;
 use App\Models\PropertyFeature;
 use App\Models\FavouritedProperty;
 use App\Models\PropertyMedia;
-use App\Models\PropertyReview;
+use App\Models\Review;
+use App\Models\Report;
 use App\Models\Article;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
@@ -23,34 +24,51 @@ class PropertyControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */  
-    //*move test to js
-    // public function homepage_shows_property_card_with_all_details()
-    // {
-    //     $this->withoutExceptionHandling();
+    /** @test */
+    public function the_property_index_can_be_viewed()
+    {
+        $response = $this->get('/');
 
-    //     $this->createAUserWithEverything(); //to set up the database with the properties
-
-    //     $property = Property::latest()->first();
-
-    //     $this->get('/')
-    //         ->assertSee($property->propertyType->type)
-    //         ->assertSee($property->town)
-    //         ->assertSee($property->address)
-    //         ->assertSeeInOrder($property->features->pluck('name')->toArray())
-    //         ->assertSee($property->reviews->average('rating'))
-    //         ->assertSee($property->reviews->count().' reviews')
-    //         ->assertSee($property->price.' / month')
-    //     ;
-    // }
+        $response->assertStatus(200);
+        $response->assertViewHas('paginatedProperties', Property::latest()->paginate(6));
+    }
 
     /** @test */
-    public function a_property_can_be_created()
+    public function a_property_can_be_shown()
     {
-        $this->withoutExceptionHandling();
+        $property = Property::factory()->create();
 
-        $this->get('/properties/create')->assertStatus(200);
+        $response = $this->get("/properties/{$property->slug}");
 
+        $response->assertStatus(200);
+        $response->assertViewHasAll([
+            'property' => $property,
+            'paginatedProperties' => Property::where([
+                ['region', $property->region],
+                ['type', $property->type],
+                ['slug', '!=', $property->slug],
+            ])
+            ->paginate(10)
+        ]);
+    }
+
+    /** @test */
+    public function the_form_to_create_a_property_can_be_viewed()
+    {
+        $property = new Property;
+
+        $response = $this->get('/properties/create');
+
+        $response->assertStatus(200);
+        $response->assertViewHasAll([
+            'propertyTypesAndFeatures' => $property->getAllTypesAndFeatures(), 
+            'mode' => 'create',
+            'property' => $property
+        ]);
+    }
+
+    public function createAPropertyAndReturnParams()
+    {
         Storage::fake('public');
 
         /**Asynchronously upload 4 pictures for processing */
@@ -82,7 +100,7 @@ class PropertyControllerTest extends TestCase
             "otherFeatures" => [
                 0 => "Other feature 1",
                 1 => "Other feature 2",
-                2 => "other freature 3",
+                2 => "other feature 3",
             ],
             "price" => "400",
             "negotiable" => true,
@@ -98,84 +116,226 @@ class PropertyControllerTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user)->post('/properties', $input)->assertStatus(201); //means created
 
-        $this->assertDatabaseHas('properties', [
-                                            'user_id' =>$user->id,
-                                            'slug' => 'apartment-in-et-elit-dicta-eos',
-                                            "region" => "Greater Accra",
-                                            'city' => 'Voluptas ipsa repud',
-                                            'town' => 'Et elit dicta eos',
-                                            'address' => 'Sapiente quis ut et',
-                                            'gps_location' => '5.6295424,-0.19005439999999998',
-                                            'type' => 'Apartment',
-                                            'other_features' => json_encode($input['otherFeatures']),
-                                            'price' => "400",
-                                            'is_rent_negotiable' => true,
-                                            'is_advance_negotiable' => false,
-                                            'contact_phone_number' => "+1 (891) 437-5757",
-                                            'contact_email' => "cinugewiz@mailinator.com",
-                                            'is_property_available' => true,
-                                        ]);
-                                    
         $property = Property::latest()->first();
 
-        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' =>'Walled']);                               
-        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' =>'Living room']);
-        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' =>'Porch / Balcony']);
-        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' =>'Dining room']);
-        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' =>'Furnished']);
-        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' =>'Number of bedrooms', 'number' => 9]);
-        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' =>'Number of bathrooms', 'number' => 7]);
+        return [
+            'responses' => [
+                $response1,
+                $response2,
+                $response3,
+                $response4,
+            ],
+            'input' => $input,
+            'user' => $user,
+            'property' => $property,
+        ];
+    }
 
+    public function propertyMediaAssertions($responses, $user, $property, $assertIfMediaIsDeleted = false)
+    {
         /** @var \Illuminate\Filesystem\Filesystem */
         $storagePublicDisk = Storage::disk('public'); //otherwise PHP intelephense cant detect method and returns undefined method since it looks for it from interface
 
-        $storagePublicDisk->assertMissing('filepond/tmp/'.$response1->content());
-        $storagePublicDisk->assertMissing('filepond/tmp/'.$response2->content());
-        $storagePublicDisk->assertMissing('filepond/tmp/'.$response3->content());
-        $storagePublicDisk->assertMissing('filepond/tmp/'.$response4->content());
+        if($assertIfMediaIsDeleted == true)
+        {
+            foreach($responses as $value)
+            {
+                $responsePath = $user->id.'/'.$property->property_id.'/'.$value->content();
+    
+                $storagePublicDisk->assertMissing($responsePath);
+    
+                $this->assertDatabaseMissing('property_media', [
+                    'property_id' => $property->property_id, 
+                    'path' => $responsePath,
+                ]);                         
+            }                         
+    
+            return;
+        }
 
-        $response1path = $user->id.'/'.$property->property_id.'/'.$response1->content();
-        $response2path = $user->id.'/'.$property->property_id.'/'.$response2->content();
-        $response3path = $user->id.'/'.$property->property_id.'/'.$response3->content();
-        $response4path = $user->id.'/'.$property->property_id.'/'.$response4->content();
+        foreach($responses as $value)
+        {
+            $storagePublicDisk->assertMissing('filepond/tmp/'.$value->content());
 
-        $storagePublicDisk->assertExists($response1path);
-        $storagePublicDisk->assertExists($response2path);
-        $storagePublicDisk->assertExists($response3path);
-        $storagePublicDisk->assertExists($response4path);
-        
-        $this->assertDatabaseHas('property_media', [
-                                                    'property_id' => $property->property_id, 
-                                                    'path' => $response1path,
-                                                    'mime_type' => $storagePublicDisk->mimeType($response1path),
-                                                    'extension' => pathinfo(storage_path('app/public').$response1path, PATHINFO_EXTENSION),
-                                                    'size_in_bytes' => $storagePublicDisk->size($response1path),
-                                                    'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($response1path)),
-                                                ]);                         
-        $this->assertDatabaseHas('property_media', [
-                                                    'property_id' => $property->property_id, 
-                                                    'path' => $response2path,
-                                                    'mime_type' => $storagePublicDisk->mimeType($response2path),
-                                                    'extension' => pathinfo(storage_path('app/public').$response2path, PATHINFO_EXTENSION),
-                                                    'size_in_bytes' => $storagePublicDisk->size($response2path),
-                                                    'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($response2path)),
-                                                ]);                         
-        $this->assertDatabaseHas('property_media', [
-                                                    'property_id' => $property->property_id, 
-                                                    'path' => $response3path,
-                                                    'mime_type' => $storagePublicDisk->mimeType($response3path),
-                                                    'extension' => pathinfo(storage_path('app/public').$response3path, PATHINFO_EXTENSION),
-                                                    'size_in_bytes' => $storagePublicDisk->size($response3path),
-                                                    'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($response3path)),
-                                                ]);                         
-        $this->assertDatabaseHas('property_media', [
-                                                    'property_id' => $property->property_id, 
-                                                    'path' => $response4path,
-                                                    'mime_type' => $storagePublicDisk->mimeType($response4path),
-                                                    'extension' => pathinfo(storage_path('app/public').$response4path, PATHINFO_EXTENSION),
-                                                    'size_in_bytes' => $storagePublicDisk->size($response4path),
-                                                    'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($response4path)),
-                                                ]);                         
+            $responsePath = $user->id.'/'.$property->property_id.'/'.$value->content();
+
+            $storagePublicDisk->assertExists($responsePath);
+
+            $this->assertDatabaseHas('property_media', [
+                'property_id' => $property->property_id, 
+                'path' => $responsePath,
+                'mime_type' => $storagePublicDisk->mimeType($responsePath),
+                'extension' => pathinfo(storage_path('app/public').$responsePath, PATHINFO_EXTENSION),
+                // 'size_in_bytes' => $storagePublicDisk->size($response1path),
+                // 'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($response1path)),
+            ]);                         
+        }                         
+    }
+
+    /** @test */
+    public function a_property_can_be_stored()
+    {
+        $this->withoutExceptionHandling();
+
+        $params = $this->createAPropertyAndReturnParams();
+
+        $input = $params['input'];
+        $user = $params['user'];
+        $property = $params['property'];
+
+        $this->assertDatabaseHas('properties', [
+                                            'user_id' =>$user->id,
+                                            'slug' => 'apartment-in-et-elit-dicta-eos',
+                                            "region" => $input['region'],
+                                            'city' => $input['city'],
+                                            'town' => $input['town'],
+                                            'address' => $input['address'],
+                                            'gps_location' => $input['gpsLocation'],
+                                            'type' => $input['type'],
+                                            'other_features' => json_encode($input['otherFeatures']),
+                                            'price' => $input['price'],
+                                            'is_rent_negotiable' => $input['negotiable'],
+                                            'is_advance_negotiable' => false,
+                                            'contact_phone_number' => $input['contactPhoneNumber'],
+                                            'contact_email' => $input['contactEmail'],
+                                            'is_property_available' => true,
+                                        ]);
+                                    
+
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => $input['checkedFeatures'][0]]);                               
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => $input['checkedFeatures'][1]]);
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => $input['checkedFeatures'][2]]);
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => $input['checkedFeatures'][3]]);
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => $input['pickedFeatures']]);
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => 'Number of bedrooms', 'number' => 9]);
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => 'Number of bathrooms', 'number' => 7]);
+
+        $this->propertyMediaAssertions($params['responses'], $user, $property);
+    }
+
+    /** @test */
+    public function a_property_can_be_updated()
+    {
+        $params = $this->createAPropertyAndReturnParams();
+
+        $input = $params['input'];
+        $user = $params['user'];
+        $property = $params['property'];
+
+        $newResponse1 = $this->post('/filepond/process', ['filepond' => UploadedFile::fake()->image('testImage5.jpg')]);
+        $newResponse2 = $this->post('/filepond/process', ['filepond' => UploadedFile::fake()->image('testImage6.jpg')]);
+
+        $updatedInput =  [
+            "region" => "Ashanti Region",
+            "city" => "Updated City",
+            "town" => "Updated town",
+            "address" => "Updated address",
+            "gpsLocation" => "Updated location",
+            "contactPhoneNumber" => "Updated phone number",
+            "contactEmail" => "updatedemail@gmail.com",
+            "type" => "House",
+            "checkedFeatures" => [
+                0 => "Walled",
+                1 => "Living room",
+                2 => "Kitchen",
+                // 2 => "Porch / Balcony", assert missing 
+                // 3 => "Dining room", assert missing
+            ],
+            "pickedFeatures" => "Unfurnished",
+            "inputFeatures" => [
+                "Number of bedrooms" => "5",
+                "Number of bathrooms" => null, //should be 1 in the database
+            ],
+            "otherFeatures" => [
+                0 => "Updated feature 1",
+                1 => "Updated feature 2",
+            ],
+            "price" => "900",
+            "negotiable" => false,
+            "media" => [ /**location ID of stored media is returned to the frontend, and added as inout when form is submitted */
+                0 => $newResponse1->content(),
+                1 => $newResponse2->content(),
+                // 2 => $response1->content(), assert missing
+                // 3 => $response2->content(), assert missing
+            ]
+        ];
+
+        $this->actingAs($user)->patch('/properties/'.$property->slug, $updatedInput)->assertStatus(200);
+
+        $this->assertDatabaseHas('properties', [
+            'user_id' =>$user->id,
+            'slug' => 'house-in-updated-town',
+            "region" => $updatedInput['region'],
+            'city' => $updatedInput['city'],
+            'town' => $updatedInput['town'],
+            'address' => $updatedInput['address'],
+            'gps_location' => $updatedInput['gpsLocation'],
+            'type' => $updatedInput['type'],
+            'other_features' => json_encode($updatedInput['otherFeatures']),
+            'price' => $updatedInput['price'],
+            'is_rent_negotiable' => $updatedInput['negotiable'],
+            'is_advance_negotiable' => false,
+            'contact_phone_number' => $updatedInput['contactPhoneNumber'],
+            'contact_email' => $updatedInput['contactEmail'],
+            'is_property_available' => true,
+        ]);
+    
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => $updatedInput['checkedFeatures'][0]]);                               
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => $updatedInput['checkedFeatures'][1]]);
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => $updatedInput['checkedFeatures'][2]]);
+        $this->assertDatabaseMissing('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => 'Porch / Balcony']);
+        $this->assertDatabaseMissing('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => 'Dining room']);
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => $updatedInput['pickedFeatures']]);
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => 'Number of bedrooms', 'number' => 5]);
+        $this->assertDatabaseHas('Properties_PropertyFeatures_join', ['property_id' => $property->property_id, 'feature' => 'Number of bathrooms', 'number' => 1]);
+
+        $this->propertyMediaAssertions([$newResponse1, $newResponse2], $user, $property);
+
+        $mediaToDelete = [$params['responses'][0], $params['responses'][1]];
+
+        $this->actingAs($user)->delete('/filepond/remove/1');
+        $this->actingAs($user)->delete('/filepond/remove/2');
+
+        $this->propertyMediaAssertions($mediaToDelete, $user, $property, true);
+    }
+
+    /** @test */
+    public function a_property_can_be_deleted()
+    {
+        $params = $this->createAPropertyAndReturnParams();
+
+        $user = $params['user'];
+        $property = $params['property'];
+
+        $review = Review::factory()->create([
+            'reviewable_id' => $property->property_id, 
+            'reviewable_type' => 'App\Models\Property'
+        ]);
+        $report = Report::factory()->create([
+            'reportable_id' => $property->property_id, 
+            'reportable_type' => 'App\Models\Property'
+        ]);
+ 
+        $this->actingAs($user)->delete('/properties/'.$property->slug)->assertStatus(200);
+
+        $this->assertDatabaseMissing('Properties', $property->getAttributes());
+
+        /** @var \Illuminate\Filesystem\Filesystem */
+        $storagePublicDisk = Storage::disk('public'); 
+
+        foreach($property->media as $propertyMedia)
+        {
+            $this->assertDatabaseMissing('property_media', $propertyMedia->getAttributes());  
+            $storagePublicDisk->assertMissing($propertyMedia->path);                       
+        }
+
+        foreach($property->features as $propertyFeature)
+        {
+            $this->assertDatabaseMissing('Properties_PropertyFeatures_join', $propertyFeature->getAttributes());  
+        }
+
+        $this->assertDatabaseMissing('Reviews', $review->getAttributes());
+        $this->assertDatabaseMissing('Reports', $report->getAttributes());
     }
 
     /** @test */
@@ -464,31 +624,6 @@ class PropertyControllerTest extends TestCase
     /** @test */
     public function a_property_can_be_reviewed()
     {
-        $this->withoutExceptionHandling();
-
-        $input = [
-            'rating' => 3.5,
-            'body' => 'random review string'
-        ];
-
-        $property = Property::factory()->create();
-
-        /** @var \Illuminate\Contracts\Auth\Authenticatable */
-        $user = User::factory()->create();
-        $this->actingAs($user)->post("/properties/{$property->slug}/reviews", $input)->assertStatus(201); 
-
-        $this->assertDatabaseHas('reviews', [
-                                            'user_id' =>$user->id,
-                                            'rating' => $input['rating'],
-                                            'review' => $input['body'],
-                                            'reviewable_id' => $property->property_id,
-                                            'reviewable_type' => 'App\Models\Property',
-                                        ]);
-    }
-
-    /** @test */
-    public function a_property_cannot_be_reviewed_more_than_once_by_the_same_user()
-    {
         $input = [
             'rating' => 3.5,
             'body' => 'random review string'
@@ -500,7 +635,35 @@ class PropertyControllerTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user)->post("/properties/{$property->slug}/reviews", $input)->assertStatus(201);
 
+        $this->assertDatabaseHas('reviews', [
+                                            'user_id' =>$user->id,
+                                            'rating' => $input['rating'],
+                                            'review' => $input['body'],
+                                            'reviewable_id' => $property->property_id,
+                                            'reviewable_type' => 'App\Models\Property',
+                                        ]);
+
         $this->actingAs($user)->post("/properties/{$property->slug}/reviews", $input)->assertStatus(403); 
+    }
+
+    /** @test */
+    public function the_property_edit_page_can_be_showed()
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+        $property = Property::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->get("/properties/{$property->slug}/edit");
+        $response->assertStatus(200); 
+        $response->assertViewHasAll([
+            'propertyTypesAndFeatures' => $property->getAllTypesAndFeatures(), 
+            'mode' => 'edit',
+            'property' => $property
+        ]);
+
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $userWhoDidNotCreateProperty = User::factory()->create();
+        $this->actingAs($userWhoDidNotCreateProperty)->get("/properties/{$property->slug}/edit")->assertStatus(403);
     }
 
     public function createAUserWithEverything()

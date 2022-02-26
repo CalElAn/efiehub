@@ -31,10 +31,16 @@
             class="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
             <div class="px-1 py-1">
                 <MenuItem v-slot="{ active }">
-                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                    <a :href="`/users/${authenticatedUser.id}`" :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                        Profile
+                    </a>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
+                    <a href="/users/favourites" :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                         'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
                         Favourites
-                    </button>
+                    </a>
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
                     <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
@@ -43,10 +49,13 @@
                     </button>
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
-                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
-                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
-                        Applications
-                    </button>
+                    <a 
+                        :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]"
+                        href="/users/uploaded-properties"
+                    >
+                        Uploaded properties
+                    </a>
                 </MenuItem>
             </div>
             <div class="px-1 py-1">
@@ -96,10 +105,12 @@ export default {
         XIcon,
     },
 
+    inject: ['authenticatedUser'],
+
     data() {
         return {
             csrfToken: csrfToken,
-            isInHomepage: window.location.pathname === '/'
+            isInHomepage: window.location.pathname === '/',
         }
     },
 

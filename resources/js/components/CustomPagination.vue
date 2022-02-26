@@ -2,7 +2,7 @@
     <div class='VuePagination'>
         <nav class="flex items-center ">
 
-            <div class="flex flex-1 items-center justify-between sm:hidden relative z-0 shadow-sm rounded-md">
+            <div class="flex flex-1 items-center justify-between sm:hidden px-3 relative z-0 shadow-sm rounded-md">
                     <button
                         type="button"
                         @click="props.setPrevPage"

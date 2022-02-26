@@ -3,20 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
-use App\Models\PropertyType;
-use App\Models\PropertyMedia;
+
+use App\Http\Requests\StoreOrUpdatePropertyRequest;
 
 use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\Foreach_;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Filesystem\Filesystem;
 
 use DB;
 
-use App\Http\Helpers\HelperMethods;
-use Illuminate\Database\Eloquent\Collection;
-use Intervention\Image\ImageManagerStatic as Image;
 
 class PropertyController extends Controller
 {
@@ -27,7 +22,7 @@ class PropertyController extends Controller
      */
     public function index(Request $request)
     {
-        $response = ['paginatedProperties' => Property::latest()->paginate(5)->withPath('/')];
+        $response = ['paginatedProperties' => Property::latest()->paginate(6)];
 
         if($request->ajax())
         {
@@ -37,13 +32,6 @@ class PropertyController extends Controller
         return view('home', $response);
     }
 
-    public function paginateProperties($propertyQuery = null, $itemsPerPage = 5, Request $request = null)
-    {
-        if( !is_null($request) && $request->path() === 'properties/search' ) $itemsPerPage = 10;
-        
-        return (is_null($propertyQuery) ? Property::latest() : $propertyQuery)->paginate($itemsPerPage)->withPath('/properties/paginate');
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -51,105 +39,28 @@ class PropertyController extends Controller
      */
     public function create()
     {
-        $properties = PropertyType::with('features')->get();
+        $property = new Property;
 
-        foreach($properties as $item)
-        {
-            $property[$item->type] = $item->features;
-        }
-
-        $property = collect($property);
-
-        return view('add-property', ['property' => $property]);
+        return view('property.create-or-edit', [
+            'propertyTypesAndFeatures' => $property->getAllTypesAndFeatures(), 
+            'mode' => 'create',
+            'property' => $property
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\StoreOrUpdatePropertyRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreOrUpdatePropertyRequest $request)
     {
-        // dd($request->input());
-        $request->validate([
-            'region' => 'required',
-            'city' => 'required',
-            'town' => 'required',
-            'address' => 'required',
-            'contactPhoneNumber' => 'required',
-            'contactEmail' => 'required|email',
-            'type' => 'required',//add check for exists|type,type, write tests for validation, show failed validation errors in vue form
-            'price' => 'required|numeric',
-        ]);
-
-        $property = Property::create([
-            'user_id' => Auth::user()->id,
-            'region' => $request->region,
-            'city' => $request->city,
-            'town' => $request->town,
-            'address' => $request->address,
-            'gps_location' => $request->gpsLocation,
-            'contact_phone_number' => $request->contactPhoneNumber,
-            'contact_email' => $request->contactEmail,
-            'type' => $request->type,
-            'price' => $request->price,
-            'other_features' => $request->otherFeatures,
-            'is_rent_negotiable' => $request->negotiable, //test what happens in database when negotiable os not ticked
-        ]);
-
-        $attachArray = [];
-
-        if($request->checkedFeatures) 
-        {
-            foreach ($request->only('checkedFeatures')['checkedFeatures'] as $key => $value )
-            {
-                $attachArray[$value] = ['number' => null] ;
-            }   
-        }
-
-        if($request->pickedFeatures) 
-        {
-            foreach ($request->only('pickedFeatures') as $key => $value )
-            {
-                $attachArray[$value] = ['number' => null] ;
-            }
-        }
-
-        if($request->inputFeatures) 
-        {
-            foreach ($request->only('inputFeatures')['inputFeatures'] as $key => $value )
-            {
-                $attachArray[$key] = ['number' => $value ?? 1] ;
-            }
-        }
+        $property = Property::create(Property::getArrayForStoreOrUpdate($request));
         
-        $property->features()->attach($attachArray);
+        $property->features()->attach(Property::getArrayForAttachingFeatures($request));
 
-        foreach ($request->only('media')['media'] as $key => $value )
-        {
-            $newStoragePath = Auth::user()->id.'/'.$property->property_id.'/'.$value;
-
-            /** @var \Illuminate\Filesystem\Filesystem */
-            $storagePublicDisk = Storage::disk('public'); //otherwise PHP intelephense cant detect method and returns undefined method since it looks for it from interface
-
-            $storagePublicDisk->move('filepond/tmp/'.$value, $newStoragePath);
-
-            Image::make($storagePublicDisk->path($newStoragePath))->save(null, 60);
-
-            $propertyMediaInsertArray[] = [
-                'property_id' => $property->property_id, 
-                'path' => $newStoragePath,
-                'mime_type' => $storagePublicDisk->mimeType($newStoragePath),
-                'extension' => pathinfo($storagePublicDisk->path($newStoragePath), PATHINFO_EXTENSION),
-                'size_in_bytes' => $storagePublicDisk->size($newStoragePath),
-                'formatted_size' => HelperMethods::formatSizeUnits($storagePublicDisk->size($newStoragePath)),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]; 
-        }
-
-        PropertyMedia::insert($propertyMediaInsertArray);
+        $property->media()->insert(Property::getArrayForInsertingMedia($request, $property->property_id));
 
         return $property;
     }
@@ -197,14 +108,14 @@ class PropertyController extends Controller
         /** @var Illuminate\Pagination\LengthAwarePaginator */
         $paginatedPropertyQuery = $propertyQuery->paginate(10);
 
-        $response = ['paginatedProperties' => $paginatedPropertyQuery->withPath('/properties/search'), 'searchQuery' => $request->except('_token')];
+        $response = ['paginatedProperties' => $paginatedPropertyQuery, 'searchQuery' => $request->except('_token')];
 
         if($request->ajax())
         {
             return response($response, 200);
         }
 
-        return view('search-property', $response);
+        return view('property.search', $response);
     }
 
 
@@ -222,8 +133,7 @@ class PropertyController extends Controller
                 ['type', $property->type],
                 ['slug', '!=', $property->slug], //for some reason using !== instead of == displays no records at all
             ])
-            ->paginate(10)
-            ->withPath("/properties/{$property->slug}");
+            ->paginate(10);
 
         $response = ['property' => $property, 'paginatedProperties' => $paginatedSimilarProperties];
 
@@ -232,7 +142,7 @@ class PropertyController extends Controller
             return response($response, 200);
         }
 
-        return view('show-property', $response);
+        return view('property.show', $response);
     }
 
     /**
@@ -243,19 +153,33 @@ class PropertyController extends Controller
      */
     public function edit(Property $property)
     {
-        //
+        abort_if(!$property->does_property_belong_to_the_authenticated_user, 403);
+
+        return view('property.create-or-edit', [
+            'propertyTypesAndFeatures' => $property->getAllTypesAndFeatures(), 
+            'mode' => 'edit',
+            'property' => $property
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\StoreOrUpdatePropertyRequest  $request
      * @param  \App\Models\Property  $property
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Property $property)
+    public function update(StoreOrUpdatePropertyRequest $request, Property $property)
     {
-        //
+        abort_if(!$property->does_property_belong_to_the_authenticated_user, 403);
+
+        $property = tap($property)->update(Property::getArrayForStoreOrUpdate($request));
+        
+        $property->features()->sync(Property::getArrayForAttachingFeatures($request));
+
+        $property->media()->insert(Property::getArrayForInsertingMedia($request, $property->property_id));
+
+        return $property;
     }
 
     /**
@@ -266,7 +190,16 @@ class PropertyController extends Controller
      */
     public function destroy(Property $property)
     {
-        //
+        abort_if(!$property->does_property_belong_to_the_authenticated_user, 403);
+
+        foreach($property->media as $propertyMedia)
+        {
+            Storage::disk('public')->delete($propertyMedia->path);
+        }
+
+        $property->reports()->delete();
+        $property->reviews()->delete();
+        $property->delete();
     }
 
     public function createReport(Request $request, Property $property)

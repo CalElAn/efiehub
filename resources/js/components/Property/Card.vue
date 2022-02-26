@@ -1,12 +1,12 @@
 <template>
 <div
-    class="cursor-pointer rounded-3xl sm:rounded-main-card transform hover:scale-105 relative flex flex-col bg-main-blue h-96 w-64 sm:w-96">
+    class="shadow-xl cursor-pointer rounded-3xl sm:rounded-main-card transform hover:scale-105 relative flex flex-col bg-main-blue h-96 w-64 sm:w-96">
     <div class="absolute top-3 right-6 z-10 text-white flex flex-col gap-3">
         <button @click="favouriteProperty">
-            <HeartIcon class="h-6 w-6" :class="{'text-main-orange': isPropertyFavouritedByUser}"/>
+            <HeartIcon class="h-7 w-7" :class="{'text-main-orange': isPropertyFavouritedByUser}"/>
         </button>
         <button @click="shareProperty">
-            <ShareIcon class="h-6 w-6"/>
+            <ShareIcon class="h-7 w-7"/>
         </button>    
     </div>
     <swiper 

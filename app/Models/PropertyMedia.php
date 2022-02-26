@@ -14,4 +14,9 @@ class PropertyMedia extends Model
     protected $primaryKey = 'property_media_id';
 
     protected $guarded = [];
+
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id', 'property_id');
+    }
 }

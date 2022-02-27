@@ -8,7 +8,7 @@
             <div 
                 :class="[isInMobileNavBar ? 'h-8 w-8' : 'h-7 w-7']"
                 class="bg-contain bg-center bg-no-repeat -ml-2 rounded-full" 
-                :style="{'background-image': 'url(' + authenticatedUser.profile_picture_path + ')'}" alt="profile picture">
+                :style="{'background-image': 'url(' + getProfilePictureUrl(authenticatedUser)+ ')'}" alt="profile picture">
             </div> 
             <XIcon
                 v-if="open" 
@@ -31,40 +31,54 @@
             class="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
             <div class="px-1 py-1">
                 <MenuItem v-slot="{ active }">
-                    <a :href="`/users/${authenticatedUser.id}`" :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                    <a :href="`/users/${authenticatedUser.id}#UploadedProperties`" :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                         'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
                         Profile
-                    </a>
-                </MenuItem>
-                <MenuItem v-slot="{ active }">
-                    <a href="/users/favourites" :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
-                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
-                        Favourites
-                    </a>
-                </MenuItem>
-                <MenuItem v-slot="{ active }">
-                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
-                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
-                        Alerts
-                    </button>
-                </MenuItem>
-                <MenuItem v-slot="{ active }">
-                    <a 
-                        :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
-                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]"
-                        href="/users/uploaded-properties"
-                    >
-                        Uploaded properties
                     </a>
                 </MenuItem>
             </div>
             <div class="px-1 py-1">
                 <MenuItem v-slot="{ active }">
-                <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
-                    'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
-                    Manage your listings
-                </button>
+                    <a 
+                        :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]"
+                        :href="`/users/${authenticatedUser.id}#UploadedProperties`"
+                    >
+                        Uploaded properties
+                    </a>
                 </MenuItem>
+                <MenuItem v-slot="{ active }">
+                    <a 
+                        :href="`/users/${authenticatedUser.id}#Reviews`" 
+                        :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                        Reviews
+                    </a>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
+                    <a 
+                        :href="`/users/${authenticatedUser.id}#Favourites`" 
+                        :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                        Favourites
+                    </a>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
+                    <a 
+                        :href="`/users/${authenticatedUser.id}#Notifications`" 
+                        :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                        Notifications
+                    </a>
+                </MenuItem>
+            </div>
+            <div class="px-1 py-1">
+                <!-- <MenuItem v-slot="{ active }">
+                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
+                        Manage your listings
+                    </button>
+                </MenuItem> -->
                 <MenuItem v-slot="{ active }">
                 <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                     'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
@@ -114,7 +128,6 @@ export default {
         }
     },
 
-    props: ['isInMobileNavBar', 'isScrollYPastNavBar']
-
+    props: ['isInMobileNavBar', 'isScrollYPastNavBar'],
 }
 </script>

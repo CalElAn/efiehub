@@ -37,12 +37,16 @@ export default {
                 chunk: 5,
                 edgeNavigation: true,
             },
-
-            paginatedProperties: this.initialPaginatedProperties,
         }
     },
 
-    props: ['initialPaginatedProperties'],    
+    props: ['initialPaginatedProperties'],  
+    
+    computed: {
+        paginatedProperties() {
+            return this.initialPaginatedProperties
+        }
+    },
 
     methods: {
         getPaginatedProperties(page) {

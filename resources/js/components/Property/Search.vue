@@ -142,7 +142,7 @@ export default {
                         if( response.status == 200 ) {  
 
                             this.$emit('updatePropertiesAndSearchQuery', response.data)
-                            window.history.pushState(null, document.title, 'properties/search?'+ this.serialize(this.form))
+                            window.history.pushState(null, document.title, 'search?'+ this.serialize(this.form))
                             this.$Progress.finish();
                         }            
                     })

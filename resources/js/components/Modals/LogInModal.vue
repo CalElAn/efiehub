@@ -153,7 +153,7 @@ export default {
 
                     this.toast.fire({
                         icon: 'success',
-                        position: 'top-end',
+                        position: 'bottom-end',
                         title: `Logged in!`
                     })
                }

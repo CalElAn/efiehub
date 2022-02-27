@@ -21,7 +21,6 @@ import MobileNavBar from './components/NavBar/MobileNavBar.vue';
 import LogInModal from './components/Modals/LogInModal.vue';
 import SignUpModal from './components/Modals/SignUpModal.vue';
 import SharePropertyModal from './components/Modals/SharePropertyModal.vue';
-import CustomPagination from './components/CustomPagination.vue'
 
 window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content') //move to mixin
 
@@ -54,6 +53,8 @@ const app =
                 import('./components/User/Card.vue') ),
             UserProfileNavBar: defineAsyncComponent( () =>
                 import('./components/User/ProfileNavBar.vue') ),
+            ProfilePictureUpload: defineAsyncComponent( () =>
+                import('./components/User/ProfilePictureUpload.vue') ),
         },
 
         data() {
@@ -66,14 +67,7 @@ const app =
                 searchQuery: typeof searchQuery === 'undefined' ? {} : searchQuery,
 
                 isUserAuthenticated: isUserAuthenticatedVar,
-                authenticatedUser: authenticatedUserVar,  
-
-                page: 1,
-                paginationOptions: {
-                    template: markRaw(CustomPagination),
-                    chunk: 5,
-                    edgeNavigation: true,
-                },
+                authenticatedUser: authenticatedUserVar,
             }
         },
 
@@ -98,15 +92,6 @@ const app =
                 this.paginatedProperties = data?.paginatedProperties
                 this.searchQuery = data?.searchQuery
             },
-
-            getPaginatedProperties(page) {
-                axios.get(`${this.paginatedProperties.path}?page=${page}`)
-                .then(
-                    response => {
-                        this.paginatedProperties = response.data.paginatedProperties;
-                    }   
-                )
-            }
         },
 
         mounted() {

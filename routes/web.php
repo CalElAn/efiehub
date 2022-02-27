@@ -49,8 +49,8 @@ Route::controller(FilePondController::class)->group(function () {
     Route::delete('/filepond/revert', 'revert');
 
     Route::middleware(['auth'])->group(function () {   
-        Route::get('/filepond/load/{propertyMedia}', 'load');
-        Route::delete('/filepond/remove/{propertyMedia}', 'remove');
+        Route::get('/filepond/load/{model}/{id}', 'load');
+        Route::delete('/filepond/remove/{model}/{id}', 'remove');
     });
 });
 

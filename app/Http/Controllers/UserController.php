@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\CallBackRequested;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -53,9 +54,19 @@ class UserController extends Controller
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255'],
             'phone_number' => 'required'
         ]);
+
+        if($request->filepond) //input name has to be filepond because that is what is used in the "process" function in FilePond Controller
+        {
+            /** @var \Illuminate\Filesystem\Filesystem */
+            $storagePublicDisk = Storage::disk('public');
+
+            $storagePublicDisk->move('filepond/tmp/'.$request->filepond, 'profile_pictures/'.$request->filepond);
+
+            $user->update(['profile_picture_path' => 'profile_pictures/'.$request->filepond]);
+        }
 
         $user 
             = tap($user)
@@ -103,13 +114,13 @@ class UserController extends Controller
     public function requestCallBack(User $user, Request $request)
     {
         $request->validate([
-            'phoneNumber' => 'required',
+            'phone_number' => 'required',
         ]);
 
         $user->notify(
             new CallBackRequested(
                 Auth::user()->id, 
-                $request->phoneNumber
+                $request->input()
             )
         );
     }

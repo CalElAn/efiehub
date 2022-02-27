@@ -33,6 +33,16 @@ const app_mixin = {
             }
         },
 
+        getProfilePictureUrl(user) {
+            if(user.profile_picture_path.includes('https://')) return user.profile_picture_path
+
+            return '/storage/' + user.profile_picture_path
+        },    
+
+        autoGrowTextarea(element) {
+            element.target.style.height = "";
+            element.target.style.height = (element.target.scrollHeight) + "px";
+        },
     },
 
     mounted() {

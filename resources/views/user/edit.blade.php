@@ -7,16 +7,24 @@
 <div class="mt-10 mx-3 sm:mt-32">
     <p class="mb-6 font-semibold text-xl sm:text-2xl">
         Edit user profile
-    </p>   
+    </p>
+
     <div class="w-full sm:max-w-md mt-6 px-6 mx-auto py-4 bg-white border border-gray-200 shadow-md overflow-hidden sm:rounded-lg">
         <form method="POST" action="{{"/users/{$user->id}"}}">
             @method('PATCH')
             @csrf
+
+            <x-auth-validation-errors class="mb-4" :errors="$errors" />
+
+            <profile-picture-upload
+                :user="{{$user}}"
+            ></profile-picture-upload>
+
             <!-- Name -->
             <div>
                 <x-label for="name" :value="__('Name')" />
 
-                <x-input id="name" class="block mt-1 w-full" type="text" name="name" value="{{$user->name}}" required autofocus />
+                <x-input class="block mt-1 w-full" type="text" name="name" value="{{$user->name}}" required autofocus />
             </div>
 
             <!-- Email Address -->

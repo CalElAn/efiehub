@@ -12,17 +12,17 @@ class CallBackRequested extends Notification
     use Queueable;
 
     private $user_id;
-    private $phone_number;
+    private $requestInput;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user_id, $phone_number)
+    public function __construct($user_id, $requestInput)
     {
         $this->user_id = $user_id;
-        $this->phone_number = $phone_number;
+        $this->requestInput = $requestInput;
     }
 
     /**
@@ -60,7 +60,8 @@ class CallBackRequested extends Notification
     {
         return [
             'user_id' => $this->user_id, 
-            'phone_number' => $this->phone_number,
+            'phone_number' => $this->requestInput['phone_number'],
+            'details' => $this->requestInput['details'],
         ];
     }
 }

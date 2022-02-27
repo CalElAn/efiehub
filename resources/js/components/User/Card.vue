@@ -7,33 +7,48 @@
         </div>
         <div 
             v-if="showFullCard" 
-            class="bg-contain bg-center bg-no-repeat h-20 sm:h-auto sm:w-2/5 rounded-full"
-            :style="{'background-image': 'url('+ user.profile_picture_path +')'}" 
+            class="place-self-center bg-contain bg-center bg-no-repeat h-52 w-52 rounded-full"
+            :style="{'background-image': 'url('+ getProfilePictureUrl(user) +')'}" 
             alt="profile picture">
         </div>
         <div 
             :class="[showFullCard ? 'sm:w-3/5' : '']"
-            class="flex flex-col gap-2">
+            class="flex flex-grow flex-col gap-2">
             <div class="flex flex-col items-center justify-center gap-2">
                 <div
                      v-if="!showFullCard"
                     class="bg-contain bg-center bg-no-repeat h-12 w-12 rounded-full"
-                    :style="{'background-image': 'url('+ user.profile_picture_path +')'}" alt="profile picture">
+                    :style="{'background-image': 'url('+ getProfilePictureUrl(user) +')'}" alt="profile picture">
                 </div>
                 <p
                     class="font-medium"
                     :class="[showFullCard ? 'sm:text-xl' : '']"
                 >
                     <a 
+                        class="underline"
                         :class="{showFullCard: 'underline'}" 
                         :href="'/users/'+user.id">
                         {{user.name}}
                     </a>
                 </p>
             </div>
-            <button class="flex items-center justify-center gap-2 bg-main-orange bg-opacity-95 hover:bg-white text-white hover:text-main-orange hover:border hover:border-main-orange p-2 rounded-lg">
-                <PhoneIcon class="h-5 w-5 md:h-4 md:w-4"/> Show contact
+            <button 
+                @click="showContact"
+                v-if="!showContactToggle"
+                class="flex items-center justify-center gap-2 bg-main-orange bg-opacity-95 hover:bg-white text-white hover:text-main-orange hover:border hover:border-main-orange p-2 rounded-lg">
+                <PhoneIcon class="h-5 w-5 md:h-4 md:w-4"/> 
+                Show contact
             </button>
+            <p 
+                v-else
+                class="py-1 px-3 mx-auto text-gray-600 rounded-md">
+                Tel:
+                <a 
+                    class="underline text-main-blue"
+                    :href="'tel:'+user.phone_number">
+                    {{user.phone_number}}
+                </a>
+            </p>
             <button class="flex items-center justify-center gap-2 border border-main-orange text-main-orange hover:text-white bg-white hover:bg-main-orange bg-opacity-95 p-1 rounded-lg">
                 <ChatAltIcon class="h-5 w-5 md:h-4 md:w-4"/> Chat
             </button>
@@ -47,16 +62,25 @@
             </button>
             <div
                 v-show="requestCallBackToggle"
-                class="flex text-xs">
+                class="flex text-xs pt-2 my-2 border-t border-b">
                 <form
                     @submit.prevent="requestCallBack"
                     class="w-full flex flex-col xl:flex-row gap-1">
-                    <input
-                        required
-                        v-model="phoneNumberForRequestCallback"
-                        type="text"
-                        placeholder="enter phone number"
-                        class="text-xs block w-full xl:w-3/5 rounded-md border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                    <div class="flex flex-col gap-1">
+                        <input
+                            required
+                            v-model="requestCallBackForm.phone_number"
+                            type="text"
+                            placeholder="enter phone number"
+                            class="text-xs block w-full xl:w-3/5 rounded-md border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                        <textarea
+                            rows="2"
+                            class="shadow-sm focus:ring-indigo-500 text-xs sm:text-sm focus:border-indigo-500 mt-1 block w-full sm border border-gray-300 rounded-md"
+                            @input="autoGrowTextarea"
+                            v-model="requestCallBackForm.details"
+                            placeholder="Details (optional)">
+                        </textarea>
+                    </div>
                     <div class="flex gap-1 xl:w-2/5">
                         <button
                             type="submit"
@@ -92,12 +116,17 @@ export default {
         StarIcon,
     },
 
-    inject: ['authenticatedUser'],
+    inject: ['isUserAuthenticated', 'authenticatedUser'],
 
     data() {
         return {
-            phoneNumberForRequestCallback: this.authenticatedUser?.phone_number,
+            requestCallBackForm: {
+                phone_number: this.authenticatedUser?.phone_number,
+                details: '',
+            },
+
             requestCallBackToggle: false,
+            showContactToggle: false,
             reviewsAverageAndCount: this.getReviewsAverageAndCount(this.user.reviews)
         }
     },
@@ -105,6 +134,16 @@ export default {
     props: ['user', 'property', 'showFullCard'],
 
     methods: {
+        showContact() {
+            if (!this.isUserAuthenticated) { 
+
+                this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to view the contact number, or'})
+                return
+            } 
+            
+            this.showContactToggle = true
+        },
+
         requestCallBack() {
             if (!this.isUserAuthenticated) { 
 
@@ -112,16 +151,15 @@ export default {
                 return
             }  
 
-            if (!this.phoneNumberForRequestCallback) return
+            if (!this.requestCallBackForm.phone_number) return
 
-            axios.post(`/users/${this.property.user_id}/request-call-back`, {phoneNumber: this.phoneNumberForRequestCallback})
+            axios.post(`/users/${this.property.user_id}/request-call-back`, this.requestCallBackForm)
                 .then( (response) => {
                     if( response.status === 200 ) { 
-
                         this.toast.fire({
                             icon: 'success',
                             position: 'bottom-end',
-                            title: `Callback requested!`
+                            title: `Call back requested!`
                         })
                         this.requestCallBackToggle = false;
                     }

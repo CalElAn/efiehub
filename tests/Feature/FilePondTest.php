@@ -62,13 +62,13 @@ class FilePondTest extends TestCase
     }
 
     /** @test */
-    public function the_requested_file_in_storage_is_returned_after_loading_it()
+    public function the_requested_property_media_file_in_storage_is_returned_after_loading_it()
     {    
         $userPropertyAndFile = $this->createAndReturnUserPropertyAndFile();
 
         $propertyMedia = $userPropertyAndFile['propertyMedia'];
 
-        $response = $this->actingAs($userPropertyAndFile['user'])->get('/filepond/load/'.$propertyMedia->property_media_id);
+        $response = $this->actingAs($userPropertyAndFile['user'])->get('/filepond/load/PropertyMedia/'.$propertyMedia->property_media_id);
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Disposition', 'inline');
@@ -76,7 +76,21 @@ class FilePondTest extends TestCase
     }
 
     /** @test */
-    public function a_file_in_storage_is_deleted_after_removing_it()
+    public function the_requested_user_profile_picture_file_in_storage_is_returned_after_loading_it()
+    {    
+        $userProfilePictureAndFile = $this->createAndReturnUserPropertyAndFile();
+
+        $user = $userProfilePictureAndFile['user'];
+
+        $response = $this->actingAs($user)->get('/filepond/load/User/'.$user->id);
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Disposition', 'inline');
+        $response->assertHeader('filename', $userProfilePictureAndFile['storagePublicDisk']->path($user->profile_picture_path));
+    }
+
+    /** @test */
+    public function a_property_media_file_in_storage_is_deleted_after_removing_it()
     {
         $userPropertyAndFile = $this->createAndReturnUserPropertyAndFile();
         $propertyMedia = $userPropertyAndFile['propertyMedia'];
@@ -84,27 +98,51 @@ class FilePondTest extends TestCase
         /** @var \Illuminate\Contracts\Auth\Authenticatable */
         $userWhoDidNotCreateProperty = User::factory()->create();
 
-        $this->actingAs($userWhoDidNotCreateProperty)->delete('/filepond/remove/'.$propertyMedia->property_media_id)->assertStatus(403);
+        $this->actingAs($userWhoDidNotCreateProperty)->delete('/filepond/remove/PropertyMedia/'.$propertyMedia->property_media_id)->assertStatus(403);
 
-        $response = $this->actingAs($userPropertyAndFile['user'])->delete('/filepond/remove/'.$propertyMedia->property_media_id);
+        $response = $this->actingAs($userPropertyAndFile['user'])->delete('/filepond/remove/PropertyMedia/'.$propertyMedia->property_media_id);
 
         $response->assertStatus(200);
         $this->assertEquals($response->content(), 1);
         $userPropertyAndFile['storagePublicDisk']->assertMissing($userPropertyAndFile['testImage1HashName']);
     }
 
+    /** @test */
+    public function a_user_profile_picture_file_in_storage_is_deleted_after_removing_it()
+    {
+        $userProfilePictureAndFile = $this->createAndReturnUserPropertyAndFile();
+        $user = $userProfilePictureAndFile['user'];
+
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $userWhoDidIsNotAuthenticated = User::factory()->create();
+
+        $this->actingAs($userWhoDidIsNotAuthenticated)->delete('/filepond/remove/User/'.$user->id)->assertStatus(403);
+
+        $response = $this->actingAs($userProfilePictureAndFile['user'])->delete('/filepond/remove/User/'.$user->id);
+
+        $response->assertStatus(200);
+        $this->assertEquals($response->content(), 1);
+        $userProfilePictureAndFile['storagePublicDisk']->assertMissing($userProfilePictureAndFile['userProfilePictureHashName']);
+    }
+
     public function createAndReturnUserPropertyAndFile()
     {
         /** @var \Illuminate\Filesystem\Filesystem */
         $storagePublicDisk = Storage::fake('public'); 
+
         $testImage1 = UploadedFile::fake()->image('testImage1.jpg');
         $testImage1HashName = $testImage1->hashName();
         $storagePublicDisk->put('/', $testImage1);
-
         $storagePublicDisk->assertExists($testImage1HashName);
 
+        $userProfilePicture = UploadedFile::fake()->image('user_profile_pic.jpg');
+        $userProfilePictureHashName = $userProfilePicture->hashName();
+        $storagePublicDisk->put('/', $userProfilePicture);
+        $storagePublicDisk->assertExists($userProfilePictureHashName);
+
         /** @var \Illuminate\Contracts\Auth\Authenticatable */
-        $user = User::factory()->create();
+        $user = User::factory()->create(['profile_picture_path' => $userProfilePictureHashName]);
+
         $property = Property::factory()->create(['user_id' => $user->id]);
 
         $propertyMedia = PropertyMedia::factory()->create([
@@ -117,6 +155,7 @@ class FilePondTest extends TestCase
             'propertyMedia' => $propertyMedia,
             'storagePublicDisk' => $storagePublicDisk,
             'testImage1HashName' => $testImage1HashName,
+            'userProfilePictureHashName' => $userProfilePictureHashName,
         ];
     }
 }

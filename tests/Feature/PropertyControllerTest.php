@@ -293,8 +293,8 @@ class PropertyControllerTest extends TestCase
 
         $mediaToDelete = [$params['responses'][0], $params['responses'][1]];
 
-        $this->actingAs($user)->delete('/filepond/remove/1');
-        $this->actingAs($user)->delete('/filepond/remove/2');
+        $this->actingAs($user)->delete('/filepond/remove/PropertyMedia/1');
+        $this->actingAs($user)->delete('/filepond/remove/PropertyMedia/2');
 
         $this->propertyMediaAssertions($mediaToDelete, $user, $property, true);
     }

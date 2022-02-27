@@ -156,7 +156,7 @@ export default {
                     this.showSignUpModal = false; 
                     this.toast.fire({
                         icon: 'success',
-                        position: 'top-end',
+                        position: 'bottom-end',
                         title: `Successfully registered!`
                     })
 

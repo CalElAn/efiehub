@@ -187,10 +187,6 @@
                                     Remove
                                 </button>
                         </div>
-                        <!-- <textarea id="description" rows="3" class="shadow-sm focus:ring-indigo-500 text-xs sm:text-sm focus:border-indigo-500 mt-1 block w-full sm border border-gray-300 rounded-md" 
-                            @input="autoGrowTextarea"
-                            v-model="form.description"
-                            placeholder="Add any other features we might have missed"></textarea> -->
                     </div>
                 </div>
                 <div class="col-span-2 col-start-1">
@@ -246,7 +242,7 @@
                             process: '/process',
                             revert: '/revert',
                             restore: '/restore',
-                            load: '/load',
+                            load: '/load/PropertyMedia',
                             fetch: '/fetch',
                             remove: handleFilePondRemove,
                             headers: {
@@ -263,6 +259,18 @@
                 <div class="input-errors ml-3 my-3 text-red-600">
                     <ul class="mt-3 list-disc list-inside">
                         <li v-for="error of v$.form.$errors" :key="error.$uid">{{ error.$message +' on "'+ error.$property +'"'  }}</li>
+                    </ul>
+                </div>
+                <div 
+                    v-if="Object.keys(backendValidationErrors).length"
+                    class="input-errors ml-3 my-3 border-t text-red-600">
+                    <p class="font-medium text-gray-600">
+                        We also detected these errors. Kindly correct them before clicking submit
+                    </p>
+                    <ul class="mt-3 list-disc list-inside">
+                        <li v-for="(item, index) in backendValidationErrors" :key="index">
+                            {{ item[0]  }}
+                        </li>
                     </ul>
                 </div>
                 <label class="block text-xs lg:text-sm text-gray-700">
@@ -333,6 +341,7 @@ export default {
 
             gpsLocationError: '',
             mediaError: '',
+            backendValidationErrors: {},
 
             triggerSubmitAfterLogin: false,
 
@@ -354,7 +363,7 @@ export default {
                 price: this.property.price,
                 negotiable: this.mode === 'create' ? false : this.property.is_rent_negotiable, //later check when submitted if I need to change true/false value to 0 or 1
                 media: [],
-            }
+            },
         };
     },
 
@@ -468,7 +477,7 @@ export default {
             })
             .then((result) => {
                 if (result.isConfirmed) {
-                    axios.delete(`/filepond/remove${source}`)
+                    axios.delete(`/filepond/remove/PropertyMedia${source}`)
                         .then( (response) => {
                             if( response.status === 200 && response.data === 1 ) {
                                 _.remove(this.filepondInitialMedia, value => value.source === source)  
@@ -543,11 +552,6 @@ export default {
             this.form.inputFeatures = {};
         },
 
-        autoGrowTextarea(element) {
-            element.target.style.height = "";
-            element.target.style.height = (element.target.scrollHeight) + "px";
-        },
-
         submitForm() {
             this.v$.$touch()
 
@@ -587,6 +591,7 @@ export default {
                 })
                 .catch( (error) => {
                     this.$Progress.fail();
+                    this.backendValidationErrors = error.response.data.errors;
                     console.log(error)
                 })  
         },
@@ -610,7 +615,7 @@ export default {
     mounted() {
         setInterval(this.keepTokenAlive, 1000 * 60 * 60); // every 60 mins 
 
-        if(this.mode === 'edit') this.filepondInitialMedia = this.property.media.map(obj => ({source: '/' + obj.property_media_id, options: {type: 'local'}}))
+        if(this.mode === 'edit') this.filepondInitialMedia = this.property.media.map(obj => ( {source: '/' + obj.property_media_id, options: {type: 'local'}} ))
     },
 }
 </script>

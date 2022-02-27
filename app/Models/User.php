@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'phone_number',
+        'profile_picture_path',
     ];
 
     /**
@@ -99,6 +100,11 @@ class User extends Authenticatable
         }
 
         return $paginatedFavouritedProperties;
+    }
+
+    public function getDefaultProfilePicture()
+    {
+        return 'https://ui-avatars.com/api/?size=50&rounded=true&name='.$this->name;
     }
 
     public function properties()

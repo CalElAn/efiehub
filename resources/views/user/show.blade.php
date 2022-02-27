@@ -5,8 +5,12 @@
 @section('main-content')
 
 <div class="mt-10 mx-3 sm:mt-32">
+    <p class="mb-6 font-semibold text-xl sm:text-2xl">
+        User profile
+    </p>
+    
     @if($user->is_user_the_authenticated_user)
-    <div class="class mb-2 flex justify-end">
+    <div class="mb-2 flex justify-end">
         <a 
             class="flex gap-1 items-center border border-main-blue text-main-blue p-2 rounded-lg hover:underline hover:bg-gray-100"
             href="{{"/users/{$user->id}/edit"}}">
@@ -17,10 +21,6 @@
         </a>
     </div>
     @endif
-
-    <p class="mb-6 font-semibold text-xl sm:text-2xl">
-        User profile
-    </p>
 
     <user-card
         class="md:mx-5 lg:mx-36 xl:mx-96"

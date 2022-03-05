@@ -35,11 +35,11 @@
     </div>
 </header>
 <section class="flex justify-center mt-4 lg:mt-10 sm:justify-start sm:mx-10 xl:text-lg">
-    <button class="bg-main-orange text-white rounded-full hover:bg-opacity-75 w-44 h-12 sm:w-52 sm:h-16">
+    {{-- <button class="bg-main-orange text-white rounded-full hover:bg-opacity-75 w-44 h-12 sm:w-52 sm:h-16">
         Book an agent
-    </button>
+    </button> --}}
 </section>
-<section class="mt-20 mx-5 sm:mx-10">
+<section class="mt-12 sm:mt-20 mx-5 sm:mx-10">
     <p class="font-semibold text-xl sm:text-2xl">
         Explore other locations
     </p>
@@ -106,9 +106,9 @@
         Not sure where to rent?
     </p>
     <div class="flex justify-center mt-4">
-        <button class="bg-main-orange text-white rounded-full h-12 w-44 sm:w-52 sm:h-16">
+        {{-- <button class="bg-main-orange text-white rounded-full h-12 w-44 sm:w-52 sm:h-16">
             Book an agent
-        </button>
+        </button> --}}
     </div>
 </section>
 <section class="flex items-center mt-20 mx-2 sm:mx-10 rounded-3xl sm:rounded-main-card bg-cover bg-no-repeat bg-become-an-agent lg:bg-become-an-agent-2x h-96 sm:h-become-an-agent-card-max">

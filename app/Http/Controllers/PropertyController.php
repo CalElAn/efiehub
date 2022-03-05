@@ -135,7 +135,12 @@ class PropertyController extends Controller
             ])
             ->paginate(10);
 
-        $response = ['property' => $property, 'paginatedProperties' => $paginatedSimilarProperties];
+        $response = [
+            'property' => 
+                tap($property, function ($collection) {
+                    $collection->user->makeVisible('phone_number');
+                }),
+            'paginatedProperties' => $paginatedSimilarProperties];
 
         if($request->ajax())
         {
@@ -158,7 +163,7 @@ class PropertyController extends Controller
         return view('property.create-or-edit', [
             'propertyTypesAndFeatures' => $property->getAllTypesAndFeatures(), 
             'mode' => 'edit',
-            'property' => $property
+            'property' => $property,
         ]);
     }
 

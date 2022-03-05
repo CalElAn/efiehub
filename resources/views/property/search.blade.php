@@ -16,6 +16,12 @@
     <div class="flex justify-end px-6 pt-1 text-xs sm:text-sm font-medium">
         @{{paginatedProperties.total}} properties found
     </div>
+    <p 
+        v-if="paginatedProperties.total === 0"
+        class="mt-24 text-center text-xl"
+    >
+        Your search did not match any available properties. Please try again sometime soon.
+    </p>
 
     <paginated-properties
         :initial-paginated-properties="paginatedProperties"

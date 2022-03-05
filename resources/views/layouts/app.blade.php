@@ -103,7 +103,7 @@
 
 <script type="application/javascript">
     var isUserAuthenticatedVar = @JSON(Auth::check());
-    var authenticatedUserVar = @JSON(Auth::user());
+    var authenticatedUserVar = @JSON(Auth::user()?->makeVisible(['email', 'phone_number']));
 
     let minPrice = {{$minPrice}}
     let maxPrice = {{$maxPrice}}

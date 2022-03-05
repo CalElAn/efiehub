@@ -189,12 +189,12 @@ class Property extends Model
     {
         $propertyMediaInsertArray = [];
 
+        /** @var \Illuminate\Filesystem\Filesystem */
+        $storagePublicDisk = Storage::disk('public'); //otherwise PHP intelephense cant detect method and returns undefined method since it looks for it from interface
+
         foreach ($request->media as $key => $value )
         {
             $newStoragePath = Auth::user()->id.'/'.$property_id.'/'.$value;
-
-            /** @var \Illuminate\Filesystem\Filesystem */
-            $storagePublicDisk = Storage::disk('public'); //otherwise PHP intelephense cant detect method and returns undefined method since it looks for it from interface
 
             $storagePublicDisk->move('filepond/tmp/'.$value, $newStoragePath);
 

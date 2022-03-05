@@ -54,7 +54,7 @@
             </button>
             <button
                 v-show="!requestCallBackToggle"
-                :disabled="authenticatedUser?.id === user.user_id"
+                :disabled="authenticatedUser && authenticatedUser.id === user.user_id"
                 @click="requestCallBackToggle = true"
                 style="text-decoration-color: #4568ED;"
                 class="rounded-xl underline hover:border hover:shadow-md p-2 md:p-1">
@@ -62,17 +62,17 @@
             </button>
             <div
                 v-show="requestCallBackToggle"
-                class="flex text-xs pt-2 my-2 border-t border-b">
+                class="flex flex-col text-xs xl:text-sm pt-2 my-2 border-t border-b">
                 <form
                     @submit.prevent="requestCallBack"
-                    class="w-full flex flex-col xl:flex-row gap-1">
+                    class="w-full flex flex-col gap-2">
                     <div class="flex flex-col gap-1">
                         <input
                             required
                             v-model="requestCallBackForm.phone_number"
                             type="text"
                             placeholder="enter phone number"
-                            class="text-xs block w-full xl:w-3/5 rounded-md border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+                            class="text-xs block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
                         <textarea
                             rows="2"
                             class="shadow-sm focus:ring-indigo-500 text-xs sm:text-sm focus:border-indigo-500 mt-1 block w-full sm border border-gray-300 rounded-md"
@@ -81,16 +81,16 @@
                             placeholder="Details (optional)">
                         </textarea>
                     </div>
-                    <div class="flex gap-1 xl:w-2/5">
+                    <div class="flex gap-1">
                         <button
                             type="submit"
-                            class="flex w-1/2 xl:w-1/2 py-1 xl:py-0 justify-center items-center border border-transparent shadow-sm rounded-md xl:rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="flex w-1/2 py-1 xl:py-1 justify-center items-center border border-transparent shadow-sm rounded-md xl:rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             request
                         </button>
                         <button
                             @click="requestCallBackToggle = false"
                             type="button"
-                            class="flex w-1/2 xl:w-1/2 py-1 xl:py-0 justify-center items-center border border-transparent shadow-sm rounded-md xl:rounded-lg text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            class="flex w-1/2 py-1 xl:py-1 justify-center items-center border border-transparent shadow-sm rounded-md xl:rounded-lg text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                             cancel
                         </button>
                     </div>

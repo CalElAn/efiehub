@@ -94,11 +94,12 @@
             </transition>
         </Popover>
 
-        <button
+        <!-- hidden for now till developed -->
+        <!-- <button
             class="row-start-2 sm:row-start-1 w-full h-full flex items-center px-1 rounded-full hover:bg-opacity-75 text-main-orange border border-main-orange hover:shadow-lg">
             <AdjustmentsIcon class="w-1/4 h-6"/>
             <span class="w-3/4">Filters</span>
-        </button>
+        </button> -->
 
         <!-- in case would change colour later consider changing tailwind forms config to not affect select elements -->
         <select 

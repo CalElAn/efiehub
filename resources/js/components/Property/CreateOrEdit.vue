@@ -622,7 +622,7 @@ export default {
 
 <style>
 .filepond--item {
-    /* percentage over number of columns in grid divided by 2 */
+    /* percentage over (number of columns in grid divided by 2) */
     width: calc(100% - 0.5em);
 }
 

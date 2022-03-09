@@ -108,6 +108,11 @@ class User extends Authenticatable
         return 'https://ui-avatars.com/api/?size=50&rounded=true&name='.$this->name;
     }
 
+    public function isPropertyFavourited($property)
+    {
+        return $this->favouritedProperties()->where('property_id', $property->property_id)->get()->isNotEmpty();
+    }
+
     public function properties()
     {
         return $this->hasMany(Property::class);
@@ -133,8 +138,13 @@ class User extends Authenticatable
         return $this->morphMany(Review::class, 'reviewable');
     }
 
-    public function isPropertyFavourited($property)
+    public function receivedMessages()
     {
-        return $this->favouritedProperties()->where('property_id', $property->property_id)->get()->isNotEmpty();
+        return $this->hasMany(ChatMessage::class, 'to_user_id', 'id');
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(ChatMessage::class, 'from_user_id', 'id');
     }
 }

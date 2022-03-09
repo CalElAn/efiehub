@@ -3,17 +3,18 @@
         <div
             v-if="property.user_id === authenticatedUser?.id" 
             class="class mb-2 gap-4 flex justify-end">
-            <!-- hidden till after launch -->
-            <!-- <button class="flex gap-1 items-center border border-main-blue text-main-blue p-2 rounded-lg hover:underline hover:bg-gray-100">
-                <EyeOffIcon class="w-5 h-5 text-main-orange"/>
-                Mark as unavailable
-            </button> -->
             <a 
                  class="flex gap-1 items-center border border-main-blue text-main-blue p-2 rounded-lg hover:underline hover:bg-gray-100"
                 :href="`/properties/${property.slug}/edit`">
                 <PencilAltIcon class="w-5 h-5 text-main-orange"/>
                 Edit
             </a>
+            <button 
+                @click="archiveProperty"
+                class="flex gap-1 items-center border border-main-blue text-main-blue p-2 rounded-lg hover:underline hover:bg-gray-100">
+                <ArchiveIcon class="w-5 h-5 text-main-orange"/>
+                {{property.is_property_archived ? 'Un-archive' : 'Archive'}}
+            </button>
         </div>
         <swiper
             :style="{
@@ -221,7 +222,7 @@ import UserCard from '../User/Card.vue'
 import Reviews from '../Reviews.vue'
 
 import { FlagIcon, EyeOffIcon } from '@heroicons/vue/solid'
-import { PencilAltIcon } from '@heroicons/vue/outline'
+import { PencilAltIcon, ArchiveIcon } from '@heroicons/vue/outline'
 
 export default {
 
@@ -235,6 +236,7 @@ export default {
         FlagIcon,
         EyeOffIcon,
         PencilAltIcon,
+        ArchiveIcon,
     },
 
     data() {
@@ -273,6 +275,34 @@ export default {
 
             this.$vfm.show('ReportOrReviewModal', {mode: 'report'})
         },
+
+        archiveProperty() {
+            this.$swal.fire({
+                title: (this.property.is_property_archived ? 'Un-archive' : 'Archive') + ' property?',
+                html: this.property.is_property_archived 
+                    ? 'This will allow it to show up on the homepage and in any relevant searches' 
+                    : "This will prevent it from showing up on the homepage and in any searches.<br><br>This can be changed later.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4568ED',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    axios.patch(`/properties/${this.property.slug}/archive`)
+                        .then( (response) => {
+                            if( response.status === 200 ) {
+                                location.reload()
+                            }
+                        })
+                        .catch( (axiosError) => {
+                            console.log(axiosError)
+                        })  
+                }
+            })
+
+        }
     },
 }
 </script>

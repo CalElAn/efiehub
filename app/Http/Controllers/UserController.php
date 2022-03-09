@@ -17,26 +17,43 @@ class UserController extends Controller
             = $user->notifications->each(function ($item, $key) {
                 $item->diffForHumans = $item->created_at->diffForHumans();
             });
-            // dd(url()->current());
+        
+        $usersReceivedMessagesFrom 
+            = $user->receivedMessages()
+                ->with('userReceivedFrom')
+                ->latest()
+                ->get()
+                ->pluck('userReceivedFrom');
 
-        $response = [
-            'user' => $user->load('reviews'),
+        $usersSentMessagesTo
+            = $user->sentMessages()
+                ->with('userSentTo')
+                ->latest()
+                ->get()
+                ->pluck('userSentTo');
+
+        $usersWithChat = $usersReceivedMessagesFrom->concat($usersSentMessagesTo)->unique()->values();
+
+        $responseData = [
+            'user' => $user->load('reviews')->makeVisible('phone_number'),
             'paginatedProperties' => $user->getPaginatedProperties(url()->current().'?category=paginatedProperties'),
+            'numberOfUploadedProperties' => $user->properties->count(),
             'reviews' => $user->reviews,
             'paginatedFavouritedProperties' => $user->getPaginatedFavouritedProperties(url()->current().'?category=paginatedFavouritedProperties'),
-            'notifications' => $notifications,
+            'notifications' => Auth::user()?->id === $user->id ? $notifications : null,
+            'usersWithChat' => $usersWithChat,
         ];
 
         if($request->ajax())
         {
             return response([
-                'paginatedProperties' => $response[$request->category] 
+                'paginatedProperties' => $responseData[$request->category] 
             ]
                 , 200
             );
         }
 
-        return view('user.show', $response);
+        return view('user.show', $responseData);
     }
 
     public function edit(User $user)

@@ -9,9 +9,7 @@ use App\Http\Requests\StoreOrUpdatePropertyRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
-use DB;
-
+use phpDocumentor\Reflection\Types\Null_;
 
 class PropertyController extends Controller
 {
@@ -205,6 +203,22 @@ class PropertyController extends Controller
         $property->reports()->delete();
         $property->reviews()->delete();
         $property->delete();
+    }
+
+    public function archive(Property $property)
+    {
+        // $property = Property::withoutGlobalScope('un-archived')->find($id);
+
+        abort_if(!$property->does_property_belong_to_the_authenticated_user, 403);
+
+        if ($property->is_property_archived) {
+            $property->archived_at = null;
+            $property->save();
+            return;
+        }
+
+        $property->archived_at = date('Y-m-d H:i:s');
+        $property->save();
     }
 
     public function createReport(Request $request, Property $property)

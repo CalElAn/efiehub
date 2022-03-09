@@ -47,6 +47,7 @@ class Property extends Model
         'is_property_favourited_by_the_authenticated_user', 
         'is_property_reviewed_by_the_authenticated_user',
         'does_property_belong_to_the_authenticated_user',
+        'is_property_archived',
     ];
 
     /**
@@ -63,8 +64,31 @@ class Property extends Model
      *
      * @var array
      */
-    protected $with = ['features', 'media', 'reviews', 'propertyType', 'user'];
+    protected $with = ['features', 'media', 'reviews', 'propertyType', 'user.reviews'];
 
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope('un-archived', function (Builder $builder) {
+            $builder->whereNull('archived_at');
+        });
+    }
+
+    /**
+     * Retrieve the model for a bound value.
+     *
+     * @param  mixed  $value
+     * @param  string|null  $field
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function resolveRouteBinding($value, $field = null) //so it can always show up when searched from a route
+    {
+        return $this::withoutGlobalScope('un-archived')->where('slug', $value)->firstOrFail();
+    }    
 
     /**
      * Return the sluggable configuration array for this model.
@@ -127,6 +151,11 @@ class Property extends Model
         }
 
         return false;
+    }
+
+    public function getIsPropertyArchivedAttribute() 
+    {
+        return !is_null($this->archived_at);
     }
 
     public function getAllTypesAndFeatures()

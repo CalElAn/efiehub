@@ -112,8 +112,6 @@
 
 <script>
 
-import { XIcon } from '@heroicons/vue/solid'
-
 export default {
 
     data: () => ({
@@ -127,10 +125,6 @@ export default {
                 remember: '',
             }
     }),
-
-    components: {
-        XIcon
-    },
 
     methods: {
         beforeOpen(event) {

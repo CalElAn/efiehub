@@ -106,7 +106,7 @@
 <script>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
-import { MenuIcon, XIcon } from '@heroicons/vue/solid'
+import { MenuIcon } from '@heroicons/vue/solid'
 
 export default {
 
@@ -116,7 +116,6 @@ export default {
         MenuItems,
         MenuItem,
         MenuIcon,
-        XIcon,
     },
 
     inject: ['authenticatedUser'],

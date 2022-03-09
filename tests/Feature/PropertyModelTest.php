@@ -119,10 +119,33 @@ class PropertyModelTest extends TestCase
         Auth::login($user);
 
         $property1 = Property::factory()->create();
-        $property2 = Property::factory(['user_id' => $user->id])->create();
+        $property2 = Property::factory()->create(['user_id' => $user->id]);
 
         $this->assertFalse($property1->does_property_belong_to_the_authenticated_user);
         $this->assertTrue($property2->does_property_belong_to_the_authenticated_user);
+    }
+
+    /** @test */
+    public function a_property_knows_if_it_is_archived_or_unarchived()
+    {
+        $property = Property::factory()->create();
+        $this->assertFalse($property->fresh()->is_property_archived);
+
+        $property->archived_at = date('Y-m-d H:i:s');
+        $property->save();
+        $this->assertTrue($property->fresh()->is_property_archived);
+    }
+
+    /** @test */
+    public function the_un_archived_global_scope_is_applied_to_every_query()
+    {
+        Property::factory()->count(5)->create(); //6 are actually created because an additional one is created in setup method
+
+        Property::factory()->create([
+            'archived_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        $this->assertEquals(6, Property::all()->count());
     }
 }
 

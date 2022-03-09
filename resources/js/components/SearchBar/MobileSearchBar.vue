@@ -149,18 +149,12 @@
 <script>
 import searchBarMixin from "./search_bar_mixin.js"
 
-import { XIcon } from '@heroicons/vue/solid'
-
 export default {
 
     data () {
         return {
             showMobileSearchBar: false,
         }
-    },
-
-    components: {
-        XIcon
     },
 
     mixins: [searchBarMixin],

@@ -6,6 +6,7 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilePondController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\ChatMessageController;
 
 
 Route::get('/dashboard', function () {
@@ -24,6 +25,7 @@ Route::controller(PropertyController::class)->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::post('/properties', 'store');
         Route::patch('/properties/{property}', 'update');
+        Route::patch('/properties/{property}/archive', 'archive');
         Route::delete('/properties/{property}', 'destroy');
         Route::post('/properties/{property}/reports', 'createReport');
         Route::post('/properties/{property}/reviews', 'createReview');
@@ -43,6 +45,15 @@ Route::controller(UserController::class)->group(function () {
 });
 
 Route::post('/analytics', [AnalyticsController::class, 'store']);
+
+Route::controller(ChatMessageController::class)
+    ->middleware('auth')
+    ->group(
+        function () {
+            Route::get('/chat-messages/{messaged_user_id}', 'getChatMessages');
+            Route::post('/chat-messages', 'store');
+        }
+    );
 
 Route::controller(FilePondController::class)->group(function () {
     Route::post('/filepond/process', 'process');

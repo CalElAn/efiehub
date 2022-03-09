@@ -106,4 +106,26 @@ class UserModelTest extends TestCase
         $this->assertTrue($this->user->reviews->contains($review));
         $this->assertInstanceOf('App\Models\Review', $this->user->reviews[0]);
     }
+
+    /** @test */
+    public function a_user_can_have_received_messages()
+    {
+        $chatMessage = \App\Models\ChatMessage::factory()->create([
+                        'to_user_id' => $this->user->id,
+                    ]);
+
+        $this->assertTrue($this->user->receivedMessages->contains($chatMessage));
+        $this->assertInstanceOf('App\Models\ChatMessage', $this->user->receivedMessages[0]);
+    }
+
+    /** @test */
+    public function a_user_can_have_sent_messages()
+    {
+        $chatMessage = \App\Models\ChatMessage::factory()->create([
+                        'from_user_id' => $this->user->id,
+                    ]);
+
+        $this->assertTrue($this->user->sentMessages->contains($chatMessage));
+        $this->assertInstanceOf('App\Models\ChatMessage', $this->user->sentMessages[0]);
+    }
 }

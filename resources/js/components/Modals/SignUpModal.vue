@@ -119,8 +119,6 @@
 
 <script>
 
-import { XIcon } from '@heroicons/vue/solid'
-
 export default {
 
     data() {
@@ -135,10 +133,6 @@ export default {
                 password_confirmation: '',
             }     
         }
-    },
-
-    components: {
-        XIcon
     },
 
     methods: {

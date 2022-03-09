@@ -39,7 +39,9 @@
         :paginated-properties="{{Js::from($paginatedProperties)}}"
         :reviews="{{Js::from($reviews)}}"
         :paginated-favourited-properties="{{Js::from($paginatedFavouritedProperties)}}"
+        :number-of-uploaded-properties="{{Js::from($numberOfUploadedProperties)}}"
         :notifications="{{Js::from($notifications)}}"
+        :users-with-chat="{{Js::from($usersWithChat)}}"
     ></user-profile-nav-bar>
     
 </div>

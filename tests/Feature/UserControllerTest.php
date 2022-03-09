@@ -8,12 +8,6 @@ use Tests\TestCase;
 
 use App\Models\User;
 use App\Models\Property;
-use App\Models\PropertyFeature;
-use App\Models\FavouritedProperty;
-use App\Models\PropertyMedia;
-use App\Models\Article;
-
-use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -24,10 +18,10 @@ class UserControllerTest extends TestCase
 
     /** @test */
     public function a_user_can_be_shown()
-    {
+    {   
         $user = User::factory()->create();
 
-        $response = $this->get("/users/{$user->id}");
+        $response = $this->actingAs($user)->get("/users/{$user->id}");
 
         $response->assertStatus(200);
         $response->assertViewHasAll([

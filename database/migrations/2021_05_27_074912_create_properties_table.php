@@ -32,6 +32,7 @@ class CreatePropertiesTable extends Migration
             $table->string('contact_phone_number');
             $table->string('contact_email');
             $table->boolean('is_property_available')->default(1);
+            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')

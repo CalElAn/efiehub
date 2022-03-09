@@ -15,6 +15,7 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
 import { SearchIcon } from '@heroicons/vue/outline'
+import { XIcon } from '@heroicons/vue/solid'
 
 import NavBar from './components/NavBar/NavBar.vue';
 import MobileNavBar from './components/NavBar/MobileNavBar.vue';
@@ -100,6 +101,7 @@ const app =
     });
 
 app.component('SearchIcon', SearchIcon);
+app.component('XIcon', XIcon);
 app.component('pagination', Pagination);
 app.mixin(app_mixin)
 

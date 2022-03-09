@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+Broadcast::channel('chat.{from_user_id}.{to_user_id}', function ($user, $from_user_id, $to_user_id) {
+    //$from_user_id has to be present even if not used for all the vars in the route to be assigned correctly 
+    return (int) $user->id === (int) $to_user_id;
 });

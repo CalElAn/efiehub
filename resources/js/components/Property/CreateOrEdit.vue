@@ -523,7 +523,6 @@ export default {
                             }
                         })
                         .catch( (axiosError) => {
-                            error('Server error, could not delete');
                             console.log(axiosError)
                         })  
                 }

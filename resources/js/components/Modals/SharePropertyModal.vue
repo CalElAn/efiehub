@@ -48,8 +48,6 @@
 
 <script>
 
-import { XIcon } from '@heroicons/vue/solid'
-
 export default {
 
     data: () => ({
@@ -71,10 +69,6 @@ export default {
         ],
         property: {},
     }),
-
-    components: {
-        XIcon
-    },
 
     props: [],
 

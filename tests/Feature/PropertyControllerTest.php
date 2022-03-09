@@ -647,6 +647,29 @@ class PropertyControllerTest extends TestCase
     }
 
     /** @test */
+    public function a_property_can_be_archived_and_unarchived()
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $user = User::factory()->create();
+        /** @var \Illuminate\Contracts\Auth\Authenticatable */
+        $userWhoDidNotCreateProperty = User::factory()->create();
+
+        $property = Property::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $this->actingAs($userWhoDidNotCreateProperty)->patch("/properties/{$property->slug}/archive")->assertStatus(403); 
+
+        $this->actingAs($userWhoDidNotCreateProperty)->patch("/properties/{$property->slug}/archive")->assertStatus(403); 
+
+        $this->actingAs($user)->patch("/properties/{$property->slug}/archive")->assertStatus(200); 
+        $this->assertNotNull($property->fresh()->archived_at);
+
+        $this->actingAs($user)->patch("/properties/{$property->slug}/archive")->assertStatus(200); 
+        $this->assertNull($property->fresh()->archived_at);
+    }
+
+    /** @test */
     public function the_property_edit_page_can_be_showed()
     {
         /** @var \Illuminate\Contracts\Auth\Authenticatable */

@@ -64,9 +64,10 @@
 
 import StarRating from 'vue-star-rating'
 
-import { XIcon } from '@heroicons/vue/solid'
-
 export default {
+    components: {
+        StarRating,
+    },
 
     data: () => ({
         showReportOrReviewModal: false,
@@ -82,11 +83,6 @@ export default {
         },
         formError: '',
     }),
-
-    components: {
-        StarRating,
-        XIcon
-    },
 
     props: ['slug', 'model'],
 

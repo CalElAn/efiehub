@@ -49,12 +49,16 @@
                     {{user.phone_number}}
                 </a>
             </p>
-            <button class="flex items-center justify-center gap-2 border border-main-orange text-main-orange hover:text-white bg-white hover:bg-main-orange bg-opacity-95 p-1 rounded-lg">
-                <ChatAltIcon class="h-5 w-5 md:h-4 md:w-4"/> Chat
+            <button 
+                @click="showChatBox"
+                :disabled="authenticatedUser && authenticatedUser.id === user.id"
+                class="flex items-center justify-center gap-2 border border-main-orange text-main-orange hover:text-white bg-white hover:bg-main-orange bg-opacity-95 p-1 rounded-lg">
+                <ChatAltIcon class="h-5 w-5 md:h-4 md:w-4"/> 
+                Chat
             </button>
             <button
                 v-show="!requestCallBackToggle"
-                :disabled="authenticatedUser && authenticatedUser.id === user.user_id"
+                :disabled="authenticatedUser && authenticatedUser.id === user.id"
                 @click="requestCallBackToggle = true"
                 style="text-decoration-color: #4568ED;"
                 class="rounded-xl underline hover:border hover:shadow-md p-2 md:p-1">
@@ -102,15 +106,24 @@
                 {{reviewsAverageAndCount.average}} <span>({{reviewsAverageAndCount.count}} agent reviews)</span>
             </div>
         </div>
+        <ChatBox
+            v-if="showChatBoxToggle"
+            :messagedUser="user"
+            @closeChatBox="showChatBoxToggle = false"
+        />
     </div>
 </template>
 
 <script>
+import ChatBox from '../ChatBox.vue'
+
 import { PhoneIcon, StarIcon } from '@heroicons/vue/solid'
 import { ChatAltIcon } from '@heroicons/vue/outline'
 
 export default {
     components: {
+        ChatBox,
+
         PhoneIcon,
         ChatAltIcon,
         StarIcon,
@@ -127,7 +140,8 @@ export default {
 
             requestCallBackToggle: false,
             showContactToggle: false,
-            reviewsAverageAndCount: this.getReviewsAverageAndCount(this.user.reviews)
+            showChatBoxToggle: false,
+            reviewsAverageAndCount: this.getReviewsAverageAndCount(this.user.reviews),
         }
     },
     
@@ -153,7 +167,7 @@ export default {
 
             if (!this.requestCallBackForm.phone_number) return
 
-            axios.post(`/users/${this.property.user_id}/request-call-back`, this.requestCallBackForm)
+            axios.post(`/users/${this.user.id}/request-call-back`, this.requestCallBackForm)
                 .then( (response) => {
                     if( response.status === 200 ) { 
                         this.toast.fire({
@@ -168,6 +182,16 @@ export default {
                     console.log(error)
             })  
         },
+
+        showChatBox() {
+            if (!this.isUserAuthenticated) { 
+                this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to chat, or'})
+                return
+            } 
+            
+            this.showChatBoxToggle = true
+        },
+
     }
 }
 </script>

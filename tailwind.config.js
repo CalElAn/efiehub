@@ -7,6 +7,10 @@ module.exports = {
         './resources/views/**/*.blade.php',
         './resources/js/components/**/*.vue',
         './resources/js/components/*.vue',
+        './resources/js/Pages/**/*.vue',
+        './resources/js/Pages/*.vue',
+        './resources/js/Shared/**/*.vue',
+        './resources/js/Shared/*.vue',
     ],
 
     theme: {

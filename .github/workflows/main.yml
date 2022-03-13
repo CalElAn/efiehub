@@ -36,7 +36,8 @@ jobs:
       - name: Deploy to production
         uses: appleboy/ssh-action@master
         with:
-          username: ubuntu
-          host: ec2-3-133-119-84.us-east-2.compute.amazonaws.com
+          username: ${{ secrets.USERNAME }}
+          host: ${{ secrets.HOST }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           script: 'cd /var/www/efiehub && ./server_deploy.sh'

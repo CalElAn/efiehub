@@ -36,6 +36,7 @@ jobs:
       - name: Deploy to production
         uses: appleboy/ssh-action@master
         with:
+          debug: true
           username: ${{ secrets.USERNAME }}
           host: ${{ secrets.HOST }}
           key: ${{ secrets.SSH_KEY }}

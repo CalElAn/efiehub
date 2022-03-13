@@ -31,16 +31,16 @@
        
     </div>
     <!-- Validation Errors -->
-    <div class="mb-4" v-if="errors.email">
+    <div class="mb-4" v-if="Object.keys($page.props.errors).length > 0">
         <div class="font-medium text-red-600">
-            Whoops! Something went wrong
+            Whoops! Something went wrong:
         </div>
         <ul class="mt-3 list-disc list-inside text-xs text-red-600">
-            <li v-for="(item, index) in errors.email" :key="index">{{ item }}</li>
+            <li v-for="(item, index) in $page.props.errors" :key="index">{{ item }}</li>
         </ul>
     </div>
 
-    <form @submit.prevent="onSubmit" @keydown="clearErrors" method="POST" action="/login">
+    <form @submit.prevent="onSubmit" method="POST" action="/login">
         <!-- Email Address -->
         <div>
             <label for="loginEmail" class="block font-medium text-gray-700" >Email</label>
@@ -101,29 +101,33 @@
             </div>
         </div>
 
-        <div class="flex justify-center mt-6">
-            <a href="/forgot-password" class="underline text-gray-600">
+        <div class="flex justify-center mt-2">
+            <Link href="/forgot-password" class="underline text-main-orange">
                 Forgot password?
-            </a>
+            </Link>
         </div>
     </form>
 </vue-final-modal>
 </template>
 
 <script>
+import { useForm } from '@inertiajs/inertia-vue3'
 
 export default {
+    setup () {
+        const form = useForm({
+            email: null,
+            password: null,
+            remember: false,
+        })
+
+        return { form }
+    },
 
     data: () => ({
         showLogInModal: false,
         showWelcomeText: false,
         welcomeText: '',
-        errors: {},
-        form: {
-                email: '',
-                password: '',
-                remember: '',
-            }
     }),
 
     methods: {
@@ -138,28 +142,18 @@ export default {
         },
 
         onSubmit() {
-            axios.post('/login', this.form)
-            .then( (response) => {
-                if( response.status === 200 ) {  
-                    // console.log(response.data)
-                    this.$emit('userHasBeenAuthenticated', response.data)
+            this.form.post('/login?fromModal=true', {
+                preserveState: true,
+                onSuccess: () => {
                     this.showLogInModal = false;
-
                     this.toast.fire({
                         icon: 'success',
                         position: 'bottom-end',
                         title: `Logged in!`
                     })
-               }
-            })
-            .catch( (error) => {
-                this.errors = error.response.data.errors;
+                },
             })
         },
-
-        clearErrors() {
-            this.errors = {}
-        }
     },
 }
 </script>

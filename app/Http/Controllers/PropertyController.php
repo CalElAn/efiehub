@@ -9,7 +9,7 @@ use App\Http\Requests\StoreOrUpdatePropertyRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use phpDocumentor\Reflection\Types\Null_;
+use Inertia\Inertia;
 
 class PropertyController extends Controller
 {
@@ -20,14 +20,7 @@ class PropertyController extends Controller
      */
     public function index(Request $request)
     {
-        $response = ['paginatedProperties' => Property::latest()->paginate(6)];
-
-        if($request->ajax())
-        {
-            return response($response, 200);
-        }
-
-        return view('home', $response);
+        return Inertia::render('Home', ['paginatedProperties' => Property::latest()->paginate(6)]);
     }
 
     /**
@@ -39,7 +32,7 @@ class PropertyController extends Controller
     {
         $property = new Property;
 
-        return view('property.create-or-edit', [
+        return Inertia::render('Property/CreateOrEdit', [
             'propertyTypesAndFeatures' => $property->getAllTypesAndFeatures(), 
             'mode' => 'create',
             'property' => $property
@@ -60,7 +53,7 @@ class PropertyController extends Controller
 
         $property->media()->insert(Property::getArrayForInsertingMedia($request, $property->property_id));
 
-        return $property;
+        return redirect()->route('properties.show', [$property]);
     }
 
     /**
@@ -104,16 +97,12 @@ class PropertyController extends Controller
         }
 
         /** @var Illuminate\Pagination\LengthAwarePaginator */
-        $paginatedPropertyQuery = $propertyQuery->paginate(10);
+        $paginatedProperties = $propertyQuery->paginate(10);
 
-        $response = ['paginatedProperties' => $paginatedPropertyQuery, 'searchQuery' => $request->except('_token')];
-
-        if($request->ajax())
-        {
-            return response($response, 200);
-        }
-
-        return view('property.search', $response);
+        return Inertia::render('Property/Search', [
+            'paginatedProperties' => $paginatedProperties, 
+            'searchQuery' => $request->except('_token')
+        ]);
     }
 
 
@@ -133,19 +122,13 @@ class PropertyController extends Controller
             ])
             ->paginate(10);
 
-        $response = [
+        return Inertia::render('Property/Show', [
             'property' => 
                 tap($property, function ($collection) {
                     $collection->user->makeVisible('phone_number');
                 }),
-            'paginatedProperties' => $paginatedSimilarProperties];
-
-        if($request->ajax())
-        {
-            return response($response, 200);
-        }
-
-        return view('property.show', $response);
+            'paginatedProperties' => $paginatedSimilarProperties
+        ]);
     }
 
     /**
@@ -158,7 +141,7 @@ class PropertyController extends Controller
     {
         abort_if(!$property->does_property_belong_to_the_authenticated_user, 403);
 
-        return view('property.create-or-edit', [
+        return Inertia::render('Property/CreateOrEdit', [
             'propertyTypesAndFeatures' => $property->getAllTypesAndFeatures(), 
             'mode' => 'edit',
             'property' => $property,
@@ -182,7 +165,7 @@ class PropertyController extends Controller
 
         $property->media()->insert(Property::getArrayForInsertingMedia($request, $property->property_id));
 
-        return $property;
+        return redirect()->route('properties.show', [$property]);
     }
 
     /**
@@ -203,6 +186,8 @@ class PropertyController extends Controller
         $property->reports()->delete();
         $property->reviews()->delete();
         $property->delete();
+
+        return redirect()->route('user.show', [Auth::user()]);
     }
 
     public function archive(Property $property)
@@ -221,7 +206,7 @@ class PropertyController extends Controller
         $property->save();
     }
 
-    public function createReport(Request $request, Property $property)
+    public function createReport(Request $request, Property $property) 
     {
         $request->validate([
             'body' => 'required'

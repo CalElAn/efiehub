@@ -8,7 +8,7 @@
             <div 
                 :class="[isInMobileNavBar ? 'h-8 w-8' : 'h-7 w-7']"
                 class="bg-contain bg-center bg-no-repeat -ml-2 rounded-full" 
-                :style="{'background-image': 'url(' + getProfilePictureUrl(authenticatedUser)+ ')'}" alt="profile picture">
+                :style="{'background-image': 'url(' + getProfilePictureUrl($page.props.authenticatedUser)+ ')'}" alt="profile picture">
             </div> 
             <XIcon
                 v-if="open" 
@@ -31,54 +31,48 @@
             class="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
             <div class="px-1 py-1">
                 <MenuItem v-slot="{ active }">
-                    <a :href="`/users/${authenticatedUser.id}#UploadedProperties`" :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                    <Link :href="`/users/${$page.props.authenticatedUser.id}#UploadedProperties`" :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                         'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
                         Profile
-                    </a>
+                    </Link>
                 </MenuItem>
             </div>
             <div class="px-1 py-1">
                 <MenuItem v-slot="{ active }">
-                    <a 
+                    <Link 
                         :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                         'group flex rounded-md items-center w-full px-2 py-2 text-sm',]"
-                        :href="`/users/${authenticatedUser.id}#UploadedProperties`"
+                        :href="`/users/${$page.props.authenticatedUser.id}#UploadedProperties`"
                     >
                         Uploaded properties
-                    </a>
+                    </Link>
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
-                    <a 
-                        :href="`/users/${authenticatedUser.id}#Reviews`" 
+                    <Link 
+                        :href="`/users/${$page.props.authenticatedUser.id}#Reviews`" 
                         :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                         'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
                         Reviews
-                    </a>
+                    </Link>
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
-                    <a 
-                        :href="`/users/${authenticatedUser.id}#Favourites`" 
+                    <Link 
+                        :href="`/users/${$page.props.authenticatedUser.id}#Favourites`" 
                         :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                         'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
                         Favourites
-                    </a>
+                    </Link>
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
-                    <a 
-                        :href="`/users/${authenticatedUser.id}#Notifications`" 
+                    <Link 
+                        :href="`/users/${$page.props.authenticatedUser.id}#Notifications`" 
                         :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                         'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
                         Notifications
-                    </a>
+                    </Link>
                 </MenuItem>
             </div>
             <div class="px-1 py-1">
-                <!-- <MenuItem v-slot="{ active }">
-                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
-                        'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
-                        Manage your listings
-                    </button>
-                </MenuItem> -->
                 <MenuItem v-slot="{ active }">
                 <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                     'group flex rounded-md items-center w-full px-2 py-2 text-sm',]">
@@ -89,13 +83,15 @@
 
             <div class="px-1 py-1">
                 <MenuItem v-slot="{ active }">
-                <form method="POST" action="/logout">
-                    <input type="hidden" name="_token" :value="csrfToken" />
-                    <button :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900',
-                            'group flex rounded-md items-center w-full px-2 py-2 text-sm']">
+                    <Link 
+                        href="/logout" 
+                        method="post" 
+                        as="button" 
+                        type="button" 
+                        :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900', 'group flex rounded-md items-center w-full px-2 py-2 text-sm']"
+                    >
                         Log Out
-                    </button>
-                </form>
+                    </Link>
                 </MenuItem>
             </div>
         </MenuItems>
@@ -109,22 +105,12 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import { MenuIcon } from '@heroicons/vue/solid'
 
 export default {
-
     components: {
         Menu,
         MenuButton,
         MenuItems,
         MenuItem,
         MenuIcon,
-    },
-
-    inject: ['authenticatedUser'],
-
-    data() {
-        return {
-            csrfToken: csrfToken,
-            isInHomepage: window.location.pathname === '/',
-        }
     },
 
     props: ['isInMobileNavBar', 'isScrollYPastNavBar'],

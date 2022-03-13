@@ -18,7 +18,7 @@
     </button>
 
     <!-- Validation Errors -->
-    <!-- <div v-if="errors">
+    <div v-if="Object.keys(errors).length > 0">
         <div class="font-medium text-red-600">
             Whoops! Something went wrong
         </div>
@@ -26,62 +26,46 @@
         <ul class="mt-3 list-disc list-inside text-sm text-red-600">
             <li v-for="(item, index) in errors" :key="index">{{ item }}</li>
         </ul>
-    </div> -->
+    </div>
 
     <form @submit.prevent="onSubmit" method="POST" action="/register">
 
         <!-- Name -->
         <div class="mt-4">
             <label for="name" class="block font-medium text-gray-700">Name</label>
-            <input id="name" 
-                @keydown="clearErrors('name')"
+            <input id="name"
                 v-model="form.name"
                 class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full" 
                 type="text" name="name" required autofocus>
-            <ul v-if="errors.name" class="mt-3 list-disc list-inside text-red-600 text-xs">
-                <li v-for="(item, index) in errors.name" :key="index">{{ item }}</li>
-            </ul>
         </div>
 
         <!-- Email Address -->
         <div class="mt-4">
             <label for="SignUpEmail" class="block font-medium text-gray-700">Email</label>
             <input id="SignUpEmail"
-                @keydown="clearErrors('email')"
                 v-model="form.email" 
                 class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full" 
                 type="email" name="email"  required autofocus>
-            <ul v-if="errors.email" class="list-disc list-inside text-red-600 text-xs">
-                <li v-for="(item, index) in errors.email" :key="index">{{ item }}</li>
-            </ul>
         </div>
 
         <!-- Phone Number -->
         <div class="mt-4">
             <label for="phoneNumber" class="block font-medium text-gray-700">Phone Number</label>
             <input id="phoneNumber"
-                @keydown="clearErrors('phoneNumber')"
-                v-model="form.phoneNumber" 
+                v-model="form.phone_number" 
                 class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full" 
                 type="tel" name="phoneNumber"  required >
-            <ul v-if="errors.phoneNumber" class="list-disc list-inside text-red-600 text-xs">
-                <li v-for="(item, index) in errors.phoneNumber" :key="index">{{ item }}</li>
-            </ul>
         </div>
 
         <!-- Password -->
         <div class="mt-4">
             <label for="signuppassword" class="block font-medium text-gray-700">Password</label>
             <input id="signuppassword"
-                @keydown="clearErrors('password')"
                 v-model="form.password" 
                 class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full" 
                 type="password"
                 name="password"
                 required autocomplete="new-password" >
-            <ul v-if="errors.password" class="list-disc list-inside text-red-600 text-xs">
-                <li v-for="(item, index) in errors.password" :key="index">{{ item }}</li>
-            </ul>
         </div>
 
         <!-- Password Confirmation -->
@@ -104,13 +88,13 @@
 
             <div class="flex">
                 <span>Already have an account?&nbsp;</span>
-                <a
+                <button
                     @click="showLogInModal"
                     class="underline text-sm text-indigo-600 hover:text-indigo-700"
                     href="#"
                     >
                     Log in
-                </a>
+                </button>
             </div>
         </div>
     </form>
@@ -118,20 +102,25 @@
 </template>
 
 <script>
+import { useForm } from '@inertiajs/inertia-vue3'
 
 export default {
+    setup () {
+        const form = useForm({
+            name: '',
+            email: '',
+            phone_number: '',
+            password: '',
+            password_confirmation: '',
+        })
+
+        return { form }
+    },
 
     data() {
         return {
             showSignUpModal: false,
-            errors: {},
-            form: {
-                name: '',
-                email: '',
-                phoneNumber: '',
-                password: '',
-                password_confirmation: '',
-            }     
+            errors: {},   
         }
     },
 
@@ -142,29 +131,19 @@ export default {
         },
 
         onSubmit() {
-            axios.post('/register', this.form)
-            .then( (response) => {
-                if( response.status == 200 ) {  
-                    // console.log(response.data)
-                    this.$emit('userHasBeenAuthenticated', response.data)
+            this.form.post('/register?fromModal=true', {
+                preserveState: true,
+                onSuccess: () => {
                     this.showSignUpModal = false; 
                     this.toast.fire({
                         icon: 'success',
                         position: 'bottom-end',
                         title: `Successfully registered!`
                     })
-
-               }
-            })
-            .catch( (error) => {
-                this.errors = error.response.data.errors;
+                },
+                onError: error => this.errors = error,
             })
         },
-
-        clearErrors(error) {
-            // console.log(this.errors[error])
-            if (this.errors[error]) this.errors[error].length = 0
-        }
     },
 }
 </script>

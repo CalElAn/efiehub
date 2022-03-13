@@ -79,24 +79,25 @@ class User extends Authenticatable
         return false;
     }
 
-    public function getPaginatedProperties($queryString)
+    public function getPaginatedProperties()
     {
-        return $this->properties()->latest()->paginate(10)->withPath($queryString);
+        return $this->properties()->latest()->paginate(10)->fragment('UploadedProperties');
     }
 
-    public function getPaginatedFavouritedProperties($queryString)
+    public function getPaginatedFavouritedProperties()
     {
         $paginatedFavouritedProperties 
             = $this
                 ->favouritedProperties()
                 ->with('property')
                 ->latest()
-                ->paginate(10)
-                ->withPath($queryString)
+                ->paginate(10, ['*'], 'favourited_properties_page')
+                ->fragment('Favourites')
                 ->toArray();
 
-        foreach ($paginatedFavouritedProperties['data'] as $key => $value) 
-        {
+        //the data property is currently the "favourited properties model" with the "property model" as an object under it 
+        // the below step is to make the "property model" directly under the data property 
+        foreach ($paginatedFavouritedProperties['data'] as $key => $value) {
             $paginatedFavouritedProperties['data'][$key] = $value['property'];
         }
 

@@ -1,10 +1,32 @@
 
 const app_mixin = {
-
     data() {
         return {
-            isInHomepage: window.location.pathname === '/',
-            toast: '',
+            toast: this.$swal.mixin({
+                toast: true,
+                position: 'top-right',
+                iconColor: 'white',
+                customClass: {
+                  popup: 'colored-toast'
+                },
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                    toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                }
+            }), 
+        }
+    },
+
+    computed: {
+        pageUrl() {
+            return this.$page.url
+        },
+
+        isInHomepage() {
+            return this.pageUrl === '/'
         }
     },
 
@@ -37,30 +59,18 @@ const app_mixin = {
             if(user.profile_picture_path.includes('https://')) return user.profile_picture_path
 
             return '/storage/' + user.profile_picture_path
-        },    
+        },  
+        
+        scrollToLastMessage() {
+            setTimeout(() => {
+                document.getElementById('div-to-scroll-to')?.scrollIntoView()
+            }, 100)
+        },
 
         autoGrowTextarea(element) {
             element.target.style.height = "";
             element.target.style.height = (element.target.scrollHeight) + "px";
         },
-    },
-
-    mounted() {
-        this.toast = this.$swal.mixin({
-            toast: true,
-            position: 'top-right',
-            iconColor: 'white',
-            customClass: {
-              popup: 'colored-toast'
-            },
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-            }
-        })
     },
 } 
 

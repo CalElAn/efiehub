@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
-use App\Http\Helpers\HelperMethods;
+use Inertia\Testing\AssertableInertia as Assert;
+use Carbon\Carbon;
 
 class PropertyControllerTest extends TestCase
 {
@@ -30,7 +31,11 @@ class PropertyControllerTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-        $response->assertViewHas('paginatedProperties', Property::latest()->paginate(6));
+        $response
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home')
+                ->where('paginatedProperties', Property::latest()->paginate(6))
+            );
     }
 
     /** @test */
@@ -41,15 +46,19 @@ class PropertyControllerTest extends TestCase
         $response = $this->get("/properties/{$property->slug}");
 
         $response->assertStatus(200);
-        $response->assertViewHasAll([
-            'property' => $property,
-            'paginatedProperties' => Property::where([
-                ['region', $property->region],
-                ['type', $property->type],
-                ['slug', '!=', $property->slug],
-            ])
-            ->paginate(10)
-        ]);
+        $response
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Property/Show')
+                ->where('property', tap($property->fresh(), function ($collection) {
+                    $collection->user->makeVisible('phone_number');
+                }))
+                ->where('paginatedProperties', Property::where([
+                    ['region', $property->region],
+                    ['type', $property->type],
+                    ['slug', '!=', $property->slug],
+                ])
+                ->paginate(10))
+            );
     }
 
     /** @test */
@@ -60,11 +69,13 @@ class PropertyControllerTest extends TestCase
         $response = $this->get('/properties/create');
 
         $response->assertStatus(200);
-        $response->assertViewHasAll([
-            'propertyTypesAndFeatures' => $property->getAllTypesAndFeatures(), 
-            'mode' => 'create',
-            'property' => $property
-        ]);
+        $response
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Property/CreateOrEdit')
+                ->where('propertyTypesAndFeatures', $property->getAllTypesAndFeatures())
+                ->where('mode', 'create')
+                ->where('property', $property)
+            );
     }
 
     public function createAPropertyAndReturnParams()
@@ -114,9 +125,11 @@ class PropertyControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable */
         $user = User::factory()->create();
-        $this->actingAs($user)->post('/properties', $input)->assertStatus(201); //means created
-
+        $response = $this->actingAs($user)->post('/properties', $input);
+        
         $property = Property::latest()->first();
+
+        $response->assertRedirect(route('properties.show', ['property' => $property]));
 
         return [
             'responses' => [
@@ -260,7 +273,8 @@ class PropertyControllerTest extends TestCase
             ]
         ];
 
-        $this->actingAs($user)->patch('/properties/'.$property->slug, $updatedInput)->assertStatus(200);
+        $response = $this->actingAs($user)->patch('/properties/'.$property->slug, $updatedInput);
+        $response->assertRedirect(route('properties.show', ['property' => $property->fresh()]));
 
         $this->assertDatabaseHas('properties', [
             'user_id' =>$user->id,
@@ -316,7 +330,8 @@ class PropertyControllerTest extends TestCase
             'reportable_type' => 'App\Models\Property'
         ]);
  
-        $this->actingAs($user)->delete('/properties/'.$property->slug)->assertStatus(200);
+        $response = $this->actingAs($user)->delete('/properties/'.$property->slug);
+        $response->assertRedirect(route('user.show', $user));
 
         $this->assertDatabaseMissing('Properties', $property->getAttributes());
 
@@ -368,7 +383,14 @@ class PropertyControllerTest extends TestCase
             ]
         ];
 
-        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('region')->all();
+        $inertiaResponse = $this->get('/properties/search?'.http_build_query($searchInput));
+        $inertiaResponse
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Property/Search')
+            );
+
+
+        $response = collect($inertiaResponse['page']['props']['paginatedProperties']['data'])->pluck('region')->all();
 
         $this->assertEquals(3, count($response));
 
@@ -409,7 +431,14 @@ class PropertyControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('type')->all();
+        $inertiaResponse = $this->get('/properties/search?'.http_build_query($searchInput));
+        $inertiaResponse
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Property/Search')
+            );
+
+
+        $response = collect($inertiaResponse['page']['props']['paginatedProperties']['data'])->pluck('type')->all();
 
         $this->assertEquals(4, count($response));
 
@@ -447,16 +476,21 @@ class PropertyControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties'];
+        $inertiaResponse = $this->get('/properties/search?'.http_build_query($searchInput));
+        $inertiaResponse
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Property/Search')
+            );
 
-        // dd($response['properties']);
+
+        $response = $inertiaResponse['page']['props']['paginatedProperties']['data'];
 
         $this->assertEquals(3, count($response));
 
         foreach ($response as $value)
         {
-            $this->assertGreaterThanOrEqual(100, $value->price );
-            $this->assertLessThanOrEqual(250, $value->price );
+            $this->assertGreaterThanOrEqual(100, $value['price'] );
+            $this->assertLessThanOrEqual(250, $value['price'] );
         }
     }
 
@@ -512,7 +546,13 @@ class PropertyControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties'];
+        $inertiaResponse = $this->get('/properties/search?'.http_build_query($searchInput));
+        $inertiaResponse
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Property/Search')
+            );
+
+        $response = collect($inertiaResponse['page']['props']['paginatedProperties']['data']);
 
         $this->assertEquals(2, count($response));
 
@@ -529,8 +569,8 @@ class PropertyControllerTest extends TestCase
         
         foreach ($response as $value)
         {
-            $this->assertGreaterThanOrEqual(100, $value->price );
-            $this->assertLessThanOrEqual(250, $value->price );
+            $this->assertGreaterThanOrEqual(100, $value['price'] );
+            $this->assertLessThanOrEqual(250, $value['price'] );
         }
     }
 
@@ -556,31 +596,36 @@ class PropertyControllerTest extends TestCase
             //to check when no order by in request query (should be auto ordered by latest)
         ];
 
-        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('created_at')->all();
+        $inertiaResponse = $this->get('/properties/search?'.http_build_query($searchInput));
+        $inertiaResponse->assertInertia(fn (Assert $page) => $page->component('Property/Search'));
+
+        $response = collect($inertiaResponse['page']['props']['paginatedProperties']['data'])->pluck('created_at')->all();
 
         $this->assertEquals(3, count($response));
 
-        $this->assertEquals('2021-12-18 19:55:21', $response[0]->toDateTimeString());
-        $this->assertEquals('2021-12-18 19:50:21', $response[1]->toDateTimeString());
-        $this->assertEquals('2021-12-17 19:45:21', $response[2]->toDateTimeString());
+        $this->assertEquals('2021-12-18 19:55:21', Carbon::parse($response[0])->toDateTimeString());
+        $this->assertEquals('2021-12-18 19:50:21', Carbon::parse($response[1])->toDateTimeString());
+        $this->assertEquals('2021-12-17 19:45:21', Carbon::parse($response[2])->toDateTimeString());
 
         $searchInput =  [
             "orderBy" => 'newest',
         ];
+        $inertiaResponse = $this->get('/properties/search?'.http_build_query($searchInput));
 
-        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('created_at')->all();
+        $response = collect($inertiaResponse['page']['props']['paginatedProperties']['data'])->pluck('created_at')->all();
 
         $this->assertEquals(3, count($response));
 
-        $this->assertEquals('2021-12-18 19:55:21', $response[0]->toDateTimeString());
-        $this->assertEquals('2021-12-18 19:50:21', $response[1]->toDateTimeString());
-        $this->assertEquals('2021-12-17 19:45:21', $response[2]->toDateTimeString());
+        $this->assertEquals('2021-12-18 19:55:21', Carbon::parse($response[0])->toDateTimeString());
+        $this->assertEquals('2021-12-18 19:50:21', Carbon::parse($response[1])->toDateTimeString());
+        $this->assertEquals('2021-12-17 19:45:21', Carbon::parse($response[2])->toDateTimeString());
 
         $searchInput =  [
             "orderBy" => 'priceLowToHigh',
         ];
+        $inertiaResponse = $this->get('/properties/search?'.http_build_query($searchInput));
 
-        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('price')->all();
+        $response = collect($inertiaResponse['page']['props']['paginatedProperties']['data'])->pluck('price')->all();
 
         $this->assertEquals(3, count($response));
 
@@ -591,8 +636,9 @@ class PropertyControllerTest extends TestCase
         $searchInput =  [
             "orderBy" => 'priceHighToLow',
         ];
+        $inertiaResponse = $this->get('/properties/search?'.http_build_query($searchInput));
 
-        $response = $this->get('/properties/search?'.http_build_query($searchInput))['paginatedProperties']->pluck('price')->all();
+        $response = collect($inertiaResponse['page']['props']['paginatedProperties']['data'])->pluck('price')->all();
 
         $this->assertEquals(3, count($response));
 
@@ -678,11 +724,14 @@ class PropertyControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get("/properties/{$property->slug}/edit");
         $response->assertStatus(200); 
-        $response->assertViewHasAll([
-            'propertyTypesAndFeatures' => $property->getAllTypesAndFeatures(), 
-            'mode' => 'edit',
-            'property' => $property
-        ]);
+
+        $response
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Property/CreateOrEdit')
+                ->where('propertyTypesAndFeatures', $property->getAllTypesAndFeatures())
+                ->where('mode', 'edit')
+                ->where('property', $property->fresh())
+            );
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable */
         $userWhoDidNotCreateProperty = User::factory()->create();

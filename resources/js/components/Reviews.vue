@@ -94,8 +94,6 @@ export default {
         }
     },
 
-    inject: ['isUserAuthenticated', 'authenticatedUser'],
-
     props: [
         'initialReviewsData',
         'hasAuthUserReviewed',
@@ -124,7 +122,7 @@ export default {
 
     methods: {
         reviewProperty() {
-            if (!this.isUserAuthenticated) {
+            if (!this.$page.props.isUserAuthenticated) {
                 this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: `Kindly login to review this ${this.model}, or`})
                 return
             }

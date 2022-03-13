@@ -34,11 +34,11 @@
 
     <div class="h-1/3 flex flex-col text-white text-xs sm:text-sm justify-around gap-2 p-4">
         <div>
-            <a :href="'/properties/' + property.slug">
+            <Link :href="'/properties/' + property.slug">
                 <p class="font-medium text-sm sm:text-base tracking-wide hover:underline">
                     {{property?.title}}
                 </p>
-            </a>
+            </Link>
         </div>
         <div class="flex flex-col justify-between">
             <div 
@@ -70,9 +70,7 @@
 import propertyMixin from "./property_mixin.js";
 
 export default {
-
     mixins: [propertyMixin],
-
 }
 </script>
 

@@ -17,7 +17,7 @@
             >
                 {{item.message}}
             </div>
-            <div id="divToScrollTo"></div>
+            <div id="div-to-scroll-to"></div>
         </div>
         <div class="bg-gray-200 font-medium flex gap-1 p-1">
             <textarea
@@ -50,8 +50,6 @@ export default {
         }
     },
 
-    inject: ['authenticatedUser'],
-
     props: ['messagedUser'],
 
     emits: ['closeChatBox'],
@@ -79,12 +77,6 @@ export default {
                     this.isSendMessagePending = false
             })           
         },
-
-        scrollToLastMessage() {
-            setTimeout(() => {
-                document.getElementById('divToScrollTo').scrollIntoView()
-            }, 100)
-        }
     },
 
     mounted() {
@@ -98,7 +90,7 @@ export default {
 
         this.scrollToLastMessage()
 
-        window.Echo.private(`chat.${this.messagedUser.id}.${this.authenticatedUser.id}`)
+        window.Echo.private(`chat.${this.messagedUser.id}.${this.$page.props.authenticatedUser.id}`)
             .listen('ChatMessageSent', (e) => {
                 this.messages.push(e.chatMessage);
                 this.scrollToLastMessage()

@@ -19,10 +19,10 @@ Route::controller(PropertyController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/properties/create', 'create');
     Route::get('/properties/search', 'search');
-    Route::get('/properties/{property}', 'show');
-    Route::get('/properties/{property}/edit', 'edit');
-
+    Route::get('/properties/{property}', 'show')->name('properties.show');
+    
     Route::middleware(['auth'])->group(function () {
+        Route::get('/properties/{property}/edit', 'edit');
         Route::post('/properties', 'store');
         Route::patch('/properties/{property}', 'update');
         Route::patch('/properties/{property}/archive', 'archive');
@@ -33,10 +33,10 @@ Route::controller(PropertyController::class)->group(function () {
 });
 
 Route::controller(UserController::class)->group(function () {
-    Route::get('/users/{user}', 'show')->name('users.show');
-    Route::get('/users/{user}/edit', 'edit');
-
+    Route::get('/users/{user}', 'show')->name('user.show');
+    
     Route::middleware(['auth'])->group(function () {   
+        Route::get('/users/{user}/edit', 'edit');
         Route::patch('/users/{user}', 'update');
         Route::post('/properties/{property}/favourites', 'createFavouritedProperty');
         Route::post('/users/{user}/request-call-back', 'requestCallBack');
@@ -48,12 +48,10 @@ Route::post('/analytics', [AnalyticsController::class, 'store']);
 
 Route::controller(ChatMessageController::class)
     ->middleware('auth')
-    ->group(
-        function () {
-            Route::get('/chat-messages/{messaged_user_id}', 'getChatMessages');
-            Route::post('/chat-messages', 'store');
-        }
-    );
+    ->group(function () {
+        Route::get('/chat-messages/{messaged_user_id}', 'getChatMessages');
+        Route::post('/chat-messages', 'store');
+    });
 
 Route::controller(FilePondController::class)->group(function () {
     Route::post('/filepond/process', 'process');
@@ -65,8 +63,8 @@ Route::controller(FilePondController::class)->group(function () {
     });
 });
 
-Route::post('keep-csrf-token-alive', function() {
-    return 'Token must have been valid, and the session expiration has been extended.';//https://stackoverflow.com/q/31449434/470749
-});
+// Route::post('keep-csrf-token-alive', function() {
+//     return 'Token must have been valid, and the session expiration has been extended.';//https://stackoverflow.com/q/31449434/470749
+// });
 
 require __DIR__.'/auth.php';

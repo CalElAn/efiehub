@@ -3,8 +3,8 @@
     <!-- <transition name="fade"> -->
     <div
         ref="searchBar"
-        v-show="!isScrollYPastSearchBar || placeSearchBarInNavBar"
-        :class="[isSearchBarFocused ? 'xl:grid-cols-9' : '', placeSearchBarInNavBar ? 'fixed top-16 left-0.1 z-20 shadow-2xl border text-main-blue' : 'absolute left-0 bottom-14 z-10 backdrop-blur-2xl backdrop-filter backdrop-opacity-90 bg-opacity-30']"
+        v-show="!isScrollYPastSearchBar || shouldPlaceSearchBarInNavBar"
+        :class="[isSearchBarFocused ? 'xl:grid-cols-9' : '', shouldPlaceSearchBarInNavBar ? 'fixed top-16 left-0.1 z-20 shadow border text-main-blue' : 'absolute left-0 bottom-14 z-10 backdrop-blur-2xl backdrop-filter backdrop-opacity-90 bg-opacity-30']"
         class="grid-cols-8 bg-white gap-1 h-16 hidden items-center rounded-full sm:grid text-center text-white text-base lg:text-lg xl:text-xl w-searchbar-max md:w-searchbar-md xl:w-searchbar-max 3xl:w-searchbar-2x">
 
         <!-- Types Popover -->
@@ -55,7 +55,7 @@
             <input
                 @focus="isInputFocused=true, isSearchBarFocused=true"
                 @blur="isInputFocused=false"
-                :class="[placeSearchBarInNavBar ? ' placeholder-main-blue' : ' placeholder-white']"
+                :class="[shouldPlaceSearchBarInNavBar ? ' placeholder-main-blue' : ' placeholder-white']"
                 class="text-base lg:text-lg xl:text-xl text-left border-0 h-full pl-3 pr-0 w-full rounded-full focus:ring-0 focus:outline-none bg-transparent mx-2 focus:placeholder-main-blue group-hover:placeholder-main-blue "
                 type="text"
                 placeholder="Enter a location">
@@ -64,7 +64,7 @@
         </div> -->
         <!-- Location Multiselect -->
         <Multiselect
-            :class="[placeSearchBarInNavBar ? 'place-search-bar-in-nav-bar' : '']"
+            :class="[shouldPlaceSearchBarInNavBar ? 'place-search-bar-in-nav-bar' : '']"
             class="col-span-3 px-4 rounded-full relative text-base lg:text-lg xl:text-xl text-main-blue flex items-center justify-end h-full group focus-within:shadow-2xl hover:shadow-lg"
             name="regions"
             v-model="form.regions"
@@ -78,12 +78,12 @@
             :options="regions" 
             :classes="{
                 container: 'focus:bg-white focus:text-main-blue hover:bg-white relative mx-auto w-full flex items-center box-border cursor-pointer rounded-full border-0 border-l border-r bg-transparent text-xs sm:text-sm leading-snug outline-none',
-                caret: 'multiselect-caret bg-multiselect-caret bg-center bg-no-repeat w-2.5 h-4 py-px box-content mr-3.5 relative z-10 flex-shrink-0 flex-grow-0 transition-transform transform pointer-events-none group-hover:color-main-blue group-focus:color-main-blue',
-                clearIcon: 'multiselect-clear-icon bg-multiselect-remove bg-center bg-no-repeat w-2.5 h-4 py-px box-content inline-block group-hover:color-main-blue group-focus:color-main-blue',
+                caret: 'large-search-bar multiselect-caret bg-multiselect-caret bg-center bg-no-repeat w-2.5 h-4 py-px box-content mr-3.5 relative z-10 flex-shrink-0 flex-grow-0 transition-transform transform pointer-events-none group-hover:color-main-blue group-focus:color-main-blue',
+                clearIcon: 'large-search-bar multiselect-clear-icon bg-multiselect-remove bg-center bg-no-repeat w-2.5 h-4 py-px box-content inline-block group-hover:color-main-blue group-focus:color-main-blue',
             }">
             <template v-slot:placeholder>
                 <div 
-                    :class="[placeSearchBarInNavBar ? 'text-main-blue' : 'text-white']"
+                    :class="[shouldPlaceSearchBarInNavBar ? 'text-main-blue' : 'text-white']"
                     class="text-white text-base lg:text-lg xl:text-xl flex items-center justify-center w-full h-full group-hover:text-main-blue group-focus:text-main-blue">
                     Region
                 </div>
@@ -131,7 +131,8 @@
             :class="[isSearchBarFocused ? 'xl:col-span-2' : '']"
             class="col-span-1 p-2 h-full">
             <button 
-                type="submit"
+                @click="searchProperty"
+                type="button"
                 class="rounded-full focus:outline-none w-full h-full bg-main-orange hover:bg-opacity-75 flex items-center justify-evenly">
                 <search-icon 
                     :class="[isSearchBarFocused ? '' : '']"
@@ -142,29 +143,24 @@
             </button>
         </div>
     </div>
-        <SearchBarFormInputs :form="form"/>
     </form>
     <!-- </transition> -->
 </template>
 
 <script>
 import searchBarMixin from "./search_bar_mixin.js"
+import { shouldPlaceSearchBarInNavBar, isScrollYPastSearchBar  } from './largeSearchBarPlacement.js'
 
 export default {
-    mixins: [searchBarMixin],
-
-    data() {
-        return {
-            isScrollYPastSearchBar: false,
-        }
+    setup() {
+        return { shouldPlaceSearchBarInNavBar, isScrollYPastSearchBar }
     },
 
-    props: ['placeSearchBarInNavBar'],
+    mixins: [searchBarMixin],
 
     emits: ['scrollYIsPastSearchBar', 'scrollYIsNotPastSearchBar'],
 
     mounted() {
-
         let searchBarOffsetTop = this.$refs.searchBar.offsetTop;
         let searchBarOffsetHeight = this.$refs.searchBar.offsetHeight;
         let navBarHeight = document.getElementById('nav-bar').offsetHeight;
@@ -175,10 +171,8 @@ export default {
                 function() {
                 if (window.scrollY + 30 - navBarHeight >= searchBarOffsetTop ) {
                     thisVar.isScrollYPastSearchBar = true
-                    thisVar.$emit('scrollYIsPastSearchBar')
                 } else {
                     thisVar.isScrollYPastSearchBar = false
-                    thisVar.$emit('scrollYIsNotPastSearchBar')
                 }
             }
         );  
@@ -186,30 +180,30 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style>
     @import "./search_bar_styles.css";
 
-    .multiselect-clear-icon {
+    .large-search-bar.multiselect-clear-icon {
         --ms-clear-color: #fff;
     }
 
-    .place-search-bar-in-nav-bar .multiselect-clear-icon {
+    .place-search-bar-in-nav-bar .large-search-bar.multiselect-clear-icon {
         --ms-clear-color: #4568ED;
     }
 
-    .multiselect-clear-icon:hover {
+    .large-search-bar.multiselect-clear-icon:hover {
         --ms-clear-color: #4568ED;
     }
 
-    .multiselect-caret {
+    .large-search-bar.multiselect-caret {
         --ms-caret-color: #fff;
     }
 
-    .place-search-bar-in-nav-bar .multiselect-caret {
+    .place-search-bar-in-nav-bar .large-search-bar.multiselect-caret {
         --ms-caret-color: #4568ED;
     }
 
-    .multiselect-caret:hover {
+    .large-search-bar.multiselect-caret:hover {
         --ms-caret-color: #4568ED;
     }
 

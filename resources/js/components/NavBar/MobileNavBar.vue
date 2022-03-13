@@ -18,14 +18,14 @@
                 </p>
             </div>
         </a>
-        <div v-if="isUserAuthenticated"
+        <div v-if="$page.props.isUserAuthenticated"
             class="text-right">
             <AuthUserMenuButton
                 :isInMobileNavBar="true"
                 :isScrollYPastNavBar="false"
             ></AuthUserMenuButton>
         </div>    
-        <button v-if="!isUserAuthenticated" @click="$vfm.show('SignUpModal')"> 
+        <button v-if="!$page.props.isUserAuthenticated" @click="$vfm.show('SignUpModal')"> 
             <div class="flex flex-col items-center">
                 <UserAddIcon class="w-5 h-5"/>
                 <p>
@@ -33,7 +33,7 @@
                 </p>
             </div>
         </button>
-        <button v-if="!isUserAuthenticated" @click="$vfm.show('LogInModal')">
+        <button v-if="!$page.props.isUserAuthenticated" @click="$vfm.show('LogInModal')">
             <div class="flex flex-col items-center">
                 <UserCircleIcon class="w-5 h-5"/>
                 <p>
@@ -59,12 +59,8 @@ export default {
         AuthUserMenuButton
     },
 
-    inject: ['isUserAuthenticated'],
-
-
     data () {
         return {
-            csrfToken: csrfToken,
             isScrollDown: false,
         }
     }, 

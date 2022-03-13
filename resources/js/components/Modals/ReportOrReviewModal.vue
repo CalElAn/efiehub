@@ -120,7 +120,6 @@ export default {
             })
             .catch( (error) => {
                 if( error.response.status === 403 ) {  
-
                     this.showReportOrReviewModal = false; 
 
                     if(this.mode === 'review') { 

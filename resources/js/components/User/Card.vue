@@ -24,12 +24,12 @@
                     class="font-medium"
                     :class="[showFullCard ? 'sm:text-xl' : '']"
                 >
-                    <a 
+                    <Link 
                         class="underline"
                         :class="{showFullCard: 'underline'}" 
                         :href="'/users/'+user.id">
                         {{user.name}}
-                    </a>
+                    </Link>
                 </p>
             </div>
             <button 
@@ -51,14 +51,14 @@
             </p>
             <button 
                 @click="showChatBox"
-                :disabled="authenticatedUser && authenticatedUser.id === user.id"
+                :disabled="$page.props.authenticatedUser && $page.props.authenticatedUser.id === user.id"
                 class="flex items-center justify-center gap-2 border border-main-orange text-main-orange hover:text-white bg-white hover:bg-main-orange bg-opacity-95 p-1 rounded-lg">
                 <ChatAltIcon class="h-5 w-5 md:h-4 md:w-4"/> 
                 Chat
             </button>
             <button
                 v-show="!requestCallBackToggle"
-                :disabled="authenticatedUser && authenticatedUser.id === user.id"
+                :disabled="$page.props.authenticatedUser && $page.props.authenticatedUser.id === user.id"
                 @click="requestCallBackToggle = true"
                 style="text-decoration-color: #4568ED;"
                 class="rounded-xl underline hover:border hover:shadow-md p-2 md:p-1">
@@ -129,12 +129,10 @@ export default {
         StarIcon,
     },
 
-    inject: ['isUserAuthenticated', 'authenticatedUser'],
-
     data() {
         return {
             requestCallBackForm: {
-                phone_number: this.authenticatedUser?.phone_number,
+                phone_number: this.$page.props.authenticatedUser?.phone_number,
                 details: '',
             },
 
@@ -149,7 +147,7 @@ export default {
 
     methods: {
         showContact() {
-            if (!this.isUserAuthenticated) { 
+            if (!this.$page.props.isUserAuthenticated) { 
 
                 this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to view the contact number, or'})
                 return
@@ -159,7 +157,7 @@ export default {
         },
 
         requestCallBack() {
-            if (!this.isUserAuthenticated) { 
+            if (!this.$page.props.isUserAuthenticated) { 
 
                 this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to request a call back, or'})
                 return
@@ -184,7 +182,7 @@ export default {
         },
 
         showChatBox() {
-            if (!this.isUserAuthenticated) { 
+            if (!this.$page.props.isUserAuthenticated) { 
                 this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to chat, or'})
                 return
             } 

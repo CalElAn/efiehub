@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
-use App\Models\PropertyType;
-use Illuminate\Support\Facades\DB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,16 +23,7 @@ class AppServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot()
-    {
-        View::composer('*', function ($view) {
-            $view
-                ->with('propertyTypes', PropertyType::all())
-                ->with('regions', 
-                    DB::table('regions')->orderBy('name', 'asc')->get())
-                ->with('minPrice',
-                    DB::table('properties')->min('price'))
-                ->with('maxPrice',
-                    DB::table('properties')->max('price'));
-        });
+    { 
+        
     }
 }

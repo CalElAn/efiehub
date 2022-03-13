@@ -128,7 +128,8 @@
             :class="[isSearchBarFocused ? '' : '']"
             class="h-full">
             <button
-                type="submit"
+                @click="searchProperty"
+                type="button"
                 class="p-1 rounded-full focus:outline-none w-full h-full bg-main-orange hover:bg-opacity-75 flex items-center justify-center gap-0.5">
                 <!-- Search -->
                 <search-icon 
@@ -140,7 +141,6 @@
             </button>
         </div>
     </div>
-        <SearchBarFormInputs :form="form"/>
     </form>
 
 </vue-final-modal>

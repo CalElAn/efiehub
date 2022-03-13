@@ -30,58 +30,21 @@ const propertyMixin = {
         LocationMarkerIcon
     },
 
-    inject: ['isUserAuthenticated', 'authenticatedUser'],
+    data() {
+        return {
+            // favouritedProperties: this.$page.props.authenticatedUser?.favourited_properties,
+        }
+    },
 
     props: ['property'],
 
-    methods: {
-        favouriteProperty() {
-
-            if (!this.isUserAuthenticated) {
-                this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to add to favourites, or'})
-                return
-            }
-
-            axios.post(`/properties/${this.property.slug}/favourites`, {})
-            .then( (response) => {
-                if( response.status === 200 ) { 
-
-                    this.authenticatedUser.favourited_properties.forEach((element, index) => {
-                        if ( element.property_id === this.property.property_id) {
-                            this.authenticatedUser.favourited_properties.splice(index, 1)
-                        }
-                    });    
-    
-                    this.toast.fire({
-                        icon: 'warning',
-                        position: 'bottom-end',
-                        title: `Removed from favourites!`
-                    })
-                }
-
-                if( response.status === 201 ) { 
-
-                    this.authenticatedUser.favourited_properties.unshift(response.data)
-                    this.toast.fire({
-                        icon: 'success',
-                        position: 'bottom-end',
-                        title: `Added to favourites!`
-                    })
-                }
-            })
-            .catch( (error) => {
-                console.log(error)
-            })  
-        },
-
-        shareProperty() {
-            this.$vfm.show('SharePropertyModal', this.property)
-        },
-    },
-
     computed: {
+        favouritedProperties() {
+            return this.$page.props.authenticatedUser?.favourited_properties 
+        },
+
         isPropertyFavouritedByUser() {
-            return !!( this.authenticatedUser?.favourited_properties?.find( obj => obj.property_id === this.property.property_id) )
+            return !!( this.favouritedProperties?.find( obj => obj.property_id === this.property.property_id) )
         },
 
         propertyReviews() {
@@ -109,7 +72,49 @@ const propertyMixin = {
                 exists: false,
             }
         }
-    }
+    },
+
+    methods: {
+        favouriteProperty() {
+
+            if (!this.$page.props.isUserAuthenticated) {
+                this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to add to favourites, or'})
+                return
+            }
+
+            axios.post(`/properties/${this.property.slug}/favourites`, {})
+            .then( (response) => {
+                if( response.status === 200 ) { 
+                    this.favouritedProperties.forEach((element, index) => {
+                        if ( element.property_id === this.property.property_id) {
+                            this.favouritedProperties.splice(index, 1)
+                        }
+                    });    
+                    this.toast.fire({
+                        icon: 'warning',
+                        position: 'bottom-end',
+                        title: `Removed from favourites!`
+                    })
+                }
+
+                if( response.status === 201 ) { 
+                    this.favouritedProperties.unshift(response.data)
+                    this.toast.fire({
+                        icon: 'success',
+                        position: 'bottom-end',
+                        title: `Added to favourites!`
+                    })
+                }
+            })
+            .catch( (error) => {
+                console.log(error)
+            })  
+        },
+
+        shareProperty() {
+            this.$vfm.show('SharePropertyModal', this.property)
+        },
+    },
 }
 
 export default propertyMixin

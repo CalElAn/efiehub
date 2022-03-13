@@ -11,6 +11,7 @@ use App\Models\Property;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 
 class UserControllerTest extends TestCase
 {
@@ -23,14 +24,20 @@ class UserControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get("/users/{$user->id}");
 
+        $user = User::latest()->first();
+
         $response->assertStatus(200);
-        $response->assertViewHasAll([
-            'user' => $user->load('reviews'),
-            'paginatedProperties' => $user->getPaginatedProperties(url()->current().'?category=paginatedProperties'),
-            'reviews' => $user->reviews,
-            'paginatedFavouritedProperties' => $user->getPaginatedFavouritedProperties(url()->current().'?category=paginatedFavouritedProperties'),
-            'notifications' => $user->notifications,
-        ]);
+        $response
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('User/Show')
+                //I have no idea why i have to load notif and properties before test passes
+                ->where('user', $user->load(['reviews', 'notifications', 'properties'])->makeVisible('phone_number'))
+                ->where('paginatedProperties', $user->getPaginatedProperties())
+                ->where('numberOfUploadedProperties', $user->properties->count())
+                ->where('reviews', $user->reviews,)
+                ->where('paginatedFavouritedProperties', $user->getPaginatedFavouritedProperties())
+                ->where('notifications', $user->notifications,)
+            );
     }
 
     /** @test */
@@ -41,9 +48,11 @@ class UserControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get("/users/{$user->id}/edit");
         $response->assertStatus(200); 
-        $response->assertViewHasAll([
-            'user' => $user
-        ]);
+        $response
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('User/Edit')
+                ->where('user', $user->fresh()->makeVisible(['email', 'phone_number']))
+            );
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable */
         $userWhoIsNotAuthenticated = User::factory()->create();

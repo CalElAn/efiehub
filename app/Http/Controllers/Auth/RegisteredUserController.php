@@ -10,17 +10,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Inertia\Inertia;
 
 class RegisteredUserController extends Controller
 {
     /**
      * Display the registration view.
      *
-     * @return \Illuminate\View\View
+     * @return \Inertia\Response
      */
     public function create()
     {
-        return view('auth.register');
+        return Inertia::render('Auth/Register');
     }
 
     /**
@@ -37,13 +38,13 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'phoneNumber' => 'required'
+            'phone_number' => 'required'
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'phone_number' => $request->phoneNumber,
+            'phone_number' => $request->phone_number,
             'profile_picture_path' => 'https://ui-avatars.com/api/?size=50&rounded=true&name='.$request->name,
             'password' => Hash::make($request->password),
         ]);
@@ -52,9 +53,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
         
-        if($request->ajax())
-        {
-            return response($user, 200);
+        if ($request->fromModal) {
+            return back();
         }
 
         return redirect(RouteServiceProvider::HOME);

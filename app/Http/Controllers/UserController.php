@@ -8,6 +8,7 @@ use App\Notifications\CallBackRequested;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -19,14 +20,16 @@ class UserController extends Controller
             });
         
         $usersReceivedMessagesFrom 
-            = $user->receivedMessages()
+            = $user
+                ->receivedMessages()
                 ->with('userReceivedFrom')
                 ->latest()
                 ->get()
                 ->pluck('userReceivedFrom');
 
         $usersSentMessagesTo
-            = $user->sentMessages()
+            = $user
+                ->sentMessages()
                 ->with('userSentTo')
                 ->latest()
                 ->get()
@@ -34,34 +37,23 @@ class UserController extends Controller
 
         $usersWithChat = $usersReceivedMessagesFrom->concat($usersSentMessagesTo)->unique()->values();
 
-        $responseData = [
+        return Inertia::render('User/Show', [
             'user' => $user->load('reviews')->makeVisible('phone_number'),
-            'paginatedProperties' => $user->getPaginatedProperties(url()->current().'?category=paginatedProperties'),
+            'paginatedProperties' => $user->getPaginatedProperties(),
             'numberOfUploadedProperties' => $user->properties->count(),
             'reviews' => $user->reviews,
-            'paginatedFavouritedProperties' => $user->getPaginatedFavouritedProperties(url()->current().'?category=paginatedFavouritedProperties'),
-            'notifications' => Auth::user()?->id === $user->id ? $notifications : null,
-            'usersWithChat' => $usersWithChat,
-        ];
-
-        if($request->ajax())
-        {
-            return response([
-                'paginatedProperties' => $responseData[$request->category] 
-            ]
-                , 200
-            );
-        }
-
-        return view('user.show', $responseData);
+            'paginatedFavouritedProperties' => $user->getPaginatedFavouritedProperties(),
+            'notifications' => $user->is_user_the_authenticated_user ? $notifications : null,
+            'usersWithChat' => $user->is_user_the_authenticated_user ? $usersWithChat : null,
+        ]);
     }
 
     public function edit(User $user)
     {
         abort_if(!$user->is_user_the_authenticated_user, 403);
 
-        return view('user.edit', [
-            'user' => $user
+        return Inertia::render('User/Edit', [
+            'user' => $user->makeVisible(['email', 'phone_number'])
         ]);
     }
 
@@ -93,7 +85,7 @@ class UserController extends Controller
                     'phone_number' => $request->phone_number,           
                 ]);
 
-        return redirect()->route('users.show', ['user' => $user]);
+        return redirect()->route('user.show', ['user' => $user]);
     }
 
     public function createFavouritedProperty(Property $property)

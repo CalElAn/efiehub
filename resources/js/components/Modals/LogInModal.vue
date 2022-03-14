@@ -31,12 +31,12 @@
        
     </div>
     <!-- Validation Errors -->
-    <div class="mb-4" v-if="Object.keys($page.props.errors).length > 0">
+    <div class="mb-4" v-if="Object.keys(form.errors).length > 0">
         <div class="font-medium text-red-600">
             Whoops! Something went wrong:
         </div>
         <ul class="mt-3 list-disc list-inside text-xs text-red-600">
-            <li v-for="(item, index) in $page.props.errors" :key="index">{{ item }}</li>
+            <li v-for="(item, index) in form.errors" :key="index">{{ item }}</li>
         </ul>
     </div>
 

@@ -18,13 +18,13 @@
     </button>
 
     <!-- Validation Errors -->
-    <div v-if="Object.keys(errors).length > 0">
+    <div v-if="Object.keys(form.errors).length > 0">
         <div class="font-medium text-red-600">
             Whoops! Something went wrong
         </div>
 
         <ul class="mt-3 list-disc list-inside text-sm text-red-600">
-            <li v-for="(item, index) in errors" :key="index">{{ item }}</li>
+            <li v-for="(item, index) in form.errors" :key="index">{{ item }}</li>
         </ul>
     </div>
 
@@ -120,7 +120,6 @@ export default {
     data() {
         return {
             showSignUpModal: false,
-            errors: {},   
         }
     },
 
@@ -141,7 +140,6 @@ export default {
                         title: `Successfully registered!`
                     })
                 },
-                onError: error => this.errors = error,
             })
         },
     },

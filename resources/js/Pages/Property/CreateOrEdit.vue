@@ -264,13 +264,13 @@
                         </ul>
                     </div>
                     <div 
-                        v-if="Object.keys(backendValidationErrors).length"
+                        v-if="Object.keys(form.errors).length"
                         class="input-errors ml-3 my-3 border-t text-red-600">
                         <p class="font-medium text-gray-600">
                             We also detected these errors. Kindly correct them before clicking submit
                         </p>
                         <ul class="mt-3 list-disc list-inside">
-                            <li v-for="(item, index) in backendValidationErrors" :key="index">
+                            <li v-for="(item, index) in form.errors" :key="index">
                                 {{ item  }}
                             </li>
                         </ul>
@@ -352,7 +352,6 @@ export default {
 
             gpsLocationError: '',
             mediaError: '',
-            backendValidationErrors: {},
 
             filepondInitialMedia: [],
         };
@@ -558,7 +557,6 @@ export default {
                             title: this.mode === 'edit' ? "Saved!" : "Property added!"
                         })
                     },
-                    onError: error => this.backendValidationErrors = error,
                 }
             ) 
         },

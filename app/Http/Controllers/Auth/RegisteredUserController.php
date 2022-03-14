@@ -45,7 +45,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone_number' => $request->phone_number,
-            'profile_picture_path' => 'https://ui-avatars.com/api/?size=50&rounded=true&name='.$request->name,
+            'profile_picture_path' => 'https://ui-avatars.com/api/?size=50&rounded=true&name='.str_replace(' ', '', $request->name),
             'password' => Hash::make($request->password),
         ]);
 

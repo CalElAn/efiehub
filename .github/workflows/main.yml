@@ -23,6 +23,13 @@ jobs:
         uses: actions/setup-node@v2.4.1
         with:
           node-version: '16'
+          
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v1
+        with:
+          envkey_MIX_PUSHER_APP_KEY: ${{ secrets.MIX_PUSHER_APP_KEY }}
+          envkey_MIX_PUSHER_APP_CLUSTER: ${{ secrets.MIX_PUSHER_APP_CLUSTER }}
+          
       - run: npm install
       - run: npx mix --production
       - name: Commit built assets

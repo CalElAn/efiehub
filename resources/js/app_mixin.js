@@ -22,11 +22,15 @@ const app_mixin = {
 
     computed: {
         pageUrl() {
-            return this.$page.url
+            return this.$page.url //or location.pathname
+        },
+
+        pageComponent() {
+            return this.$page.component
         },
 
         isInHomepage() {
-            return this.pageUrl === '/'
+            return this.pageComponent === 'Home'
         }
     },
 

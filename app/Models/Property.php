@@ -227,7 +227,7 @@ class Property extends Model
 
             $storagePublicDisk->move('filepond/tmp/'.$value, $newStoragePath);
 
-            Image::make($storagePublicDisk->path($newStoragePath))->save(null, 60);
+            Image::make($storagePublicDisk->path($newStoragePath))->orientate()->save(null, 60);
 
             $propertyMediaInsertArray[] = [
                 'property_id' => $property_id, 

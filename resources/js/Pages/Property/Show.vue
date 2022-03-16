@@ -1,5 +1,5 @@
 <template>
-<div class="px-2 sm:mt-28">
+<div class="px-2 mt-8 sm:mt-28">
     <Head>
         <title>{{`${property.type} in ${property.town}`}}</title>
         <meta property="og:title" :content="property.title"/>
@@ -101,6 +101,9 @@
             <p class="font-semibold text-xl sm:text-2xl">
                 {{property.title}}
             </p>
+            <div class="sm:hidden">
+                <span class="font-medium text-base lg:text-lg">GH&#8373; {{property.price}}</span> / month
+            </div>
             <div class="flex justify-between sm:justify-start">
                 <div class="flex sm:hidden text-xs sm:text-sm md:text-base items-center gap-1">
                     <StarIcon class="h-4 sm:h-5 w-4 sm:w-5 text-main-orange"/>
@@ -124,6 +127,9 @@
                     </button>
                 </div>
             </div>
+        </div>
+        <div class="hidden sm:block my-2 text-center">
+            <span class="font-semibold text-base lg:text-lg">GH&#8373; {{property.price}}</span> / month
         </div>
         <section class="mt-4 pb-6 sm:mt-8 w-full flex flex-col sm:flex-row gap-5 sm:gap-4 border-b">
             <div class="w-full sm:w-3/4">
@@ -189,7 +195,6 @@
             <div class="w-full h-full sm:w-1/4 text-sm lg:text-base">
                 <UserCard
                     :user="property.user"
-                    :property="property"
                     :showFullCard="false"
                 />
                 <button 

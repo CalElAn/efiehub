@@ -102,9 +102,9 @@
         </div>
 
         <div class="flex justify-center mt-2">
-            <Link href="/forgot-password" class="underline text-main-orange">
+            <button @click="onClickForgotPassword" class="underline text-main-orange">
                 Forgot password?
-            </Link>
+            </button>
         </div>
     </form>
 </vue-final-modal>
@@ -134,6 +134,11 @@ export default {
         beforeOpen(event) {
             this.showWelcomeText = event.ref.params.value.showWelcomeText
             this.welcomeText = event.ref.params.value.welcomeText
+        },
+
+        onClickForgotPassword() {
+            this.showLogInModal = false;
+            this.$inertia.get('/forgot-password')
         },
 
         showSignUpModal() {

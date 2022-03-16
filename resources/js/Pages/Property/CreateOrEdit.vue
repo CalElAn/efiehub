@@ -70,7 +70,7 @@
                         </span>
                     </div>
                     <div class="col-span-2">
-                        <label for="gps_location" class="block font-medium text-gray-700">GPS location</label>
+                        <label for="gps_location" class="block font-medium text-gray-700">GPS location ...for example: 3.423, 4.53545</label>
                         <div class="flex flex-col sm:flex-row rounded-md">
                             <input v-model="form.gpsLocation" type="text" id="gps_location"
                                 class="block w-full mt-1 rounded-t-md sm:rounded-l-md sm:rounded-r-none border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
@@ -102,7 +102,7 @@
                     </div>
                     <div class="col-span-2 flex justify-end">
                         <button @click="nextStep"
-                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-main-blue hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-main-blue">
                             Next
                         </button>
                     </div>
@@ -139,21 +139,26 @@
                     </template>
                     <template v-for="(item, index) in propertyTypesAndFeatures[form.type]" :key="index">
                         <div v-if="item['input_type'] == 'checkbox'" class="col-span-1 flex items-center">
-                            <input type="checkbox"
-                                v-model="form.checkedFeatures"
-                                :value="item['feature']"
-                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
-                            <span class="ml-2">{{ item['feature'] }}</span>
+                            <label class="flex gap-2">
+                                <input type="checkbox"
+                                    v-model="form.checkedFeatures"
+                                    :value="item['feature']"
+                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50"
+                                />
+                                {{ item['feature'] }}
+                            </label>
                         </div>
                     </template>
                     <template v-for="(item, index) in propertyTypesAndFeatures[form.type]" :key="index">
                         <div v-if="item['input_type'] == 'radio'" class="col-span-1 flex items-center">
-                            <input  type="radio"
-                                v-model="form.pickedFeatures"
-                                :value="item['feature']"
-                                
-                                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"> 
-                        <span class="ml-2">{{ item['feature'] }}</span>
+                            <label class="flex gap-2">
+                                <input  type="radio"
+                                    v-model="form.pickedFeatures"
+                                    :value="item['feature']"
+                                    class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                >
+                                {{ item['feature'] }}
+                            </label>
                         </div>
                     </template>
                     <div class="col-span-2 col-start-1">
@@ -203,19 +208,22 @@
                             </span>
                         </div>
                         <div class="col-span-1 col-start-1 inline-flex items-center mt-2">
-                            <input type="checkbox"
-                                v-model="form.negotiable"
-                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
-                            <span class="ml-2">Negotiable</span>
+                            <label class="flex gap-2">
+                                <input type="checkbox"
+                                    v-model="form.negotiable"
+                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50"
+                                />
+                                Negotiable
+                            </label>
                         </div>
                     </div>
                     <div class="col-span-2 flex justify-between">
                         <button @click="previousStep"
-                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-main-blue hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-main-blue">
                             Previous
                         </button>
                         <button @click="nextStep"
-                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-main-blue hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-main-blue">
                             Next
                         </button>
                     </div>
@@ -234,11 +242,12 @@
                             ref="filepond"
                             label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
                             allow-multiple="true"
-                            max-files="15"
+                            :max-files="15"
                             itemInsertLocation="after"
-                            allow-reorder="true"
+                            captureMethod="environment"
+                            :allow-reorder="true"
                             :files="filepondInitialMedia"
-                            :accepted-file-types="['image/*']"
+                            :acceptedFileTypes="['image/*']"
                             :server = "{
                                 url: '/filepond',
                                 process: '/process',
@@ -280,13 +289,13 @@
                     </label>                
                     <div class="mt-7 col-span-2 flex justify-between">
                         <button @click="previousStep"
-                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-main-blue hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-main-blue">
                             Previous
                         </button>
                         <button
                             @click="submitForm"
                             :disabled="form.processing"
-                            class="disabled:opacity-40 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="disabled:opacity-40 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-medium rounded-full text-white bg-main-orange hover:bg-opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-main-orange">
                             {{form.processing ? `submitting...` : 'Submit'}}
                         </button>
                     </div>
@@ -318,6 +327,7 @@ import { required, email, numeric } from '@vuelidate/validators';
 import { PlusCircleIcon, MinusCircleIcon, TrashIcon } from '@heroicons/vue/outline'
 
 import { useForm } from '@inertiajs/inertia-vue3'
+import { Inertia } from '@inertiajs/inertia'
 
 export default {
     setup(props) {
@@ -327,8 +337,8 @@ export default {
             town: props.property.town,
             address: props.property.address,
             gpsLocation: props.property.gps_location,
-            contactPhoneNumber: props.mode === 'create' ? props.authenticatedUser?.phone_number : props.property.contact_phone_number,
-            contactEmail: props.mode === 'create' ? props.authenticatedUser?.email : props.property.contact_email,
+            contactPhoneNumber: props.mode === 'create' ? Inertia.page.props.authenticatedUser?.phone_number : props.property.contact_phone_number,
+            contactEmail: props.mode === 'create' ? Inertia.page.props.authenticatedUser?.email : props.property.contact_email,
             type: props.property.type ?? '',
             checkedFeatures: props.mode === 'create' ? [] : props.property.features.filter(obj => obj.input_type === 'checkbox')?.map(obj => obj.feature),
             pickedFeatures: props.mode === 'create' ? 'Furnished' : props.property.features.find(obj => obj.input_type === 'radio')?.feature,

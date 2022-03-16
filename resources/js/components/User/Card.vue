@@ -2,9 +2,6 @@
     <div 
         :class="[showFullCard ? 'sm:flex-row flex-col' : 'flex-col sm:shadow-lg']"
         class="flex gap-2 shadow rounded-lg p-3 py-7 border">
-        <div v-if="property">
-            <span class="font-semibold text-base lg:text-lg">GH&#8373; {{property.price}}</span> / month
-        </div>
         <div 
             v-if="showFullCard" 
             class="place-self-center bg-contain bg-center bg-no-repeat h-52 w-52 rounded-full"
@@ -32,38 +29,41 @@
                     </Link>
                 </p>
             </div>
-            <button 
-                @click="showContact"
-                v-if="!showContactToggle"
-                class="flex items-center justify-center gap-2 bg-main-orange bg-opacity-95 hover:bg-white text-white hover:text-main-orange hover:border hover:border-main-orange p-2 rounded-lg">
-                <PhoneIcon class="h-5 w-5 md:h-4 md:w-4"/> 
-                Show contact
-            </button>
-            <p 
-                v-else
-                class="py-1 px-3 mx-auto text-gray-600 rounded-md">
-                Tel:
-                <a 
-                    class="underline text-main-blue"
-                    :href="'tel:'+user.phone_number">
-                    {{user.phone_number}}
-                </a>
-            </p>
-            <button 
-                @click="showChatBox"
-                :disabled="$page.props.authenticatedUser && $page.props.authenticatedUser.id === user.id"
-                class="flex items-center justify-center gap-2 border border-main-orange text-main-orange hover:text-white bg-white hover:bg-main-orange bg-opacity-95 p-1 rounded-lg">
-                <ChatAltIcon class="h-5 w-5 md:h-4 md:w-4"/> 
-                Chat
-            </button>
-            <button
-                v-show="!requestCallBackToggle"
-                :disabled="$page.props.authenticatedUser && $page.props.authenticatedUser.id === user.id"
-                @click="requestCallBackToggle = true"
-                style="text-decoration-color: #4568ED;"
-                class="rounded-xl underline hover:border hover:shadow-md p-2 md:p-1">
-                Request call back
-            </button>
+            <template v-if="!user.is_user_the_authenticated_user">
+                <button
+                    @click="showContact"
+                    v-if="!showContactToggle"
+                    class="flex items-center justify-center gap-2 bg-main-orange bg-opacity-95 hover:bg-white text-white hover:text-main-orange hover:border hover:border-main-orange p-2 rounded-lg">
+                    <PhoneIcon class="h-5 w-5 md:h-4 md:w-4"/>
+                    Show contact
+                </button>
+                <p
+                    v-else
+                    class="py-1 px-3 mx-auto text-gray-600 rounded-md">
+                    Tel:
+                    <a
+                        class="underline text-main-blue"
+                        :href="'tel:'+user.phone_number">
+                        {{user.phone_number}}
+                    </a>
+                </p>
+                <button
+                    v-if="!user.is_user_the_authenticated_user"
+                    @click="showChatBox"
+                    :disabled="$page.props.authenticatedUser && $page.props.authenticatedUser.id === user.id"
+                    class="flex items-center justify-center gap-2 border border-main-orange text-main-orange hover:text-white bg-white hover:bg-main-orange bg-opacity-95 p-1 rounded-lg">
+                    <ChatAltIcon class="h-5 w-5 md:h-4 md:w-4"/>
+                    Chat
+                </button>
+                <button
+                    v-show="!requestCallBackToggle"
+                    :disabled="$page.props.authenticatedUser && $page.props.authenticatedUser.id === user.id"
+                    @click="requestCallBackToggle = true"
+                    style="text-decoration-color: #4568ED;"
+                    class="rounded-xl underline hover:border hover:shadow-md p-2 md:p-1">
+                    Request call back
+                </button>
+            </template>
             <div
                 v-show="requestCallBackToggle"
                 class="flex flex-col text-xs xl:text-sm pt-2 my-2 border-t border-b">
@@ -143,7 +143,7 @@ export default {
         }
     },
     
-    props: ['user', 'property', 'showFullCard'],
+    props: ['user', 'showFullCard'],
 
     methods: {
         showContact() {

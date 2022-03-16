@@ -20,7 +20,6 @@
     <UserCard
         class="md:mx-5 lg:mx-36 xl:mx-96"
         :user="user"
-        :property="null"
         :show-full-card="true"
     >
     </UserCard>

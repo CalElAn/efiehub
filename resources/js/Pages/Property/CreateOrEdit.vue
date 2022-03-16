@@ -232,6 +232,10 @@
             <!-- Upload Media -->
             <section v-show="step == 3">
                 <div>
+                    <div class="my-3 border border-red-400 rounded">
+                        Test
+                        <input type="file" name="test">
+                    </div>
                     <div class="text-xl mb-3">Upload photos</div>
                     <div>
                         <label class="block text-gray-700">
@@ -240,8 +244,8 @@
                         <file-pond
                             name="filepond"
                             ref="filepond"
-                            label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
-                            allow-multiple="true"
+                            label-idle="Drop pictures here or <span class='filepond--label-action'>Browse</span>"
+                            :allowMultiple="true"
                             :max-files="15"
                             itemInsertLocation="after"
                             captureMethod="environment"
@@ -253,7 +257,7 @@
                                 process: '/process',
                                 revert: '/revert',
                                 restore: '/restore',
-                                load: '/load/PropertyMedia',
+                                load: '/load/PropertyMedia/',
                                 fetch: '/fetch',
                                 remove: handleFilePondRemove,
                                 headers: {
@@ -590,7 +594,7 @@ export default {
     mounted() {
         // setInterval(this.keepTokenAlive, 1000 * 60 * 60); // every 60 mins 
 
-        if(this.mode === 'edit') this.filepondInitialMedia = this.property.media.map(obj => ( {source: '/' + obj.property_media_id, options: {type: 'local'}} ))
+        if(this.mode === 'edit') this.filepondInitialMedia = this.property.media.map(obj => ( {source: `${obj.property_media_id}`, options: {type: 'local'}} )) //using string interpolation because it has to be a string
     },
 
 }

@@ -20,7 +20,7 @@
                     process: '/process',
                     revert: '/revert',
                     restore: '/restore',
-                    load: '/load/User',
+                    load: '/load/User/',
                     fetch: '/fetch',
                     remove: handleFilePondRemove,
                     headers: {
@@ -129,7 +129,8 @@ const submit = () => {
 };
 
 onMounted(() => {
-    filepondInitialMedia.value = [{source: '/' + props.user.id, 
+    filepondInitialMedia.value = [{
+        source: `${props.user.id}`, 
         options: {type: 'local'}
     }]
 })

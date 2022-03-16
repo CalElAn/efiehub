@@ -1,6 +1,6 @@
 <template>
     <nav ref="mobileNavBar" 
-        class="fixed bottom-0 z-20 w-full tracking-wide bg-gray-100 text-gray-700 text-xs flex flex-row gap-3 justify-evenly border-t px-1 py-1.5 sm:hidden"
+        class="fixed bottom-0 z-20 w-full tracking-wide bg-gray-100 text-gray-700 text-xs flex flex-row gap-3 justify-evenly border-t px-1 pt-1.5 pb-5 sm:hidden"
     >
         <button 
             class="rounded-md focus:outline-none focus:text-main-blue focus:ring-2 focus:ring-offset-2 focus:ring-main-blue"
@@ -13,10 +13,10 @@
             </div>
         </button>
         <a
-            class="rounded-md focus:outline-none focus:text-main-blue focus:ring-2 focus:ring-offset-2 focus:ring-main-blue"
+            class="rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-main-blue"
             href="/properties/create">
             <div 
-                :class="{ 'text-main-blue font-semibold p-1 px-2': $page.component === 'Property/CreateOrEdit' }"
+                :class="{ 'text-main-blue font-semibold p-1 px-2': $page.url.startsWith('/properties/create') }"
                 class="flex flex-col items-center rounded-lg">
                 <HomeIcon class="w-5 h-5"/>
                 <p>

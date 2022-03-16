@@ -1,5 +1,5 @@
 <template>
-<div class="px-2 mt-8 sm:mt-28">
+<div class="px-2 mt-12 sm:mt-28">
     <Head>
         <title>{{`${property.type} in ${property.town}`}}</title>
         <meta property="og:title" :content="property.title"/>

@@ -232,9 +232,9 @@
             <!-- Upload Media -->
             <section v-show="step == 3">
                 <div>
-                    <div class="my-3 border border-red-400 rounded">
+                    <!-- <div class="my-3 p-2 border border-red-400 rounded">
                         Test
-                        <file-pond
+                        <FilePond
                             name="test"
                             ref="pond"
                             label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
@@ -242,7 +242,7 @@
                             accepted-file-types="image/jpeg, image/png"
                             v-bind:files="myFiles"
                         />
-                    </div>
+                    </div> -->
                     <div class="text-xl mb-3">Upload photos</div>
                     <div>
                         <label class="block text-gray-700">
@@ -255,7 +255,7 @@
                             :allowMultiple="true"
                             :max-files="15"
                             itemInsertLocation="after"
-                            captureMethod="environment"
+                            :captureMethod="null"
                             :allow-reorder="true"
                             :files="filepondInitialMedia"
                             :acceptedFileTypes="['image/*']"

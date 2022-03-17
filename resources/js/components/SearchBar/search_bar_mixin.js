@@ -32,7 +32,6 @@ const searchBarMixin = {
             form: {
                 types: this.searchQuery?.types ?? [],
                 priceRange: this.searchQuery?.priceRange.map(item => parseInt(item)) ?? [parseInt(this.$page.props.minPrice), parseInt(this.$page.props.maxPrice)],
-                // priceRange: [20, 40],
                 regions: this.searchQuery?.regions ?? [],
                 orderBy: this.searchQuery?.orderBy ?? 'latest',
             },

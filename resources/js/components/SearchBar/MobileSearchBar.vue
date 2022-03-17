@@ -23,7 +23,6 @@
         <!-- Types Popover -->
         <Popover v-slot="{ open }" class="z-30 h-full relative hover:bg-opacity-75">
             <PopoverButton
-                @click="shouldOpenPopoverPanel = !open"
                 :class="open ? 'bg-opacity-75 shadow-2xl' : ''"
                 class="w-full inline-flex items-center text-center h-full rounded-full group bg-white text-main-blue">
                 <span class="w-3/4">Type</span>
@@ -33,9 +32,8 @@
             <transition enter-active-class="transition duration-200 ease-out" enter-from-class="translate-y-1 opacity-0"
                 enter-to-class="translate-y-0 opacity-100" leave-active-class="transition duration-150 ease-in"
                 leave-from-class="translate-y-0 opacity-100" leave-to-class="translate-y-1 opacity-0">
-                <div v-if="shouldOpenPopoverPanel">
+                <!-- <div v-if="shouldOpenPopoverPanel"> -->
                     <PopoverPanel
-                        static
                         class="absolute z-auto w-max px-4 mt-3">
                         <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
                             <div class="relative grid gap-4 text-xs text-gray-700 bg-white p-7 grid-cols-1">
@@ -61,7 +59,7 @@
                             </div>
                         </div>
                     </PopoverPanel>
-                </div>
+                <!-- </div> -->
             </transition>
         </Popover>
 

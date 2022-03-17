@@ -1,6 +1,6 @@
 <template>
     <nav ref="mobileNavBar" 
-        class="fixed bottom-0 z-20 w-full tracking-wide bg-gray-100 text-gray-700 text-xs flex flex-row gap-3 justify-evenly border-t px-1 pt-1.5 pb-5 sm:hidden"
+        class="fixed bottom-0 z-20 w-full tracking-wide bg-gray-100 text-gray-700 text-xs flex flex-row gap-3 justify-evenly border-t px-1 pt-1.5 h-16 pb-5 sm:hidden"
     >
         <button 
             class="rounded-md focus:outline-none focus:text-main-blue focus:ring-2 focus:ring-offset-2 focus:ring-main-blue"

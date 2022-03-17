@@ -2,7 +2,7 @@
 <Head>
     <title>efiehub</title>
 </Head>
-<div class="min-h-screen flex flex-col justify-between mb-12 sm:mb-0">
+<div class="min-h-screen flex flex-col justify-between mb-14 sm:mb-0">
     <div 
         class="sm:hidden bg-main-blue border-main-blue h-2"
         :class="{'hidden': !isInHomepage}"

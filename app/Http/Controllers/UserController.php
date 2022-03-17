@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class UserController extends Controller
 {
@@ -71,8 +72,9 @@ class UserController extends Controller
         {
             /** @var \Illuminate\Filesystem\Filesystem */
             $storagePublicDisk = Storage::disk('public');
-
+            
             $storagePublicDisk->move('filepond/tmp/'.$request->filepond, 'profile_pictures/'.$request->filepond);
+            Image::make($storagePublicDisk->path('profile_pictures/'.$request->filepond))->orientate()->save();
 
             $user->update(['profile_picture_path' => 'profile_pictures/'.$request->filepond]);
         }

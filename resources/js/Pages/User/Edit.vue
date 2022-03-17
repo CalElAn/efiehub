@@ -15,6 +15,7 @@
                 :allow-multiple="false"
                 :max-files="1"
                 :required="false"
+                :captureMethod="null"
                 :server = "{
                     url: '/filepond',
                     process: '/process',
@@ -129,10 +130,12 @@ const submit = () => {
 };
 
 onMounted(() => {
-    filepondInitialMedia.value = [{
-        source: `${props.user.id}`, 
-        options: {type: 'local'}
-    }]
+    if(!(props.user.profile_picture_path.includes('https://'))) {
+        filepondInitialMedia.value = [{
+            source: `${props.user.id}`, 
+            options: {type: 'local'}
+        }]
+    }
 })
 </script>
 

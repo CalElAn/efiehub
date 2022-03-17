@@ -232,17 +232,6 @@
             <!-- Upload Media -->
             <section v-show="step == 3">
                 <div>
-                    <!-- <div class="my-3 p-2 border border-red-400 rounded">
-                        Test
-                        <FilePond
-                            name="test"
-                            ref="pond"
-                            label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
-                            allow-multiple="true"
-                            accepted-file-types="image/jpeg, image/png"
-                            v-bind:files="myFiles"
-                        />
-                    </div> -->
                     <div class="text-xl mb-3">Upload photos</div>
                     <div>
                         <label class="block text-gray-700">
@@ -254,6 +243,7 @@
                             label-idle="Drop pictures here or <span class='filepond--label-action'>Browse</span>"
                             :allowMultiple="true"
                             :max-files="15"
+                            maxFileSize="10MB"
                             itemInsertLocation="after"
                             :captureMethod="null"
                             :allow-reorder="true"
@@ -325,10 +315,14 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css
 // Import image preview and file type validation plugins
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 // Create component
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
-    FilePondPluginImagePreview
+    FilePondPluginImagePreview,
+    FilePondPluginImageExifOrientation,
+    FilePondPluginFileValidateSize,
 )
 
 //Vuelidate

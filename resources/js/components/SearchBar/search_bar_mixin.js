@@ -18,10 +18,8 @@ const searchBarMixin = {
 
     data () {
         return {
-            // csrfToken: csrfToken,
             isSearchBarFocused: false,
             isInputFocused: false,
-            // isScrollYPastSearchBar: false,
 
             sliderFormat: {
                 prefix: 'GH&#8373;',
@@ -33,7 +31,8 @@ const searchBarMixin = {
 
             form: {
                 types: this.searchQuery?.types ?? [],
-                priceRange: this.searchQuery?.priceRange ?? [this.$page.props.minPrice, this.$page.props.maxPrice],
+                priceRange: this.searchQuery?.priceRange.map(item => parseInt(item)) ?? [parseInt(this.$page.props.minPrice), parseInt(this.$page.props.maxPrice)],
+                // priceRange: [20, 40],
                 regions: this.searchQuery?.regions ?? [],
                 orderBy: this.searchQuery?.orderBy ?? 'latest',
             },
@@ -62,7 +61,7 @@ const searchBarMixin = {
         searchProperty() {
             this.$nextTick( () => {
                 this.$inertia.get('/properties/search', this.form, {
-                        preserveState: false,
+                        preserveState: true,
                         replace: true,
                     })
             })

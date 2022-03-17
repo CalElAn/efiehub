@@ -1,5 +1,5 @@
 <template>
-    <form action="/properties/search" method="GET">
+    <!-- <form action="/properties/search" method="GET"> -->
     <!-- <transition name="fade"> -->
     <div
         ref="searchBar"
@@ -27,19 +27,25 @@
                     <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
                         <div class="relative text-sm grid gap-4 bg-white p-7 grid-cols-2">
                             <div class="col-span-1 flex items-center">
-                                <input
-                                    v-model="selectAllPropertyTypes"
-                                    type="checkbox"
-                                    class="rounded border-gray-600 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
-                                <span class="ml-2 font-semibold text-gray-700">-- Select {{selectAllPropertyTypes ? 'none' : 'all'}} --</span>
+                                <label>
+                                    <input
+                                        v-model="selectAllPropertyTypes"
+                                        type="checkbox"
+                                        class="rounded border-gray-600 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" 
+                                    />
+                                    <span class="ml-2 font-semibold text-gray-700">-- Select {{selectAllPropertyTypes ? 'none' : 'all'}} --</span>
+                                </label>
                             </div>
                             <div class="col-span-1"></div>
                             <div v-for="(item, index) in propertyTypes" :key="index" class="col-span-1 flex items-center">
-                                <input type="checkbox"
-                                    v-model="form.types"
-                                    :value="item['type']"
-                                    class="rounded border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
-                                <span class="ml-2 text-gray-700">{{ item['type'] }}</span>
+                                <label>
+                                    <input type="checkbox"
+                                        v-model="form.types"
+                                        :value="item['type']"
+                                        class="rounded border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50"
+                                    />
+                                    <span class="ml-2 text-gray-700">{{ item['type'] }}</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -115,8 +121,7 @@
                     <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
                         <div class="bg-white pb-7 pt-14 px-12 w-80 relative">
                             <Slider 
-                                :min="form.priceRange?.[0]"
-                                :max="form.priceRange?.[1]"
+                                :max="form.priceRange[1] + 50"
                                 :format="sliderFormat"
                                 v-model="form.priceRange" 
                             />
@@ -143,7 +148,7 @@
             </button>
         </div>
     </div>
-    </form>
+    <!-- </form> -->
     <!-- </transition> -->
 </template>
 
@@ -158,24 +163,27 @@ export default {
 
     mixins: [searchBarMixin],
 
-    emits: ['scrollYIsPastSearchBar', 'scrollYIsNotPastSearchBar'],
-
     mounted() {
-        let searchBarOffsetTop = this.$refs.searchBar.offsetTop;
-        let searchBarOffsetHeight = this.$refs.searchBar.offsetHeight;
-        let navBarHeight = document.getElementById('nav-bar').offsetHeight;
         let thisVar = this;
+        
+        if(this.$page.component === 'Home') {
+            let searchBarOffsetTop = this.$refs.searchBar.offsetTop;
+            let searchBarOffsetHeight = this.$refs.searchBar.offsetHeight;
+            let navBarHeight = document.getElementById('nav-bar').offsetHeight;
 
-        window.addEventListener(
-            'scroll', 
-                function() {
-                if (window.scrollY + 30 - navBarHeight >= searchBarOffsetTop ) {
-                    thisVar.isScrollYPastSearchBar = true
-                } else {
-                    thisVar.isScrollYPastSearchBar = false
+            window.addEventListener(
+                'scroll', 
+                    function() {
+                    if (window.scrollY + 30 - navBarHeight >= searchBarOffsetTop ) {
+                        thisVar.isScrollYPastSearchBar = true
+                    } else {
+                        thisVar.isScrollYPastSearchBar = false
+                    }
                 }
-            }
-        );  
+            ); 
+        } else {
+            thisVar.isScrollYPastSearchBar = true
+        } 
     }   
 }
 </script>

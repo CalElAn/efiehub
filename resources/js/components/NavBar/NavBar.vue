@@ -52,12 +52,17 @@
             </div>
         </div>
     </nav>
+    <LargeSearchBar
+        class="mt-3"
+        v-if="$page.component !== 'Home' && $page.component !== 'Property/Search'"
+    ></LargeSearchBar>
 </div>
 </template>
 
 <script>
 import AuthUserMenuButton from './AuthUserMenuButton.vue'
 import { shouldPlaceSearchBarInNavBar, isScrollYPastSearchBar } from '../SearchBar/largeSearchBarPlacement'
+import LargeSearchBar from '../SearchBar/LargeSearchBar.vue'
 
 export default {
     setup() {
@@ -65,7 +70,8 @@ export default {
     },
 
     components: {
-        AuthUserMenuButton
+        AuthUserMenuButton,
+        LargeSearchBar
     },
 
     data () {
@@ -90,17 +96,17 @@ export default {
 
     methods: {
         onClickMiniSearchBar() {
-            if (!this.isInHomepage && !this.pageUrl.includes('/properties/search')) {
-                this.$vfm.show('MobileSearchBarModal')
-                return
-            }
+            // if (!this.isInHomepage && !this.pageUrl.includes('/properties/search')) {
+            //     this.$vfm.show('MobileSearchBarModal')
+            //     return
+            // }
             this.showMiniSearchBar=false
         },
 
         shouldShowMiniSearchBar() {
-            if (!this.isInHomepage && !this.pageUrl.includes('/properties/search')) {
-                return true
-            }
+            // if (!this.isInHomepage && !this.pageUrl.includes('/properties/search')) {
+            //     return true
+            // }
             return (this.isScrollYPastSearchBar && this.showMiniSearchBar)
         },
 

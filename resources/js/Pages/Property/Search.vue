@@ -28,13 +28,15 @@
                             </div>
                             <div class="col-span-1"></div>
                             <div v-for="(item, index) in propertyTypes" :key="index" class="col-span-1 flex items-center">
-                                <input 
-                                    @change="searchProperty"
-                                    type="checkbox"
-                                    v-model="form.types"
-                                    :value="item['type']"
-                                    class="rounded border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
-                                <span class="ml-2 text-gray-700">{{ item['type'] }}</span>
+                                <label>
+                                    <input
+                                        @change="searchProperty"
+                                        type="checkbox"
+                                        v-model="form.types"
+                                        :value="item['type']"
+                                        class="rounded border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
+                                    <span class="ml-2 text-gray-700">{{ item['type'] }}</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -81,8 +83,7 @@
                     <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
                         <div class="bg-white pb-7 pt-14 px-12 w-72 sm:w-80 relative">
                             <Slider 
-                                :min="0"
-                                :max="500"
+                                :max="form.priceRange[1] + 50"
                                 :format="sliderFormat"
                                 v-model="form.priceRange" 
                                 @change="searchProperty"

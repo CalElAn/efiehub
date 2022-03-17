@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col items-center mt-12 mb-10 gap-16 lg:grid lg:grid-cols-2 xl:grid-cols-3 xl:gap-20">
+    <div class="flex flex-col items-center justify-items-center mt-12 mb-10 gap-16 lg:grid lg:grid-cols-2 xl:grid-cols-3 xl:gap-20">
         <PropertyCard
             v-for="(item, index) in paginatedProperties.data"
             :key="index"

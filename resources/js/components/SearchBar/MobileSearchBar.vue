@@ -21,42 +21,48 @@
     <form action="/properties/search" method="GET">
     <div ref="searchBar" class="grid grid-rows-3 gap-4 h-52 mt-2 text-white text-base">
         <!-- Types Popover -->
-        <Popover v-slot="{ open }" class="h-full relative hover:bg-opacity-75">
-        <PopoverButton
-            @click="isSearchBarFocused=true"
-            :class="open ? 'bg-opacity-75 shadow-2xl' : ''"
-            class="w-full inline-flex items-center text-center h-full rounded-full group bg-white text-main-blue">
-            <span class="w-3/4">Type</span>
-            <ChevronDownIcon :class="open ? 'rotate-180' : 'text-opacity-70'"
-                class="w-1/4 h-6 transform transition-transform" aria-hidden="true" />
-        </PopoverButton>
-        <transition enter-active-class="transition duration-200 ease-out" enter-from-class="translate-y-1 opacity-0"
-            enter-to-class="translate-y-0 opacity-100" leave-active-class="transition duration-150 ease-in"
-            leave-from-class="translate-y-0 opacity-100" leave-to-class="translate-y-1 opacity-0">
-            <PopoverPanel
-                @click="isSearchBarFocused=true"
-                class="absolute z-20 w-max px-4 mt-3">
-                <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
-                    <div class="relative grid gap-4 text-xs text-gray-700 bg-white p-7 grid-cols-1">
-                        <div class="col-span-1 flex items-center">
-                            <input
-                                v-model="selectAllPropertyTypes"
-                                type="checkbox"
-                                class="rounded border-gray-600 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
-                            <span class="ml-2 font-semibold">-- Select {{selectAllPropertyTypes ? 'none' : 'all'}} --</span>
+        <Popover v-slot="{ open }" class="z-30 h-full relative hover:bg-opacity-75">
+            <PopoverButton
+                @click="shouldOpenPopoverPanel = !open"
+                :class="open ? 'bg-opacity-75 shadow-2xl' : ''"
+                class="w-full inline-flex items-center text-center h-full rounded-full group bg-white text-main-blue">
+                <span class="w-3/4">Type</span>
+                <ChevronDownIcon :class="open ? 'rotate-180' : 'text-opacity-70'"
+                    class="w-1/4 h-6 transform transition-transform" aria-hidden="true" />
+            </PopoverButton>
+            <transition enter-active-class="transition duration-200 ease-out" enter-from-class="translate-y-1 opacity-0"
+                enter-to-class="translate-y-0 opacity-100" leave-active-class="transition duration-150 ease-in"
+                leave-from-class="translate-y-0 opacity-100" leave-to-class="translate-y-1 opacity-0">
+                <div v-if="shouldOpenPopoverPanel">
+                    <PopoverPanel
+                        static
+                        class="absolute z-auto w-max px-4 mt-3">
+                        <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
+                            <div class="relative grid gap-4 text-xs text-gray-700 bg-white p-7 grid-cols-1">
+                                <div class="col-span-1 flex items-center">
+                                    <label>
+                                        <input
+                                            v-model="selectAllPropertyTypes"
+                                            type="checkbox"
+                                            class="rounded border-gray-600 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
+                                        <span class="ml-2 font-semibold">-- Select {{selectAllPropertyTypes ? 'none' : 'all'}} --</span>
+                                    </label>
+                                </div>
+                                <!-- <div class="col-span-1"></div> -->
+                                <div v-for="(item, index) in propertyTypes" :key="index" class="col-span-1 flex items-center">
+                                    <label>
+                                        <input type="checkbox"
+                                            v-model="form.types"
+                                            :value="item['type']"
+                                            class="rounded border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
+                                        <span class="ml-2">{{ item['type'] }}</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <!-- <div class="col-span-1"></div> -->
-                        <div v-for="(item, index) in propertyTypes" :key="index" class="col-span-1 flex items-center">
-                            <input type="checkbox"
-                                v-model="form.types"
-                                :value="item['type']"
-                                class="rounded border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" />
-                            <span class="ml-2">{{ item['type'] }}</span>
-                        </div>
-                    </div>
+                    </PopoverPanel>
                 </div>
-            </PopoverPanel>
-        </transition>
+            </transition>
         </Popover>
 
         <!-- Location Input box -->
@@ -111,9 +117,8 @@
                     class="absolute z-10 w-max px-4 mt-5 transform -translate-x-1/2 left-1/2">
                     <div class="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5">
                         <div class="bg-white pb-7 pt-14 px-12 w-80 relative">
-                            <Slider 
-                                :min="form.priceRange?.[0]"
-                                :max="form.priceRange?.[1]"
+                            <Slider
+                                :max="form.priceRange[1] + 50"
                                 :format="sliderFormat"
                                 v-model="form.priceRange" 
                             />
@@ -150,17 +155,16 @@
 import searchBarMixin from "./search_bar_mixin.js"
 
 export default {
-
     data () {
         return {
             showMobileSearchBar: false,
+            shouldOpenPopoverPanel: false,
         }
     },
 
     mixins: [searchBarMixin],
 
-    emits: ['closedMobileSearchBar']
-   
+    emits: ['closedMobileSearchBar'],   
 }
 </script>
 

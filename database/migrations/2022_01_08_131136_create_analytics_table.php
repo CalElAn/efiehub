@@ -18,6 +18,7 @@ class CreateAnalyticsTable extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('event')->nullable();
             $table->json('details')->nullable();
+            $table->bigInteger('number')->nullable();
             $table->timestamps();
         });
     }

@@ -17,7 +17,7 @@ class AnalyticsTest extends TestCase
 
         $input = [
             'event' => 'clicked share property button',
-            'details' => [
+            'number' => [
                 'network' => 'twitter',
                 'property_id' => 1,
             ]
@@ -27,7 +27,7 @@ class AnalyticsTest extends TestCase
 
         $response->assertStatus(200);
 
-        $input['details'] = json_encode($input['details']);
+        $input['number'] = json_encode($input['number']);
 
         $this->assertDatabaseHas('analytics', $input);                         
     }
@@ -42,28 +42,28 @@ class AnalyticsTest extends TestCase
 
         $this->assertDatabaseHas('analytics', [
             'event' => 'visit from instagram',
-            'details' => 1,
+            'number' => 1,
         ]);
 
         $this->get('/?referrer=instagram');
 
         $this->assertDatabaseHas('analytics', [
             'event' => 'visit from instagram',
-            'details' => 2,
+            'number' => 2,
         ]);
 
         $this->get('/?referrer=instagram');
 
         $this->assertDatabaseHas('analytics', [
             'event' => 'visit from instagram',
-            'details' => 3,
+            'number' => 3,
         ]);
 
         $this->get('/?referrer=twitter');
 
         $this->assertDatabaseHas('analytics', [
             'event' => 'visit from twitter',
-            'details' => 1,
+            'number' => 1,
         ]);
     }
 }

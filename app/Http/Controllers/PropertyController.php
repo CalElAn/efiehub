@@ -25,8 +25,8 @@ class PropertyController extends Controller
             Analytics::firstOrCreate([
                 'event' => 'visit from '.$request->referrer
             ], [
-                'details' => 0,
-            ])->increment('details');
+                'number' => 0,
+            ])->increment('number');
         }
 
         return Inertia::render('Home', ['paginatedProperties' => Property::latest()->paginate(6)]);

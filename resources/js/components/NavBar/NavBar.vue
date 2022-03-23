@@ -2,14 +2,14 @@
 <div class="relative w-full">
     <nav ref="navBar"
         id="nav-bar"
-        :class="[isScrollYPastNavBar ? 'bg-white p-3 z-20 rounded-b-md shadow sm:fixed left-0' : 'pt-3 sm:absolute sm:mt-3', {'h-36': isSearchBarInNavBar}, isInHomepage ? '' : 'border-b pb-2']"
-        class="hidden top-0 w-full sm:flex justify-center sm:justify-between sm:px-10 3xl:px-20">
+        :class="[isScrollYPastNavBar ? 'bg-white p-3 rounded-b-md shadow sm:fixed left-0' : 'pt-3 sm:absolute sm:mt-3', {'h-40': isSearchBarInNavBar}, isInHomepage ? '' : 'border-b pb-2']"
+        class="hidden top-0 w-full sm:flex justify-center z-20 sm:justify-between sm:px-10 3xl:px-20">
         <Link href="/" :class="{'flex items-center': isInHomepage && !isScrollYPastNavBar}">
             <div v-if="isInHomepage && !isScrollYPastNavBar" class="bg-contain bg-left bg-no-repeat h-7 w-32 bg-logo" alt="logo"></div>
             <div v-else class="bg-contain bg-left bg-no-repeat h-8 w-32 bg-logo-blue" alt="logo"></div>
         </Link>
         <!-- Mini Search Bar -->
-        <transition name="fade">
+        <!-- <transition name="fade"> -->
         <div
             v-show="shouldShowMiniSearchBar()"
             class="bg-white rounded-full shadow-sm hover:shadow">
@@ -22,7 +22,7 @@
                     class="text-white p-1 rounded-full w-7 h-7 bg-main-orange hover:bg-opacity-75"/>
             </button>
         </div>
-        </transition>
+        <!-- </transition> -->
 
         <div class="sm:flex gap-3 text-sm sm:text-base">
             <Link href="/properties/create"
@@ -87,6 +87,7 @@ export default {
             if(newValue === false) {
                 this.shouldPlaceSearchBarInNavBar = true
                 this.isSearchBarInNavBar = true
+                this.isScrollYPastNavBar = true
                 window.addEventListener('scroll', this.scrollEventListener);
             } else {
                 window.removeEventListener('scroll', this.scrollEventListener);
@@ -107,6 +108,11 @@ export default {
             // if (!this.isInHomepage && !this.pageUrl.includes('/properties/search')) {
             //     return true
             // }
+
+            if (!this.isInHomepage && this.showMiniSearchBar) {
+                return true
+            }
+            
             return (this.isScrollYPastSearchBar && this.showMiniSearchBar)
         },
 

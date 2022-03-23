@@ -675,11 +675,17 @@ class PropertyControllerTest extends TestCase
             'body' => 'random review string'
         ];
 
-        $property = Property::factory()->create();
+        $userWhoCreatedProperty = User::factory()->create();
+        
+        $property = Property::factory()->create([
+            'user_id' => $userWhoCreatedProperty->id,
+        ]);
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable */
         $user = User::factory()->create();
         $this->actingAs($user)->post("/properties/{$property->slug}/reviews", $input)->assertStatus(201);
+
+        $this->actingAs($userWhoCreatedProperty)->post("/properties/{$property->slug}/reviews", $input)->assertStatus(403);
 
         $this->assertDatabaseHas('reviews', [
                                             'user_id' =>$user->id,

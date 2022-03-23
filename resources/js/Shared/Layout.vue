@@ -20,6 +20,12 @@
     <MobileNavBar
         @showMobileSearchBar="$vfm.show('MobileSearchBarModal')"
     ></MobileNavBar>
+    <ChatBox
+        class="mb-20 sm:mb-10"
+        v-if="showChatBoxToggle"
+        :messagedUser="$page.props.efiehubInfoAccount"
+        @closeChatBox="showChatBoxToggle = false"
+    />
     <footer class="p-5 text-base sm:text-lg">
         <hr class="my-5">
         <div class="flex flex-col justify-center items-center gap-4 sm:flex-row sm:gap-12">
@@ -28,7 +34,7 @@
             <span>Privacy policy</span>
         </div>
         <hr class="my-5">
-        <div class="flex justify-center items-center gap-12">
+        <div class="flex justify-center items-center gap-5 sm:gap-12">
             <span class="flex flex-shrink-0">&copy; efiehub</span>
             <div class="flex gap-3 justify-center items-center">
                 <a href="#" class="text-gray-500 hover:text-gray-900">
@@ -36,7 +42,10 @@
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                     </svg>
                 </a>
-                <a href="#" class="text-gray-500 hover:text-gray-900">
+                <button @click="showChatBox">
+                    <ChatIcon class="w-6 h-6 text-gray-500 hover:text-gray-900"/>
+                </button>
+                <a href="mailto: info@efiehub.com" class="text-gray-500 hover:text-gray-900">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
@@ -74,6 +83,9 @@ import MobileNavBar from '../components/NavBar/MobileNavBar.vue'
 import SharePropertyModal from '../components/Modals/SharePropertyModal.vue'
 import LogInModal from '../components/Modals/LogInModal.vue'
 import SignUpModal from '../components/Modals/SignUpModal.vue'
+import ChatBox from '../components/ChatBox.vue'
+
+import { ChatIcon } from '@heroicons/vue/solid'
 
 export default {
     components: {
@@ -83,6 +95,15 @@ export default {
         SharePropertyModal,
         LogInModal,
         SignUpModal,
+        ChatBox,
+
+        ChatIcon,
+    },
+
+    data() {
+        return {
+            showChatBoxToggle: false,
+        }
     },
 
     computed: {
@@ -96,6 +117,17 @@ export default {
             }
             return !!this.$page.props.flash.message
         }
-    }
+    },
+
+    methods: {
+        showChatBox() {
+            if (!this.$page.props.isUserAuthenticated) { 
+                this.$vfm.show('LogInModal', {showWelcomeText: true, welcomeText: 'Kindly login to chat with us, or '})
+                return
+            } 
+
+            this.showChatBoxToggle = true
+        }
+    },
 }
 </script>

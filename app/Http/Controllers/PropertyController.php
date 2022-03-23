@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use App\Models\Analytics;
 
 use App\Http\Requests\StoreOrUpdatePropertyRequest;
 
@@ -20,6 +21,14 @@ class PropertyController extends Controller
      */
     public function index(Request $request)
     {
+        if($request->referrer) {
+            Analytics::firstOrCreate([
+                'event' => 'visit from '.$request->referrer
+            ], [
+                'details' => 0,
+            ])->increment('details');
+        }
+
         return Inertia::render('Home', ['paginatedProperties' => Property::latest()->paginate(6)]);
     }
 
@@ -221,6 +230,7 @@ class PropertyController extends Controller
     public function createReview(Request $request, Property $property)
     {
         abort_if($property->is_property_reviewed_by_the_authenticated_user, 403);
+        abort_if($property->does_property_belong_to_the_authenticated_user, 403); //TODO write test for this
 
         $request->validate([
             'rating' => 'required|numeric|min:0|max:5',

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PropertyType;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class HandleInertiaRequests extends Middleware
@@ -46,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                         'message' => fn () => $request->session()->get('message')
                     ],
                     'csrf_token' => csrf_token(),
+                    'efiehubInfoAccount' => User::where('email', 'info@efiehub.com')->first(),
                     'isUserAuthenticated' => Auth::check(),
                     'authenticatedUser' => Auth::user()?->makeVisible(['email', 'phone_number']),
                     'propertyTypes' => PropertyType::all(),

@@ -166,6 +166,7 @@ class UserControllerTest extends TestCase
         /** @var \Illuminate\Contracts\Auth\Authenticatable */
         $userToMakeTheReview = User::factory()->create();
         $this->actingAs($userToMakeTheReview)->post("/users/{$userToBeReviewed->id}/reviews", $input)->assertStatus(201);
+        $this->actingAs($userToBeReviewed)->post("/users/{$userToBeReviewed->id}/reviews", $input)->assertStatus(403);
 
         $this->assertDatabaseHas('reviews', [
                                             'user_id' =>$userToMakeTheReview->id,

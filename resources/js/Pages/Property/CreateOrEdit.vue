@@ -473,7 +473,7 @@ export default {
             })
             .then((result) => {
                 if (result.isConfirmed) {
-                    axios.delete(`/filepond/remove/PropertyMedia${source}`)
+                    axios.delete(`/filepond/remove/PropertyMedia/${source}`)
                         .then( (response) => {
                             if( response.status === 200 && response.data === 1 ) {
                                 _.remove(this.filepondInitialMedia, value => value.source === source)  

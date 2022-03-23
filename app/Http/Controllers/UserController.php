@@ -106,6 +106,7 @@ class UserController extends Controller
     public function createReview(Request $request, User $user)
     {
         abort_if($user->is_user_reviewed_by_the_authenticated_user, 403);
+        abort_if($user->is_user_the_authenticated_user, 403); //TODO write test for this
 
         $request->validate([
             'rating' => 'required|numeric|min:0|max:5',

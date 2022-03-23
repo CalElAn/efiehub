@@ -110,7 +110,7 @@ const form = useForm({
 });
 
 function handleFilePondRemove(source, load, error) {
-    axios.delete(`/filepond/remove/User${source}`)
+    axios.delete(`/filepond/remove/User/${source}`)
         .then( (response) => {
             if( response.status === 200 && response.data === 1 ) load()
         })

@@ -17,7 +17,7 @@ class AnalyticsTest extends TestCase
 
         $input = [
             'event' => 'clicked share property button',
-            'number' => [
+            'details' => [
                 'network' => 'twitter',
                 'property_id' => 1,
             ]
@@ -27,7 +27,7 @@ class AnalyticsTest extends TestCase
 
         $response->assertStatus(200);
 
-        $input['number'] = json_encode($input['number']);
+        $input['details'] = json_encode($input['details']);
 
         $this->assertDatabaseHas('analytics', $input);                         
     }

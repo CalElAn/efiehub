@@ -7,7 +7,7 @@
         <meta head-key="description" property="og:description" :content="property.title + ' available on efiehub'">
         <meta head-key="url" property="og:url" :content="route('properties.show', property)">
         <meta head-key="image" property="og:image" :content="'https://efiehub.com/storage/' + property.media?.[0]?.path"/>
-        <meta head-key="twitterCard" name="twitter:card" :content="'https://efiehub.com/storage/' + property.media?.[0]?.path">
+        <meta head-key="twitterCard" name="twitter:card" content="summary_large_image">
     </Head>
     <div class="text-sm md:text-base">
         <div

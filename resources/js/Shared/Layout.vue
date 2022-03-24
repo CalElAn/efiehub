@@ -5,8 +5,10 @@
     <meta head-key="type" property="og:type" content="website"/>
     <meta head-key="description" property="og:description" content="Rent that meets your lifestyle">
     <meta head-key="url" property="og:url" content="https://efiehub.com">
-    <meta head-key="image" property="og:image" content="https://efiehub.com/images/logo-blue.png"/>
-    <meta head-key="twitterCard" name="twitter:card" content="https://efiehub.com/images/logo-blue.png">
+    <meta head-key="image" property="og:image" content="https://efiehub.com/images/surprised-man.png"/>
+    <meta head-key="twitterCard" name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@efiehub"/>
+    <meta name="twitter:creator" content="@efiehub"/>
 </Head>
 <div class="min-h-screen flex flex-col justify-between mb-14 sm:mb-0">
     <div 

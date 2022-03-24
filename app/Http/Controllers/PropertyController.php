@@ -23,7 +23,7 @@ class PropertyController extends Controller
     {
         if($request->referrer) {
             Analytics::firstOrCreate([
-                'event' => 'visit from '.$request->referrer
+                'event' => 'referred from '.$request->referrer
             ], [
                 'number' => 0,
             ])->increment('number');

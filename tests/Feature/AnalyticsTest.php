@@ -41,28 +41,28 @@ class AnalyticsTest extends TestCase
         // $this->get('/?referrer=instagram');
 
         $this->assertDatabaseHas('analytics', [
-            'event' => 'visit from instagram',
+            'event' => 'referred from instagram',
             'number' => 1,
         ]);
 
         $this->get('/?referrer=instagram');
 
         $this->assertDatabaseHas('analytics', [
-            'event' => 'visit from instagram',
+            'event' => 'referred from instagram',
             'number' => 2,
         ]);
 
         $this->get('/?referrer=instagram');
 
         $this->assertDatabaseHas('analytics', [
-            'event' => 'visit from instagram',
+            'event' => 'referred from instagram',
             'number' => 3,
         ]);
 
         $this->get('/?referrer=twitter');
 
         $this->assertDatabaseHas('analytics', [
-            'event' => 'visit from twitter',
+            'event' => 'referred from twitter',
             'number' => 1,
         ]);
     }

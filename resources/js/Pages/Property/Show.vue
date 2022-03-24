@@ -2,8 +2,12 @@
 <div class="px-2 mt-12 sm:mt-28">
     <Head>
         <title>{{`${property.type} in ${property.town}`}}</title>
-        <meta property="og:title" :content="property.title"/>
-        <meta property="og:url" :content="route('properties.show', property)"/>    
+        <meta head-key="title" property="og:title" :content="property.title">
+        <meta head-key="type" property="og:type" content="website"/>
+        <meta head-key="description" property="og:description" :content="property.title + ' available on efiehub'">
+        <meta head-key="url" property="og:url" :content="route('properties.show', property)">
+        <meta head-key="image" property="og:image" :content="'https://efiehub.com/storage/' + property.media?.[0]?.path"/>
+        <meta head-key="twitterCard" name="twitter:card" :content="'https://efiehub.com/storage/' + property.media?.[0]?.path">
     </Head>
     <div class="text-sm md:text-base">
         <div

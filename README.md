@@ -11,6 +11,7 @@
 
 - [About](#about)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Usage](#usage)
 - [Technology Stack](#technology-stack)
 - [Requirements](#requirements)
@@ -82,6 +83,42 @@ Built with Laravel and Vue, Efiehub leverages the power of Inertia.js to deliver
 - **🔄 Progress Indicators**: Visual feedback during page loads and transitions
 - **🍞 Toast Notifications**: User-friendly notifications with SweetAlert2
 - **🌐 Google Maps Integration**: Interactive maps for property locations
+
+---
+
+## 📸 Screenshots
+
+> Replace the image paths below with your own screenshots (e.g. place files under `docs/screenshots/`).
+
+### Home & Discovery
+
+| Homepage |
+| :---: |
+| ![Homepage](docs/screenshots/homepage.png) |
+
+### Property Details
+
+| Property Page |
+| :---: |
+| ![Property Page](docs/screenshots/property-details.png) |
+
+### Create Property
+| Details | Features | Media |
+| :---: |  :---: |  :---: |
+| ![Property Details](docs/screenshots/create-property-details.png) | ![Property Features](docs/screenshots/create-property-features.png) | ![Property Media](docs/screenshots/create-property-media.png) |
+
+### User Experience
+
+|                  User Dashboard                   |
+|:-------------------------------------------------:|
+| ![User Dashboard](docs/screenshots/dashboard.png) |
+
+### Mobile View
+
+<p align="center">
+  <img src="docs/screenshots/mobile-home.png" alt="Mobile Homepage" width="280" />
+  <img src="docs/screenshots/mobile-property.png" alt="Mobile Property" width="280" />
+</p>
 
 ---
 

@@ -88,8 +88,6 @@ Built with Laravel and Vue, Efiehub leverages the power of Inertia.js to deliver
 
 ## 📸 Screenshots
 
-> Replace the image paths below with your own screenshots (e.g. place files under `docs/screenshots/`).
-
 ### Home & Discovery
 
 | Homepage |

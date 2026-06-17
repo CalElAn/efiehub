@@ -7,9 +7,9 @@
         </button>
         <button @click="shareProperty">
             <ShareIcon class="h-7 w-7"/>
-        </button>    
+        </button>
     </div>
-    <swiper 
+    <swiper
         :style="{
             '--swiper-navigation-color': '#fff',
             '--swiper-pagination-color': '#FF5B1A',
@@ -17,17 +17,17 @@
             '--swiper-pagination-bullet-inactive-opacity': 1,
             '--swiper-navigation-size': '60px',
         }"
-        :navigation="true" 
+        :navigation="true"
         :pagination='{
             "clickable": true,
-            "dynamicBullets": true}' 
+            "dynamicBullets": true}'
         :grabCursor="true"
-        :spaceBetween="15" 
+        :spaceBetween="15"
         :loop="true"
         :lazy="true"
         class="w-full h-2/3">
         <swiper-slide v-for="(item, index) in property?.media" :key="index"
-            class="bg-cover bg-center bg-no-repeat rounded-t-3xl sm:rounded-t-main-card swiper-lazy" :data-background="'/storage/'+item.path" alt="property image">
+            class="bg-cover bg-center bg-no-repeat rounded-t-3xl sm:rounded-t-main-card swiper-lazy" :data-background="item.path?.includes('http') ? item.path : `/storage/${item.path}`" alt="property image">
             <div class="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
         </swiper-slide>
     </swiper>
@@ -41,7 +41,7 @@
             </Link>
         </div>
         <div class="flex flex-col justify-between">
-            <div 
+            <div
                 v-if="numberOfBedroomsAndBathrooms.exists"
                 class="flex flex-row justify-center items-center gap-2">
                 <p> {{numberOfBedroomsAndBathrooms.numberOfBedrooms}} bedrooms </p>
@@ -56,7 +56,7 @@
         </div>
         <div class="flex justify-between items-center">
             <div v-if="property?.reviews[0]" class="flex items-center gap-1">
-                <StarIcon class="h-4 sm:h-5 w-4 sm:w-5 text-white"/> 
+                <StarIcon class="h-4 sm:h-5 w-4 sm:w-5 text-white"/>
                 {{propertyReviews.average}} <span class="hidden sm:inline">({{propertyReviews.count}} reviews)</span>
             </div>
             <div v-else></div>

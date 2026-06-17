@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Auth;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -61,7 +61,7 @@ class User extends Authenticatable
 
     public function getIsUserReviewedByTheAuthenticatedUserAttribute()
     {
-        if (Auth::check()) 
+        if (Auth::check())
         {
             return $this->reviews()->where('user_id', Auth::user()->id)->get()->isNotEmpty();
         }
@@ -71,7 +71,7 @@ class User extends Authenticatable
 
     public function getIsUserTheAuthenticatedUserAttribute()
     {
-        if (Auth::check()) 
+        if (Auth::check())
         {
             return $this->id === Auth::user()->id;
         }
@@ -86,7 +86,7 @@ class User extends Authenticatable
 
     public function getPaginatedFavouritedProperties()
     {
-        $paginatedFavouritedProperties 
+        $paginatedFavouritedProperties
             = $this
                 ->favouritedProperties()
                 ->with('property')
@@ -95,8 +95,8 @@ class User extends Authenticatable
                 ->fragment('Favourites')
                 ->toArray();
 
-        //the data property is currently the "favourited properties model" with the "property model" as an object under it 
-        // the below step is to make the "property model" directly under the data property 
+        //the data property is currently the "favourited properties model" with the "property model" as an object under it
+        // the below step is to make the "property model" directly under the data property
         foreach ($paginatedFavouritedProperties['data'] as $key => $value) {
             $paginatedFavouritedProperties['data'][$key] = $value['property'];
         }

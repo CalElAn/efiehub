@@ -11,27 +11,27 @@
     </Head>
     <div class="text-sm md:text-base">
         <div
-            v-if="property.does_property_belong_to_the_authenticated_user" 
+            v-if="property.does_property_belong_to_the_authenticated_user"
             class="class mb-2 gap-4 flex justify-end">
-            <Link 
+            <Link
                  class="flex gap-1 items-center border border-main-blue text-main-blue p-2 rounded-lg hover:underline hover:bg-gray-100"
                 :href="`/properties/${property.slug}/edit`">
                 <PencilAltIcon class="w-5 h-5 text-main-orange"/>
                 Edit
             </Link>
-            <button 
+            <button
                 @click="archiveProperty"
                 class="flex gap-1 items-center border border-main-blue text-main-blue p-2 rounded-lg hover:underline hover:bg-gray-100">
                 <ArchiveIcon class="w-5 h-5 text-main-orange"/>
                 {{property.is_property_archived ? 'Un-archive' : 'Archive'}}
             </button>
         </div>
-        <p 
+        <p
             v-if="property.is_property_archived"
             class="text-2xl text-purple-700 font-medium"
         >
             This property has been archived
-        </p>        
+        </p>
         <swiper
             :style="{
                 '--swiper-navigation-color': '#fff',
@@ -67,7 +67,7 @@
             class="w-full h-96 mt-12 rounded-t-3xl">
             <!-- if you make grid >1, make loop false and define height "height: calc((100% - 30px) / 2) !important;" in css with .swiper-slide class -->
             <swiper-slide v-for="(item, index) in property?.media" :key="index"
-                class="bg-cover bg-center bg-no-repeat swiper-lazy" :data-background="'/storage/'+item.path" alt="property image">
+                class="bg-cover bg-center bg-no-repeat swiper-lazy" :data-background="item.path?.includes('http') ? item.path : `/storage/${item.path}`" alt="property image">
                 <div class="swiper-lazy-preloader swiper-lazy-preloader-white"></div>
             </swiper-slide>
         </swiper>
@@ -145,12 +145,12 @@
                     <div class="flex items-center justify-center">
                         <Link
                             style="text-decoration-color: #4568ED;"
-                            class="underline" 
-                            :href="searchPropertyUrl()" 
+                            class="underline"
+                            :href="searchPropertyUrl()"
                             target="_blank">
                             {{ property.region }},
-                        </Link> 
-                        &nbsp; 
+                        </Link>
+                        &nbsp;
                         {{`${property.city}, ${property.town}`}}
                     </div>
                 </div>
@@ -161,7 +161,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-2 justify-between  pt-3">
-                    <div 
+                    <div
                         v-if="numberOfBedroomsAndBathrooms.exists"
                         class="flex flex-row justify-center items-center gap-4">
                         <p> {{numberOfBedroomsAndBathrooms.numberOfBedrooms}} bedrooms </p>
@@ -179,36 +179,36 @@
                     <ul class="flex flex-col gap-2 list-disc mx-auto mt-3">
                         <li
                             class="text-main-blue"
-                            v-for="(item, index) in property?.features?.filter(obj => obj.input_type == 'checkbox')" 
+                            v-for="(item, index) in property?.features?.filter(obj => obj.input_type == 'checkbox')"
                             :key="index">
-                            <span class="text-black">{{item.feature}}</span> 
+                            <span class="text-black">{{item.feature}}</span>
                         </li>
                     </ul>
                     <hr class="mt-3">
                     <ul class="flex flex-col gap-2 list-disc mx-auto mt-3">
                         <li
                             class="text-main-blue"
-                            v-for="(item, index) in property?.other_features" 
+                            v-for="(item, index) in property?.other_features"
                             :key="index">
-                            <span class="text-black">{{item}}</span> 
+                            <span class="text-black">{{item}}</span>
                         </li>
                     </ul>
 
-                </div>          
+                </div>
             </div>
             <div class="w-full h-full sm:w-1/4 text-sm lg:text-base">
                 <UserCard
                     :user="property.user"
                     :showFullCard="false"
                 />
-                <button 
+                <button
                     @click="reportProperty"
                     class="flex underline gap-2 mt-6 text-gray-600">
                     <FlagIcon  class="h-4 lg:h-5 w-4 lg:w-5"/>
                     Report this property
                 </button>
             </div>
-        </section> 
+        </section>
         <section class="mt-12">
             <p class="flex gap-1 items-center mb-3 font-semibold text-lg sm:text-xl">
                 Map location
@@ -225,7 +225,7 @@
             <p v-else >
                 Map location is currently not available for this property
             </p>
-        </section> 
+        </section>
         <section class="mt-12">
             <Reviews
                 :initialReviewsData="property.reviews"
@@ -260,7 +260,7 @@ import { PencilAltIcon, ArchiveIcon } from '@heroicons/vue/outline'
 
 export default {
     components: {
-        GoogleMap, 
+        GoogleMap,
         Marker,
 
         UserCard,
@@ -276,7 +276,7 @@ export default {
         return {
             thumbsSwiper: null,
             propertyReviewsData: this.property.reviews,
-            gpsLocationArray: this.property.gps_location?.split(','), 
+            gpsLocationArray: this.property.gps_location?.split(','),
             showAllReviews: false,
         }
     },
@@ -316,8 +316,8 @@ export default {
         archiveProperty() {
             this.$swal.fire({
                 title: (this.property.is_property_archived ? 'Un-archive' : 'Archive') + ' property?',
-                html: this.property.is_property_archived 
-                    ? 'This will allow it to show up on the homepage and in any relevant searches' 
+                html: this.property.is_property_archived
+                    ? 'This will allow it to show up on the homepage and in any relevant searches'
                     : "This will prevent it from showing up on the homepage and in any searches.<br><br>This can be changed later.",
                 icon: 'warning',
                 showCancelButton: true,
